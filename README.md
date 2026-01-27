@@ -54,7 +54,7 @@ npm run dev
 
 This project is built with:
 
-- Vite
+- Next.js 15
 - TypeScript
 - React
 - shadcn-ui
@@ -62,7 +62,21 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+This project is configured for deployment on Vercel. You can deploy it by:
+
+1. **Using Vercel CLI**:
+   ```sh
+   npm install -g vercel
+   vercel
+   ```
+
+2. **Using Vercel Dashboard**:
+   - Push your code to GitHub
+   - Import your repository in the [Vercel Dashboard](https://vercel.com)
+   - Vercel will automatically detect Next.js and configure the deployment
+
+3. **Using Lovable**:
+   Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
 ## Can I connect a custom domain to my Lovable project?
 
