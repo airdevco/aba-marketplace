@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, MapPin, DollarSign, Briefcase, Filter, Calendar, Clock, Building, ExternalLink } from "lucide-react";
+import { Search, MapPin, DollarSign, Briefcase, Filter, Clock, Building, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

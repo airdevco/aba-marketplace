@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, MapPin, Mail, Phone, Briefcase, Award, Check, DollarSign, Calendar, Clock, MessageSquare, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, MapPin, Mail, Phone, Briefcase, Award, Check, DollarSign, MessageSquare, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";

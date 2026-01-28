@@ -7,10 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Info, Lock, AlertTriangle, Check } from "lucide-react";
+import { Info, Lock, Check } from "lucide-react";
 
 export default function ProfileView() {
   const [roleType, setRoleType] = useState<"RBT" | "BCBA">("RBT");

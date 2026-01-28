@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, DollarSign, Clock, Building, MessageSquare, Send, ChevronLeft } from "lucide-react";
+import { MapPin, DollarSign, Clock, Building, Send, ChevronLeft } from "lucide-react";
 
 // Mock data for suggested matches
 const suggestedMatches = [
@@ -188,7 +188,7 @@ export default function MatchesView() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="bg-white p-3 rounded-md text-sm italic text-muted-foreground border">
-                    "{job.message}"
+                    &quot;{job.message}&quot;
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
