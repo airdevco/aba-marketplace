@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -57,7 +57,7 @@ function PendingInviteScreen({ onAccept, onDecline }: { onAccept: () => void; on
           Join Airdev, Inc.
         </h1>
         <p className="text-lg text-muted-foreground leading-relaxed">
-          You've been invited to join <span className="font-medium text-foreground">Airdev, Inc.</span> on ABA Marketplace.
+          You&apos;ve been invited to join <span className="font-medium text-foreground">Airdev, Inc.</span> on ABA Marketplace.
         </p>
       </div>
 
@@ -174,9 +174,14 @@ export default function OnboardingPage() {
   };
 
   const handleCompanyInfoSubmit = () => {
-    // TODO: Validate required fields
-    setCompanyInfoCompleted(true);
-    setCurrentStep(1); // Proceed to multi-step flow
+    // TODO: Validate required fields and handle submission
+    // For now, just stay on the same screen
+    console.log("Company info submitted", {
+      companyName,
+      companyLocation,
+      companyDescription,
+      companyLogo,
+    });
   };
 
   // Check for pending invite on mount
@@ -432,7 +437,11 @@ export default function OnboardingPage() {
                   </div>
 
                   <div className="pt-4">
-                    <Button onClick={handleCompanyInfoSubmit} className="w-full h-12 text-base font-medium">
+                    <Button 
+                      type="button"
+                      onClick={handleCompanyInfoSubmit} 
+                      className="w-full h-12 text-base font-medium"
+                    >
                       Continue
                     </Button>
                   </div>
@@ -443,7 +452,7 @@ export default function OnboardingPage() {
         )}
 
         {/* Onboarding Steps (only show if not employer company info or if company info completed) */}
-        {currentStep > 0 && !(userType === "employer" && !companyInfoCompleted) && (
+        {currentStep > 0 && (userType !== "employer" || companyInfoCompleted) && (
           <div className="max-w-xl mx-auto mt-8">
             {/* Step Navigation */}
             <StepNavigation currentStep={currentStep} totalSteps={totalSteps} />
@@ -655,7 +664,7 @@ export default function OnboardingPage() {
                             placeholder="Enter your license number"
                           />
                           <p className="text-xs text-muted-foreground mt-1">
-                            Enter your license number to receive a "Verified Professional" badge after manual verification by admin
+                            Enter your license number to receive a &quot;Verified Professional&quot; badge after manual verification by admin
                           </p>
                         </div>
                       )}

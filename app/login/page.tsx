@@ -170,7 +170,7 @@ export default function LoginPage() {
                   </>
                 ) : (
                   <>
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <button
                       type="button"
                       onClick={() => setIsSignUp(true)}
@@ -231,9 +231,9 @@ export default function LoginPage() {
                 </div>
               </div>
               <p className="text-sm text-foreground leading-relaxed">
-                "ABA Marketplace has transformed how I find opportunities. The platform connects me
-                with quality clinics in Georgia, and the application process is seamless. I've found
-                my ideal position through this marketplace."
+                &quot;ABA Marketplace has transformed how I find opportunities. The platform connects me
+                with quality clinics in Georgia, and the application process is seamless. I&apos;ve found
+                my ideal position through this marketplace.&quot;
               </p>
             </CardContent>
           </Card>
@@ -242,13 +242,13 @@ export default function LoginPage() {
           <div className="space-y-6 text-primary-foreground">
             <div>
               <h2 className="text-4xl font-bold leading-tight">
-                Connect with Georgia's top ABA opportunities
+                Connect with Georgia&apos;s top ABA opportunities
               </h2>
             </div>
             <div className="space-y-4">
               <p className="text-lg leading-relaxed opacity-95 font-light">
                 ABA Marketplace is the premier platform connecting RBTs and BCBAs with clinics and
-                employers across Georgia. Whether you're a therapist seeking your next role or an
+                employers across Georgia. Whether you&apos;re a therapist seeking your next role or an
                 employer looking for qualified professionals, we make the connection simple and
                 efficient.
               </p>
