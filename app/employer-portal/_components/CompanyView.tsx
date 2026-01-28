@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 
 export default function CompanyView() {
@@ -52,52 +52,19 @@ export default function CompanyView() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-xl mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Company Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your organization's public information</p>
+        <p className="text-muted-foreground mt-1">Manage your organization&apos;s public information</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Organization Details</CardTitle>
-          <CardDescription>This information will be visible to candidates on your job listings.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-8">
-          {/* Logo Upload */}
-          <div>
-            <Label className="text-sm font-medium mb-4 block">Company Logo</Label>
-            <div className="flex items-start gap-6">
-              <div className="relative group cursor-pointer">
-                {companyLogo ? (
-                  <>
-                    <label htmlFor="company-logo-upload" className="cursor-pointer block">
-                      <img
-                        src={companyLogo}
-                        alt="Company Logo"
-                        className="w-32 h-32 rounded-lg object-contain border-2 border-border p-2 bg-white hover:border-primary transition-colors"
-                      />
-                    </label>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full shadow-md"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCompanyLogo(null);
-                      }}
-                    >
-                      <span className="text-xs">×</span>
-                    </Button>
-                  </>
-                ) : (
-                  <label htmlFor="company-logo-upload" className="cursor-pointer block">
-                    <div className="w-32 h-32 rounded-lg bg-muted flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-all text-center p-2">
-                      <span className="text-muted-foreground text-xs font-medium">Click to upload logo</span>
-                    </div>
-                  </label>
-                )}
+      <Card className="shadow-md">
+        <CardContent className="p-8">
+          <div className="space-y-6">
+            {/* Company Logo Upload */}
+            <div>
+              <Label className="text-sm font-medium mb-1 block text-center">Company Logo</Label>
+              <div className="flex justify-center">
                 <Input
                   type="file"
                   accept="image/*"
@@ -105,19 +72,24 @@ export default function CompanyView() {
                   className="hidden"
                   id="company-logo-upload"
                 />
-              </div>
-              <div className="space-y-1 py-2">
-                <h4 className="font-medium text-sm">Logo Guidelines</h4>
-                <p className="text-xs text-muted-foreground max-w-xs">
-                  Upload a high-quality image of your company logo. 
-                  Recommended size: 400x400px.
-                  Formats: PNG, JPG.
-                </p>
+                {companyLogo ? (
+                  <label htmlFor="company-logo-upload" className="cursor-pointer">
+                    <img
+                      src={companyLogo}
+                      alt="Company Logo"
+                      className="w-24 h-24 rounded-lg object-contain border-2 border-border p-1 bg-white hover:opacity-80 transition-opacity"
+                    />
+                  </label>
+                ) : (
+                  <label htmlFor="company-logo-upload" className="cursor-pointer">
+                    <div className="w-24 h-24 rounded-lg bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-all">
+                      <span className="text-muted-foreground text-xs">Click to upload</span>
+                    </div>
+                  </label>
+                )}
               </div>
             </div>
-          </div>
 
-          <div className="grid gap-6 max-w-2xl">
             <div className="space-y-2">
               <Label htmlFor="companyName">Company Name</Label>
               <Input
@@ -138,9 +110,11 @@ export default function CompanyView() {
                 maxLength={5}
               />
               {companyLocationError && (
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md mt-2 flex gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-yellow-800">{companyLocationError}</p>
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md mt-2">
+                  <p className="text-sm text-yellow-800 flex gap-2">
+                    <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    {companyLocationError}
+                  </p>
                 </div>
               )}
             </div>
@@ -149,20 +123,17 @@ export default function CompanyView() {
               <Label htmlFor="companyDescription">Description</Label>
               <Textarea
                 id="companyDescription"
-                className="min-h-[150px]"
+                className="min-h-[120px]"
                 value={companyDescription}
                 onChange={(e) => setCompanyDescription(e.target.value)}
                 placeholder="Tell us about your organization..."
               />
-              <p className="text-xs text-muted-foreground text-right">
-                {companyDescription.length} characters
-              </p>
             </div>
-          </div>
 
-          <div className="pt-4 flex gap-4">
-            <Button>Save Changes</Button>
-            <Button variant="outline">Cancel</Button>
+            <div className="pt-4 flex gap-4">
+              <Button className="flex-1">Save Changes</Button>
+              <Button variant="outline" className="flex-1">Discard</Button>
+            </div>
           </div>
         </CardContent>
       </Card>

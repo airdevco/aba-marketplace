@@ -2,12 +2,13 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, Suspense } from "react";
-import DashboardView from "./_components/DashboardView";
-import JobsView from "./_components/JobsView";
-import TeamView from "./_components/TeamView";
-import CompanyView from "./_components/CompanyView";
+import MatchesView from "./_components/MatchesView";
+import ApplicationsView from "./_components/ApplicationsView";
+import ProfileView from "./_components/ProfileView";
 
-function EmployerPortalContent() {
+export const dynamic = 'force-dynamic';
+
+function ProfessionalPortalContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const tab = searchParams.get("tab");
@@ -15,7 +16,7 @@ function EmployerPortalContent() {
   // Redirect to dashboard if no tab is specified
   useEffect(() => {
     if (!tab) {
-      router.replace("/employer-portal?tab=dashboard");
+      router.replace("/professional-portal?tab=dashboard");
     }
   }, [tab, router]);
 
@@ -26,21 +27,19 @@ function EmployerPortalContent() {
 
   switch (tab) {
     case "jobs":
-      return <JobsView />;
-    case "team":
-      return <TeamView />;
-    case "company":
-      return <CompanyView />;
+      return <ApplicationsView />;
+    case "profile":
+      return <ProfileView />;
     case "dashboard":
     default:
-      return <DashboardView />;
+      return <MatchesView />;
   }
 }
 
-export default function EmployerPortalPage() {
+export default function ProfessionalPortalPage() {
   return (
     <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
-      <EmployerPortalContent />
+      <ProfessionalPortalContent />
     </Suspense>
   );
 }

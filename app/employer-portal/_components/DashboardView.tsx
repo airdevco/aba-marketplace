@@ -20,7 +20,7 @@ export default function DashboardView() {
         <div>
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">{currentDate}</p>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, John</h1>
-          <p className="text-muted-foreground mt-1">Here's what's happening with your job listings today.</p>
+          <p className="text-muted-foreground mt-1">Here&apos;s what&apos;s happening with your job listings today.</p>
         </div>
       </div>
 

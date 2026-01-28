@@ -33,8 +33,8 @@ import { MoreHorizontal, Plus, Mail, Trash2 } from "lucide-react";
 // Mock data
 const initialMembers = [
   { id: 1, name: "John Doe", email: "john@airdev.com", role: "Admin", status: "Active" },
-  { id: 2, name: "Jane Smith", email: "jane@airdev.com", role: "Recruiter", status: "Active" },
-  { id: 3, name: "Mike Johnson", email: "mike@airdev.com", role: "Viewer", status: "Pending" },
+  { id: 2, name: "Jane Smith", email: "jane@airdev.com", role: "Team", status: "Active" },
+  { id: 3, name: "Mike Johnson", email: "mike@airdev.com", role: "Team", status: "Pending" },
 ];
 
 export default function TeamView() {
@@ -48,7 +48,7 @@ export default function TeamView() {
       id: members.length + 1,
       name: "",
       email: newEmail,
-      role: "Recruiter",
+      role: "Team",
       status: "Pending"
     };
     setMembers([...members, newMember]);
@@ -69,9 +69,9 @@ export default function TeamView() {
         </div>
         <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Invite Member
+            <Button className="gap-1">
+              <Plus className="w-4 h-4" />
+              Invite member
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -95,16 +95,16 @@ export default function TeamView() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsInviteOpen(false)}>Cancel</Button>
-              <Button onClick={handleInvite}>Send Invitation</Button>
+              <Button onClick={handleInvite}>Send invitation</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="border rounded-md bg-white">
+      <div className="border rounded-md bg-white overflow-x-auto">
         <Table>
-          <TableHeader>
-            <TableRow>
+          <TableHeader className="hover:bg-transparent">
+            <TableRow className="hover:bg-transparent">
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
@@ -132,7 +132,7 @@ export default function TeamView() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem className="text-destructive" onClick={() => handleRemove(member.id)}>
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <Trash2 className="mr-1.5 h-4 w-4" />
                         Remove
                       </DropdownMenuItem>
                     </DropdownMenuContent>

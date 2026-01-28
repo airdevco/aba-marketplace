@@ -304,6 +304,12 @@ export default function OnboardingPage() {
       workSetting,
       geographicRadius,
     });
+
+    if (userType === "worker") {
+      router.push("/professional-portal");
+    } else if (userType === "employer") {
+      router.push("/employer-portal");
+    }
   };
 
   if (hasPendingInvite) {
