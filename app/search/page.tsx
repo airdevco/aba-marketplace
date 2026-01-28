@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, MapPin, DollarSign, Briefcase, Filter, Clock, Building, ExternalLink } from "lucide-react";
+import { Search, MapPin, DollarSign, Briefcase, Filter, Clock, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Mock Job Postings Data
@@ -27,7 +26,7 @@ const jobPostings = [
     employmentType: "Full-time",
     schedule: ["Weekdays"],
     posted: "2 days ago",
-    matchScore: 98
+    description: "Provide 1:1 ABA therapy to children with autism in home and clinic settings."
   },
   {
     id: 2,
@@ -41,7 +40,7 @@ const jobPostings = [
     employmentType: "Part-time",
     schedule: ["School Hours"],
     posted: "1 day ago",
-    matchScore: 92
+    description: "Work with students in elementary school settings implementing behavior plans."
   },
   {
     id: 3,
@@ -55,7 +54,7 @@ const jobPostings = [
     employmentType: "Full-time",
     schedule: ["Weekdays", "Evenings"],
     posted: "3 days ago",
-    matchScore: 85
+    description: "Lead a team of RBTs while maintaining your own caseload of clients."
   },
   {
     id: 4,
@@ -69,7 +68,7 @@ const jobPostings = [
     employmentType: "Full-time",
     schedule: ["Weekdays"],
     posted: "5 days ago",
-    matchScore: 88
+    description: "Oversee clinical operations and supervise a team of BCBAs and RBTs."
   },
   {
     id: 5,
@@ -83,7 +82,7 @@ const jobPostings = [
     employmentType: "Part-time",
     schedule: ["Weekends"],
     posted: "1 week ago",
-    matchScore: 90
+    description: "Provide weekend ABA services for families needing flexible scheduling."
   },
   {
     id: 6,
@@ -97,7 +96,7 @@ const jobPostings = [
     employmentType: "Full-time",
     schedule: ["Flexible"],
     posted: "4 days ago",
-    matchScore: 82
+    description: "Develop and oversee treatment plans for a diverse caseload of clients."
   }
 ];
 
@@ -345,11 +344,11 @@ export default function SearchPage() {
             </div>
 
             {/* Results Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {filteredJobs.map((job) => (
                 <Card key={job.id} className="overflow-hidden hover:border-primary/50 transition-colors">
                   <CardHeader className="pb-3 bg-muted/20">
-                    <div className="flex justify-between items-start gap-2 flex-wrap">
+                    <div className="flex justify-between items-start gap-4">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <Avatar className="h-10 w-10 border bg-white shrink-0">
                           <AvatarImage src={job.companyLogo} />
@@ -359,73 +358,38 @@ export default function SearchPage() {
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <CardTitle className="text-base font-semibold truncate">{job.title}</CardTitle>
-                          <div className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                            <Building className="h-3 w-3 shrink-0" /> 
-                            <span className="truncate">{job.company}</span>
-                          </div>
+                          <span className="text-xs text-muted-foreground truncate">{job.company}</span>
                         </div>
                       </div>
-                      {job.matchScore && (
-                        <Badge variant="secondary" className="font-normal text-xs bg-green-50 text-green-700 border-green-200 hover:bg-green-50 shrink-0 whitespace-nowrap">
-                          {job.matchScore}% Match
-                        </Badge>
-                      )}
+                      <Button size="sm" className="shrink-0" asChild>
+                        <Link href={`/listing/${job.id}?view=professional`}>
+                          View & Apply
+                        </Link>
+                      </Button>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-4 pb-2 space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Location</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                          {job.location}
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Pay Rate</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                          {job.rate}
-                        </div>
-                      </div>
+                  <CardContent className="pt-3 pb-4 space-y-3 ml-[52px]">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {job.location}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <DollarSign className="h-3.5 w-3.5" />
+                        {job.rate}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Briefcase className="h-3.5 w-3.5" />
+                        {job.employmentType}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5" />
+                        {job.schedule.join(", ")}
+                      </span>
                     </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Type</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
-                          {job.employmentType}
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Posted</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                          {job.posted}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1.5">
-                      <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Schedule</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {job.schedule.map((sch, i) => (
-                          <Badge key={i} variant="outline" className="text-xs font-normal bg-gray-50">
-                            {sch}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
+
+                    <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
                   </CardContent>
-                  <CardFooter className="bg-muted/10 pt-4">
-                    <Button className="w-full gap-2" asChild>
-                      <Link href={`/listing/${job.id}?view=professional`}>
-                        <ExternalLink className="h-4 w-4" />
-                        View & Apply
-                      </Link>
-                    </Button>
-                  </CardFooter>
                 </Card>
               ))}
             </div>

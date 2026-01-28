@@ -2,51 +2,38 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, MessageSquare, User } from "lucide-react";
+import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, Clock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
-import { Textarea } from "@/components/ui/textarea";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
 
 // Mock Directory Data (Anonymized)
 const directoryWorkers = [
-  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], status: "Available" },
-  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], status: "Available" },
-  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], status: "Looking" },
-  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], status: "Available" },
-  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], status: "Available" },
-  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], status: "Looking" },
-  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], status: "Available" },
-  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], status: "Available" },
+  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], status: "Available", bio: "Passionate about helping children reach their full potential through evidence-based ABA therapy." },
+  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], status: "Available", bio: "Experienced BCBA specializing in early intervention and parent training programs." },
+  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], status: "Looking", bio: "Dedicated RBT with experience in school-based settings and a focus on social skills development." },
+  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], status: "Available", bio: "Skilled in discrete trial training and natural environment teaching with diverse client populations." },
+  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], status: "Available", bio: "Senior BCBA with expertise in behavior reduction and skill acquisition programming." },
+  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], status: "Looking", bio: "Energetic and creative RBT who loves incorporating play-based learning into therapy sessions." },
+  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], status: "Available", bio: "Recently certified RBT eager to learn and grow in the field of applied behavior analysis." },
+  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], status: "Available", bio: "Compassionate BCBA focused on family-centered care and collaborative treatment planning." },
 ];
 
 export default function DirectoryPage() {
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedWorker, setSelectedWorker] = useState<typeof directoryWorkers[0] | null>(null);
-  const [messageText, setMessageText] = useState("");
-  const [isMessageOpen, setIsMessageOpen] = useState(false);
 
   const filteredWorkers = directoryWorkers.filter(worker => {
     if (selectedRole !== "all" && worker.role.toLowerCase() !== selectedRole) return false;
     if (searchQuery && !worker.location.toLowerCase().includes(searchQuery.toLowerCase()) && !worker.role.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
-
-  const handleSendMessage = () => {
-    // In a real app, this would verify the user and send the message
-    setIsMessageOpen(false);
-    setMessageText("");
-    // Could show a toast here
-  };
 
   return (
     <div className="min-h-screen bg-gray-50/30">
@@ -176,119 +163,53 @@ export default function DirectoryPage() {
             </div>
 
             {/* Results Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {filteredWorkers.map((worker) => (
                 <Card key={worker.id} className="overflow-hidden hover:border-primary/50 transition-colors">
                   <CardHeader className="pb-3 bg-muted/20">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border bg-white">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <Avatar className="h-10 w-10 border bg-white shrink-0">
                           <AvatarFallback className="bg-primary/10 text-primary">
                             <User className="h-5 w-5" />
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <CardTitle className="text-base font-semibold flex items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base font-semibold truncate">
                             {worker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}
-                            <span className="text-xs font-normal text-muted-foreground">#{worker.id}</span>
                           </CardTitle>
-                          <div className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3" /> {worker.location}
-                          </div>
+                          <span className="text-xs text-muted-foreground">#{worker.id}</span>
                         </div>
                       </div>
-                      <Badge variant="secondary" className="font-normal text-xs bg-white border-input text-foreground hover:bg-white">
-                        {worker.status}
-                      </Badge>
+                      <Button size="sm" className="shrink-0" asChild>
+                        <Link href={`/profile/${worker.id}`}>
+                          View & Connect
+                        </Link>
+                      </Button>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-4 pb-2 space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Experience</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
-                          {worker.experience}
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Rate Expectation</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                          {worker.rate}
-                        </div>
-                      </div>
+                  <CardContent className="pt-3 pb-4 space-y-3 ml-[52px]">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {worker.location}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <DollarSign className="h-3.5 w-3.5" />
+                        {worker.rate}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Briefcase className="h-3.5 w-3.5" />
+                        {worker.experience}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5" />
+                        {worker.schedule.join(", ")}
+                      </span>
                     </div>
-                    
-                    <div className="space-y-1.5">
-                      <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Schedule Availability</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {worker.schedule.map((sch, i) => (
-                          <Badge key={i} variant="outline" className="text-xs font-normal bg-gray-50">
-                            {sch}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
+
+                    <p className="text-sm text-muted-foreground line-clamp-2">{worker.bio}</p>
                   </CardContent>
-                  <CardFooter className="bg-muted/10 pt-4 flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1 gap-2"
-                      asChild
-                    >
-                      <Link href={`/profile/${worker.id}`} target="_blank">
-                        <User className="h-4 w-4" />
-                        View Profile
-                      </Link>
-                    </Button>
-                    <Sheet open={isMessageOpen && selectedWorker?.id === worker.id} onOpenChange={(open) => {
-                      setIsMessageOpen(open);
-                      if (!open) setSelectedWorker(null);
-                    }}>
-                      <SheetTrigger asChild>
-                        <Button className="flex-1 gap-2" onClick={() => {
-                          setSelectedWorker(worker);
-                          setIsMessageOpen(true);
-                        }}>
-                          <MessageSquare className="h-4 w-4" />
-                          Message Candidate
-                        </Button>
-                      </SheetTrigger>
-                      <SheetContent>
-                        <SheetHeader>
-                          <SheetTitle>Contact {worker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}</SheetTitle>
-                          <SheetDescription>
-                            Send a message to initiate contact. Your full company profile will be visible to them.
-                          </SheetDescription>
-                        </SheetHeader>
-                        <div className="py-6 space-y-4">
-                          <div className="space-y-2">
-                            <Label>Candidate Details</Label>
-                            <div className="bg-muted p-3 rounded-md text-sm space-y-1">
-                              <p><span className="font-medium">Role:</span> {worker.role}</p>
-                              <p><span className="font-medium">Location:</span> {worker.location}</p>
-                              <p><span className="font-medium">ID:</span> #{worker.id}</p>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="message">Your Message</Label>
-                            <Textarea 
-                              id="message" 
-                              placeholder="Hi, we'd like to discuss a potential opportunity..." 
-                              className="min-h-[150px]"
-                              value={messageText}
-                              onChange={(e) => setMessageText(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        <SheetFooter>
-                          <Button variant="outline" onClick={() => setIsMessageOpen(false)}>Cancel</Button>
-                          <Button onClick={handleSendMessage}>Send Message</Button>
-                        </SheetFooter>
-                      </SheetContent>
-                    </Sheet>
-                  </CardFooter>
                 </Card>
               ))}
             </div>
