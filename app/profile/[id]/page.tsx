@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, MapPin, Mail, Phone, Briefcase, Award, Check, DollarSign, Calendar, Clock, MessageSquare } from "lucide-react";
+import { ChevronLeft, MapPin, Mail, Phone, Briefcase, Award, Check, DollarSign, Calendar, Clock, MessageSquare, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
 
 // Mock worker data that matches employer portal applicants
@@ -84,7 +85,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
 
       <div className="max-w-3xl mx-auto py-8 px-4 space-y-8">
         {/* Navigation */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary" asChild>
             <Link href="/employer-portal?tab=jobs">
               <ChevronLeft className="w-4 h-4 mr-2" />
@@ -143,56 +144,53 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
 
         {/* Content - Single Card like listing page */}
         <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            {/* Profile Photo & Basic Info */}
-            <div className="flex items-start gap-6 pb-6 border-b">
-              <Avatar className="h-20 w-20 border-2 border-gray-200">
-                {worker.image ? (
-                  <AvatarImage src={worker.image} alt={worker.name} />
-                ) : null}
-                <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                  {worker.role.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-2">
-                <h3 className="font-semibold text-lg">{isAnonymous ? `${worker.role} Candidate` : worker.name}</h3>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{worker.role}</Badge>
-                  {isVerified && (
-                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                      <Check className="w-3 h-3 mr-1" />
-                      Verified Professional
-                    </Badge>
-                  )}
-                </div>
+          <CardContent className="space-y-8 pt-6">
+            {/* Profile Photo - Centered */}
+            <div className="flex justify-center pb-6 border-b">
+              <div className="relative">
+                <Avatar className="h-24 w-24 border-2 border-gray-200">
+                  {worker.image ? (
+                    <AvatarImage src={worker.image} alt={worker.name} />
+                  ) : null}
+                  <AvatarFallback className="bg-primary/10 text-primary text-xl">
+                    {worker.role.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                {isVerified && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-0.5 border-2 border-white shadow-sm cursor-pointer">
+                          <CheckCircle2 className="h-4 w-4 text-white" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" align="start">
+                        <p>Verified professional</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </div>
 
             {/* Contact Information */}
             {!isAnonymous && (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1">
-                    <Label className="text-muted-foreground font-normal">Email</Label>
-                    <div className="font-medium flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      {worker.email}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-muted-foreground font-normal">Phone</Label>
-                    <div className="font-medium flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      {worker.phone}
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground font-normal">Email</Label>
+                  <div className="font-medium flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    {worker.email}
                   </div>
                 </div>
-
-                <Separator />
-              </>
+                <div className="space-y-1">
+                  <Label className="text-muted-foreground font-normal">Phone</Label>
+                  <div className="font-medium flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    {worker.phone}
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Location */}
