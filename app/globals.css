@@ -101,5 +101,55 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
+}
+
+/* Hide empty Sonner toaster container */
+[data-sonner-toaster][data-sonner-empty="true"],
+[data-sonner-toaster]:empty {
+  display: none !important;
+}
+
+/* Aggressively hide Next.js development indicator (floating N) - EVERYWHERE */
+#__next-build-watcher,
+[data-nextjs-toast],
+[data-nextjs-dialog],
+.nextjs-toast-root,
+[class*="__next-build-watcher"],
+[class*="nextjs"],
+iframe[src*="__nextjs"],
+iframe[src*="nextjs"],
+div[id*="__next"],
+div[class*="__next"],
+div[data-nextjs],
+*[style*="position: fixed"][style*="bottom"][style*="left"],
+*[style*="position: fixed"][style*="z-index: 9999"],
+*[style*="position: fixed"][style*="z-index: 99999"],
+*[style*="position: fixed"][style*="bottom: 0"][style*="left: 0"],
+*[style*="position: fixed"][style*="bottom: 0px"][style*="left: 0px"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+}
+
+/* Hide any fixed position elements in bottom-left corner - catch all */
+body > div:last-child[style*="position: fixed"],
+body > div[style*="position: fixed"][style*="bottom"],
+body > div[style*="position: fixed"][style*="left"],
+div[style*="position: fixed"]:has(> *[style*="N"]),
+div[style*="position: fixed"]:has-text("N") {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
 }

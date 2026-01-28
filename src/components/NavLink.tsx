@@ -12,7 +12,7 @@ interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof Link> {
 }
 
 const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
-  ({ className, activeClassName, pendingClassName, href, ...props }, ref) => {
+  ({ className, activeClassName, href, ...props }, ref) => {
     const pathname = usePathname();
     const isActive = pathname === href;
 
