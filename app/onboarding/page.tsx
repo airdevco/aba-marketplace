@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Check, Lock, AlertTriangle, Info } from "lucide-react";
 import {
   Popover,
@@ -132,6 +133,7 @@ function StepNavigation({ currentStep, totalSteps }: { currentStep: number; tota
 }
 
 export default function OnboardingPage() {
+  const router = useRouter();
   const [hasPendingInvite, setHasPendingInvite] = useState(true); // Show invite screen by default
   const [currentStep, setCurrentStep] = useState(0); // Start at 0 for user type selection
   const [userType, setUserType] = useState<"worker" | "employer" | null>(null);
@@ -182,6 +184,7 @@ export default function OnboardingPage() {
       companyDescription,
       companyLogo,
     });
+    router.push("/employer-portal");
   };
 
   // Check for pending invite on mount
