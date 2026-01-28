@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import Link from "next/link";
 import { ChevronLeft, MapPin, Mail, Phone, Briefcase, Award, Check, DollarSign, MessageSquare, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,18 +26,18 @@ const allMockApplicants = [
 
 // Directory workers
 const directoryWorkers = [
-  { id: "W101", name: "Anonymous RBT", role: "RBT", location: "Atlanta, GA", zipCode: "30301", image: "", experience: "3 years", licenseNumber: "RBT-W101", minRate: "24", employmentType: ["Weekdays", "Evenings"], workSetting: "In-person", radius: "25" },
-  { id: "W102", name: "Anonymous BCBA", role: "BCBA", location: "Marietta, GA", zipCode: "30060", image: "", experience: "5 years", licenseNumber: "BCBA-W102", minRate: "82", employmentType: ["Weekdays"], workSetting: "In-person", radius: "30" },
-  { id: "W103", name: "Anonymous RBT", role: "RBT", location: "Decatur, GA", zipCode: "30030", image: "", experience: "1 year", licenseNumber: "RBT-W103", minRate: "22", employmentType: ["Weekends", "School Hours"], workSetting: "Hybrid", radius: "15" },
-  { id: "W104", name: "Anonymous RBT", role: "RBT", location: "Alpharetta, GA", zipCode: "30009", image: "", experience: "4 years", licenseNumber: "RBT-W104", minRate: "26", employmentType: ["Full-time"], workSetting: "In-person", radius: "20" },
-  { id: "W105", name: "Anonymous BCBA", role: "BCBA", location: "Sandy Springs, GA", zipCode: "30328", image: "", experience: "7 years", licenseNumber: "BCBA-W105", minRate: "90", employmentType: ["Flexible"], workSetting: "Hybrid", radius: "35" },
-  { id: "W106", name: "Anonymous RBT", role: "RBT", location: "Smyrna, GA", zipCode: "30080", image: "", experience: "2 years", licenseNumber: "RBT-W106", minRate: "23", employmentType: ["Weekdays"], workSetting: "In-person", radius: "15" },
-  { id: "W107", name: "Anonymous RBT", role: "RBT", location: "Atlanta, GA", zipCode: "30303", image: "", experience: "< 1 year", licenseNumber: "RBT-W107", minRate: "20", employmentType: ["Weekends"], workSetting: "In-person", radius: "10" },
-  { id: "W108", name: "Anonymous BCBA", role: "BCBA", location: "Roswell, GA", zipCode: "30076", image: "", experience: "3 years", licenseNumber: "BCBA-W108", minRate: "77", employmentType: ["Full-time"], workSetting: "In-person", radius: "25" },
+  { id: "W101", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Atlanta, GA", zipCode: "30301", image: "", experience: "3 years", licenseNumber: "RBT-W101", minRate: "24", employmentType: ["Weekdays", "Evenings"], workSetting: "In-person", radius: "25" },
+  { id: "W102", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Marietta, GA", zipCode: "30060", image: "", experience: "5 years", licenseNumber: "BCBA-W102", minRate: "82", employmentType: ["Weekdays"], workSetting: "In-person", radius: "30" },
+  { id: "W103", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Decatur, GA", zipCode: "30030", image: "", experience: "1 year", licenseNumber: "RBT-W103", minRate: "22", employmentType: ["Weekends", "School Hours"], workSetting: "Hybrid", radius: "15" },
+  { id: "W104", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Alpharetta, GA", zipCode: "30009", image: "", experience: "4 years", licenseNumber: "RBT-W104", minRate: "26", employmentType: ["Full-time"], workSetting: "In-person", radius: "20" },
+  { id: "W105", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Sandy Springs, GA", zipCode: "30328", image: "", experience: "7 years", licenseNumber: "BCBA-W105", minRate: "90", employmentType: ["Flexible"], workSetting: "Hybrid", radius: "35" },
+  { id: "W106", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Smyrna, GA", zipCode: "30080", image: "", experience: "2 years", licenseNumber: "RBT-W106", minRate: "23", employmentType: ["Weekdays"], workSetting: "In-person", radius: "15" },
+  { id: "W107", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Atlanta, GA", zipCode: "30303", image: "", experience: "< 1 year", licenseNumber: "RBT-W107", minRate: "20", employmentType: ["Weekends"], workSetting: "In-person", radius: "10" },
+  { id: "W108", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Roswell, GA", zipCode: "30076", image: "", experience: "3 years", licenseNumber: "BCBA-W108", minRate: "77", employmentType: ["Full-time"], workSetting: "In-person", radius: "25" },
 ];
 
-export default function ProfilePage({ params }: { params: { id: string } }) {
-  const workerId = params.id;
+export default function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: workerId } = use(params);
   
   // Find worker from applicants or directory
   let foundWorker = allMockApplicants.find(a => a.id === workerId);

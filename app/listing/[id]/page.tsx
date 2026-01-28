@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, AlertTriangle, Check, MapPin, DollarSign, Eye, Edit, Calendar, Briefcase, Building } from "lucide-react";
@@ -18,7 +18,8 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
 
-export default function JobListingPage({ params }: { params: { id: string } }) {
+export default function JobListingPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode") || "view"; // Default to view if no mode
@@ -95,7 +96,7 @@ export default function JobListingPage({ params }: { params: { id: string } }) {
                 </Button>
               )}
               {isViewMode && !isProfessionalView && (
-                 <Button onClick={() => router.push(`/listing/${params.id}?mode=edit`)} className="gap-1">
+                 <Button onClick={() => router.push(`/listing/${id}?mode=edit`)} className="gap-1">
                    <Edit className="w-4 h-4" />
                    Edit Listing
                  </Button>
@@ -390,8 +391,8 @@ export default function JobListingPage({ params }: { params: { id: string } }) {
 
               {/* Action Buttons */}
               <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" onClick={() => router.push(`/listing/${params.id}?mode=view`)}>Cancel</Button>
-                <Button onClick={() => router.push(`/listing/${params.id}?mode=view`)}>Save Changes</Button>
+                <Button variant="outline" onClick={() => router.push(`/listing/${id}?mode=view`)}>Cancel</Button>
+                <Button onClick={() => router.push(`/listing/${id}?mode=view`)}>Save Changes</Button>
               </div>
             </>
           )}
