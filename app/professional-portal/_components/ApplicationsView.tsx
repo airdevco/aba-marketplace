@@ -18,7 +18,7 @@ const applications = [
     title: "Senior RBT",
     company: "Behavioral Health Co.",
     location: "Atlanta, GA",
-    status: "Interviewing",
+    status: "Active",
     appliedDate: "Jan 20, 2026",
     lastActivity: "Message received yesterday"
   },
@@ -27,7 +27,7 @@ const applications = [
     title: "RBT Specialist",
     company: "Metro Therapy Services",
     location: "Buckhead, GA",
-    status: "Applied",
+    status: "Active",
     appliedDate: "Jan 24, 2026",
     lastActivity: "Application submitted"
   },
@@ -36,9 +36,9 @@ const applications = [
     title: "Clinical Technician",
     company: "Spectrum Support",
     location: "Dunwoody, GA",
-    status: "Offer Received",
+    status: "Accepted",
     appliedDate: "Jan 15, 2026",
-    lastActivity: "Offer letter pending review"
+    lastActivity: "Offer accepted - start date pending"
   }
 ];
 
@@ -76,19 +76,19 @@ const applicationThreads = [
 const getMessagesForApplication = (applicationId: number) => {
   if (applicationId === 1) {
     return [
-      { id: 1, sender: "worker", text: "Hi, I'm very interested in the Senior RBT position. I have 5 years of experience.", time: "Jan 20, 2026 2:00 PM" },
-      { id: 2, sender: "employer", text: "Thank you for your application. We'd like to schedule an interview.", time: "Yesterday 10:30 AM" },
+      { id: 1, sender: "worker", senderName: "Sarah Williams", text: "Hi, I'm very interested in the Senior RBT position. I have 5 years of experience.", time: "Jan 20, 2026 2:00 PM" },
+      { id: 2, sender: "employer", senderName: "Michael Chen", senderCompany: "Behavioral Health Co.", text: "Thank you for your application. We'd like to schedule an interview.", time: "Yesterday 10:30 AM" },
     ];
   } else if (applicationId === 2) {
     return [
-      { id: 1, sender: "worker", text: "I've submitted my application for the RBT Specialist role.", time: "Jan 24, 2026 3:15 PM" },
-      { id: 2, sender: "employer", text: "We've received your application and will review it shortly.", time: "2 days ago" },
+      { id: 1, sender: "worker", senderName: "Sarah Williams", text: "I've submitted my application for the RBT Specialist role.", time: "Jan 24, 2026 3:15 PM" },
+      { id: 2, sender: "employer", senderName: "Jennifer Brown", senderCompany: "Metro Therapy Services", text: "We've received your application and will review it shortly.", time: "2 days ago" },
     ];
   } else {
     return [
-      { id: 1, sender: "worker", text: "Thank you for considering my application for the Clinical Technician position.", time: "Jan 15, 2026 11:00 AM" },
-      { id: 2, sender: "employer", text: "Congratulations! We're pleased to offer you the position.", time: "3 days ago 4:00 PM" },
-      { id: 3, sender: "worker", text: "Thank you so much! I'm very excited about this opportunity.", time: "2 days ago 9:30 AM" },
+      { id: 1, sender: "worker", senderName: "Sarah Williams", text: "Thank you for considering my application for the Clinical Technician position.", time: "Jan 15, 2026 11:00 AM" },
+      { id: 2, sender: "employer", senderName: "David Lee", senderCompany: "Spectrum Support", text: "Congratulations! We're pleased to offer you the position.", time: "3 days ago 4:00 PM" },
+      { id: 3, sender: "worker", senderName: "Sarah Williams", text: "Thank you so much! I'm very excited about this opportunity.", time: "2 days ago 9:30 AM" },
     ];
   }
 };
@@ -165,20 +165,22 @@ export default function ApplicationsView() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge 
-                    variant={
-                      app.status === 'Offer Received' ? 'default' :
-                      app.status === 'Interviewing' ? 'secondary' :
+                    <Badge 
+                      variant={
+                      app.status === 'Accepted' ? 'default' :
+                      app.status === 'Active' ? 'secondary' :
                       'outline'
                     }
-                    className={
-                      app.status === 'Offer Received' ? 'bg-green-600 hover:bg-green-700' :
-                      app.status === 'Interviewing' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200' :
+                      className={
+                      app.status === 'Accepted' ? 'bg-green-600 hover:bg-green-700' :
+                      app.status === 'Active' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200' :
+                      app.status === 'Declined by Employer' ? 'bg-gray-100 text-gray-700' :
+                      app.status === 'Declined by Candidate' ? 'bg-gray-100 text-gray-700' :
                       ''
                     }
-                  >
-                    {app.status}
-                  </Badge>
+                    >
+                      {app.status}
+                    </Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {app.lastActivity}
@@ -279,6 +281,18 @@ export default function ApplicationsView() {
                       key={msg.id} 
                       className={`flex flex-col ${msg.sender === 'worker' ? 'items-end' : 'items-start'}`}
                     >
+                      {/* Sender Attribution */}
+                      {msg.sender === 'employer' && msg.senderName && (
+                        <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                          {msg.senderName} from {msg.senderCompany}
+                        </div>
+                      )}
+                      {msg.sender === 'worker' && msg.senderName && (
+                        <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                          {msg.senderName}
+                        </div>
+                      )}
+
                       <div 
                         className={`max-w-[85%] rounded-lg p-3 text-sm ${
                           msg.sender === 'worker' 

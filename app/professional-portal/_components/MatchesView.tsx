@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, DollarSign, Clock, Building, Send, ChevronLeft } from "lucide-react";
+import { DollarSign, Clock, Building, Send, ChevronLeft } from "lucide-react";
 
 // Mock data for suggested matches
 const suggestedMatches = [
@@ -100,24 +100,24 @@ const allThreads = [
 const getMessagesForThread = (threadId: number) => {
   if (threadId === 101) {
     return [
-      { id: 1, sender: "employer", text: "Hi Sarah, we liked your profile and think you'd be a great fit for our weekend team.", time: "Yesterday 3:30 PM" },
+      { id: 1, sender: "employer", senderName: "Jessica Martinez", senderCompany: "Helping Hands ABA", text: "Hi Sarah, we liked your profile and think you'd be a great fit for our weekend team.", time: "Yesterday 3:30 PM" },
     ];
   } else if (threadId === 1) {
     return [
-      { id: 1, sender: "worker", text: "Hi, I'm very interested in this position. Could you tell me more about the schedule?", time: "Yesterday 2:00 PM" },
-      { id: 2, sender: "employer", text: "Thanks for your interest! When would be a good time to discuss?", time: "2 hours ago" },
+      { id: 1, sender: "worker", senderName: "Sarah Williams", text: "Hi, I'm very interested in this position. Could you tell me more about the schedule?", time: "Yesterday 2:00 PM" },
+      { id: 2, sender: "employer", senderName: "Robert Chen", senderCompany: "Bright Future ABA", text: "Thanks for your interest! When would be a good time to discuss?", time: "2 hours ago" },
     ];
   } else if (threadId === 2) {
     return [
-      { id: 1, sender: "employer", text: "Hello Sarah, your experience looks impressive.", time: "2 days ago 10:00 AM" },
-      { id: 2, sender: "worker", text: "Thank you! I've been working in the field for 5 years now.", time: "2 days ago 11:30 AM" },
-      { id: 3, sender: "employer", text: "We'd love to schedule an interview with you next week.", time: "1 day ago" },
+      { id: 1, sender: "employer", senderName: "Emily Rodriguez", senderCompany: "Peach State Therapy", text: "Hello Sarah, your experience looks impressive.", time: "2 days ago 10:00 AM" },
+      { id: 2, sender: "worker", senderName: "Sarah Williams", text: "Thank you! I've been working in the field for 5 years now.", time: "2 days ago 11:30 AM" },
+      { id: 3, sender: "employer", senderName: "Emily Rodriguez", senderCompany: "Peach State Therapy", text: "We'd love to schedule an interview with you next week.", time: "1 day ago" },
     ];
   } else {
     return [
-      { id: 1, sender: "employer", text: "Hi Sarah, are you still available?", time: "4 days ago" },
-      { id: 2, sender: "worker", text: "Yes, I am.", time: "3 days ago" },
-      { id: 3, sender: "employer", text: "Could you send over your latest certification?", time: "3 days ago" },
+      { id: 1, sender: "employer", senderName: "James Wilson", senderCompany: "Metro Behavioral Health", text: "Hi Sarah, are you still available?", time: "4 days ago" },
+      { id: 2, sender: "worker", senderName: "Sarah Williams", text: "Yes, I am.", time: "3 days ago" },
+      { id: 3, sender: "employer", senderName: "James Wilson", senderCompany: "Metro Behavioral Health", text: "Could you send over your latest certification?", time: "3 days ago" },
     ];
   }
 };
@@ -164,91 +164,182 @@ export default function MatchesView() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">View your suggested matches and employer invitations.</p>
+        <p className="text-muted-foreground mt-1">Your personalized job search hub</p>
       </div>
 
-      {/* Employer Reachouts Section */}
-      {employerReachouts.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">
-            Pending Invitations
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {employerReachouts.map((job) => (
-              <Card key={job.id} className="border-blue-200 bg-white">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <Badge className="bg-blue-600 hover:bg-blue-700">Invitation</Badge>
-                    <span className="text-xs text-muted-foreground">{job.date}</span>
-                  </div>
-                  <CardTitle className="mt-2 text-lg">{job.title}</CardTitle>
-                  <CardDescription className="flex items-center gap-1">
-                    <Building className="w-3 h-3" /> {job.company}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="bg-white p-3 rounded-md text-sm italic text-muted-foreground border">
-                    &quot;{job.message}&quot;
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="w-4 h-4" /> {job.location}
+      {/* Metrics Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Active Applications</p>
+              <p className="text-3xl font-bold">3</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">New Invites</p>
+              <p className="text-3xl font-bold">{employerReachouts.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Messages Awaiting</p>
+              <p className="text-3xl font-bold">{allThreads.filter(t => t.unread).length}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Profile Views</p>
+              <p className="text-3xl font-bold">47</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Two-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: New Opportunities (2/3 width) */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">New Opportunities</h2>
+            <Button asChild>
+              <Link href="/search">Find More Jobs</Link>
+            </Button>
+          </div>
+
+          {/* Employer Invitations */}
+          {employerReachouts.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-blue-700">Pending Invitations</h3>
+              <div className="space-y-4">
+                {employerReachouts.map((job) => (
+                  <Card key={job.id} className="border-blue-200 bg-white">
+                    <CardHeader className="pb-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge className="bg-blue-600 hover:bg-blue-700">Invitation</Badge>
+                            <span className="text-xs text-muted-foreground">{job.date}</span>
+                          </div>
+                          <CardTitle className="text-base">{job.title}</CardTitle>
+                          <CardDescription className="flex items-center gap-1 mt-1">
+                            <Building className="w-3 h-3" /> {job.company} • {job.location}
+                          </CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3 pt-0">
+                      <div className="bg-blue-50 p-3 rounded-md text-sm italic text-blue-900 border border-blue-100">
+                        &quot;{job.message}&quot;
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <DollarSign className="w-3 h-3" /> {job.rate}
+                        </span>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex gap-2 pt-3">
+                      <Button variant="outline" className="flex-1 text-destructive hover:text-destructive border-destructive/20">
+                        Decline
+                      </Button>
+                      <Button className="flex-1" onClick={() => handleOpenDrawer(job)}>Accept & Reply</Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Suggested Matches (Top 5) */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-green-700">Recommended Matches</h3>
+            <div className="space-y-4">
+              {suggestedMatches.slice(0, 5).map((job) => (
+                <Card key={job.id} className="hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                            {job.matchScore}% Match
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">{job.posted}</span>
+                        </div>
+                        <CardTitle className="text-base">{job.title}</CardTitle>
+                        <CardDescription className="flex items-center gap-1 mt-1">
+                          <Building className="w-3 h-3" /> {job.company} • {job.location}
+                        </CardDescription>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <DollarSign className="w-4 h-4" /> {job.rate}
+                  </CardHeader>
+                  <CardContent className="space-y-2 pt-0">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <DollarSign className="w-3 h-3" /> {job.rate}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {job.type}
+                      </span>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="pt-3">
+                    <Button className="w-full" asChild>
+                      <Link href={`/listing/${job.id}?view=professional`}>View & Apply</Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Recent Messages (1/3 width) */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-semibold">Recent Messages</h2>
+          <div className="space-y-3">
+            {allThreads.slice(0, 5).map((thread) => (
+              <Card 
+                key={thread.id} 
+                className="cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => {
+                  setSelectedThread(thread);
+                  setShowThreadList(false);
+                  setIsDrawerOpen(true);
+                }}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10 border">
+                      <AvatarImage src={thread.companyLogo} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        <Building className="h-5 w-5" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-sm truncate">{thread.companyName}</p>
+                        {thread.unread && (
+                          <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate">{thread.jobTitle}</p>
+                      <p className="text-xs text-muted-foreground truncate overflow-hidden">
+                        {thread.lastMessage}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">{thread.lastMessageTime}</p>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="flex gap-2">
-                  <Button variant="outline" className="flex-1 bg-white hover:bg-gray-50 text-destructive hover:text-destructive border-destructive/20">
-                    Decline
-                  </Button>
-                  <Button className="flex-1" onClick={() => handleOpenDrawer(job)}>Accept & Reply</Button>
-                </CardFooter>
               </Card>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Suggested Matches Section */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Suggested for You</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {suggestedMatches.map((job) => (
-            <Card key={job.id} className="hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                    {job.matchScore}% Match
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">{job.posted}</span>
-                </div>
-                <CardTitle className="mt-2 text-lg">{job.title}</CardTitle>
-                <CardDescription className="flex items-center gap-1">
-                  <Building className="w-3 h-3" /> {job.company}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="w-4 h-4" /> {job.location}
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <DollarSign className="w-4 h-4" /> {job.rate}
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="w-4 h-4" /> {job.type}
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href={`/listing/${job.id}?view=professional`}>View & Apply</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
         </div>
       </div>
 
@@ -330,6 +421,18 @@ export default function MatchesView() {
                       key={msg.id} 
                       className={`flex flex-col ${msg.sender === 'worker' ? 'items-end' : 'items-start'}`}
                     >
+                      {/* Sender Attribution */}
+                      {msg.sender === 'employer' && msg.senderName && (
+                        <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                          {msg.senderName} from {msg.senderCompany}
+                        </div>
+                      )}
+                      {msg.sender === 'worker' && msg.senderName && (
+                        <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                          {msg.senderName}
+                        </div>
+                      )}
+
                       <div 
                         className={`max-w-[85%] rounded-lg p-3 text-sm ${
                           msg.sender === 'worker' 

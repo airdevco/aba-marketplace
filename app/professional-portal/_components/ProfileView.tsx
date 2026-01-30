@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 import { Info, Lock, Check } from "lucide-react";
 
 export default function ProfileView() {
@@ -20,12 +22,18 @@ export default function ProfileView() {
   const [phone, setPhone] = useState("(555) 123-4567");
   const [zipCode, setZipCode] = useState("30308");
   const [zipCodeError, setZipCodeError] = useState("");
+  const [bio, setBio] = useState("Experienced RBT with a passion for helping children develop essential life skills.");
+  const [resume, setResume] = useState<File | null>(null);
   const [hasLicense, setHasLicense] = useState(true);
   const [licenseNumber, setLicenseNumber] = useState("RBT-12345678");
+  const [compensationPreference, setCompensationPreference] = useState<"hourly" | "salary" | "both">("hourly");
   const [minHourlyRate, setMinHourlyRate] = useState("24");
-  const [employmentType, setEmploymentType] = useState<string[]>(["Full-time", "Weekends"]);
+  const [minAnnualSalary, setMinAnnualSalary] = useState("");
+  const [employmentType, setEmploymentType] = useState<string[]>(["W2 – Full Time", "Weekends"]);
   const [workSetting, setWorkSetting] = useState("in-person");
   const [geographicRadius, setGeographicRadius] = useState("25");
+  const [schedulePreference, setSchedulePreference] = useState<"standard" | "flexible">("standard");
+  const [scheduleDetails, setScheduleDetails] = useState<string[]>([]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -59,6 +67,26 @@ export default function ProfileView() {
       setEmploymentType([...employmentType, type]);
     } else {
       setEmploymentType(employmentType.filter((t) => t !== type));
+    }
+  };
+
+  const handleScheduleDetailsChange = (detail: string, checked: boolean) => {
+    if (checked) {
+      setScheduleDetails([...scheduleDetails, detail]);
+    } else {
+      setScheduleDetails(scheduleDetails.filter((d) => d !== detail));
+    }
+  };
+
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (validTypes.includes(file.type)) {
+        setResume(file);
+      } else {
+        alert("Please upload a PDF or DOC file");
+      }
     }
   };
 
@@ -216,6 +244,42 @@ export default function ProfileView() {
                 />
               </div>
 
+              {/* Bio */}
+              <div className="space-y-2">
+                <Label htmlFor="bio">
+                  Bio / About You <span className="text-muted-foreground text-xs">(Optional)</span>
+                </Label>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell employers about your experience, specializations, and what makes you a great fit..."
+                  className="min-h-[100px] resize-none"
+                  maxLength={500}
+                />
+                <p className="text-xs text-muted-foreground text-right">{bio.length}/500</p>
+              </div>
+
+              {/* Resume Upload */}
+              <div className="space-y-2">
+                <Label htmlFor="resume">
+                  Resume <span className="text-muted-foreground text-xs">(Optional)</span>
+                </Label>
+                <Input
+                  id="resume"
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleResumeUpload}
+                  className="cursor-pointer"
+                />
+                {resume && (
+                  <p className="text-xs text-green-600 flex items-center gap-1">
+                    <Check className="w-3 h-3" /> {resume.name}
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground">PDF or DOC format, max 5MB</p>
+              </div>
+
               {/* ZIP Code */}
               <div className="space-y-2">
                 <Label htmlFor="zipCode">ZIP Code</Label>
@@ -286,30 +350,64 @@ export default function ProfileView() {
               <div>
                 <Label className="text-base font-semibold mb-4 block">Job Preferences</Label>
                 
-                <div className="space-y-2 mb-6">
-                  <Label htmlFor="minHourlyRate">Minimum Hourly Rate ($)</Label>
-                  <Input
-                    id="minHourlyRate"
-                    type="number"
-                    value={minHourlyRate}
-                    onChange={(e) => setMinHourlyRate(e.target.value)}
-                    placeholder="Enter minimum hourly rate"
-                  />
+                {/* Compensation Preference */}
+                <div className="space-y-3 mb-6">
+                  <Label>Compensation Preference</Label>
+                  <RadioGroup value={compensationPreference} onValueChange={(value) => setCompensationPreference(value as "hourly" | "salary" | "both")}>
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="hourly" id="comp-hourly" />
+                      <Label htmlFor="comp-hourly" className="flex-1 cursor-pointer">Hourly only</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="salary" id="comp-salary" />
+                      <Label htmlFor="comp-salary" className="flex-1 cursor-pointer">Salary only</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="both" id="comp-both" />
+                      <Label htmlFor="comp-both" className="flex-1 cursor-pointer">Open to hourly or salary</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
+
+                {(compensationPreference === "hourly" || compensationPreference === "both") && (
+                  <div className="space-y-2 mb-6">
+                    <Label htmlFor="minHourlyRate">Minimum Hourly Rate ($)</Label>
+                    <Input
+                      id="minHourlyRate"
+                      type="number"
+                      value={minHourlyRate}
+                      onChange={(e) => setMinHourlyRate(e.target.value)}
+                      placeholder="Enter minimum hourly rate"
+                    />
+                  </div>
+                )}
+
+                {(compensationPreference === "salary" || compensationPreference === "both") && (
+                  <div className="space-y-2 mb-6">
+                    <Label htmlFor="minAnnualSalary">Minimum Annual Salary ($)</Label>
+                    <Input
+                      id="minAnnualSalary"
+                      type="number"
+                      value={minAnnualSalary}
+                      onChange={(e) => setMinAnnualSalary(e.target.value)}
+                      placeholder="Enter minimum annual salary"
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-2 mb-6">
                   <Label>Employment Type</Label>
                   <div className="flex flex-wrap gap-3 mt-2">
-                    {["Full-time", "Part-time", "Weekends"].map((type) => (
+                    {["W2 – Full Time", "W2 – Part Time", "1099 Contractor", "Weekends"].map((type) => (
                       <div key={type} className="flex items-center space-x-2">
                         <Checkbox
-                          id={type}
+                          id={`profile-${type}`}
                           checked={employmentType.includes(type)}
                           onCheckedChange={(checked) =>
                             handleEmploymentTypeChange(type, checked === true)
                           }
                         />
-                        <Label htmlFor={type} className="cursor-pointer">
+                        <Label htmlFor={`profile-${type}`} className="cursor-pointer text-sm">
                           {type}
                         </Label>
                       </div>
@@ -327,11 +425,12 @@ export default function ProfileView() {
                       <SelectItem value="in-person">In-Person</SelectItem>
                       <SelectItem value="hybrid">Hybrid</SelectItem>
                       <SelectItem value="remote">Remote</SelectItem>
+                      <SelectItem value="telehealth">Telehealth</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 mb-6">
                   <Label htmlFor="geographicRadius">Geographic Radius (miles)</Label>
                   <Input
                     id="geographicRadius"
@@ -341,6 +440,44 @@ export default function ProfileView() {
                     placeholder="Enter radius in miles"
                   />
                 </div>
+
+                {/* Schedule Preference */}
+                <Separator className="my-6" />
+                <div className="space-y-3 mb-6">
+                  <Label>Schedule Preference</Label>
+                  <RadioGroup value={schedulePreference} onValueChange={(value) => setSchedulePreference(value as "standard" | "flexible")}>
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="standard" id="sched-standard" />
+                      <Label htmlFor="sched-standard" className="flex-1 cursor-pointer">Standard Full-Time (Weekday daytime hours)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="flexible" id="sched-flexible" />
+                      <Label htmlFor="sched-flexible" className="flex-1 cursor-pointer">Flexible Schedule</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {schedulePreference === "flexible" && (
+                  <div className="space-y-2 mb-6">
+                    <Label>Schedule Availability</Label>
+                    <div className="flex flex-wrap gap-3 mt-2">
+                      {["Weekdays", "Weekends", "Mornings", "Afternoons", "Evenings"].map((detail) => (
+                        <div key={detail} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`schedule-${detail}`}
+                            checked={scheduleDetails.includes(detail)}
+                            onCheckedChange={(checked) =>
+                              handleScheduleDetailsChange(detail, checked === true)
+                            }
+                          />
+                          <Label htmlFor={`schedule-${detail}`} className="cursor-pointer text-sm">
+                            {detail}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

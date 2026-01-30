@@ -12,6 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
+import { GenericAvatarByRole } from "@/components/GenericAvatar";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
 
 // Mock worker data that matches employer portal applicants
@@ -142,21 +145,35 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
           </p>
         </div>
 
+        {/* Anonymous Profile Alert */}
+        {isAnonymous && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <Info className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-blue-900">
+              This is an anonymous profile. Full details will be revealed when the candidate applies to your job or accepts your message.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Content - Single Card like listing page */}
         <Card>
           <CardContent className="space-y-8 pt-6">
             {/* Profile Photo - Centered */}
             <div className="flex justify-center pb-6 border-b">
               <div className="relative">
-                <Avatar className="h-24 w-24 border-2 border-gray-200">
-                  {worker.image ? (
-                    <AvatarImage src={worker.image} alt={worker.name} />
-                  ) : null}
-                  <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                    {worker.role.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                {isVerified && (
+                {isAnonymous ? (
+                  <GenericAvatarByRole roleType={worker.role as "RBT" | "BCBA"} size="xl" />
+                ) : (
+                  <Avatar className="h-24 w-24 border-2 border-gray-200">
+                    {worker.image ? (
+                      <AvatarImage src={worker.image} alt={worker.name} />
+                    ) : null}
+                    <AvatarFallback className="bg-primary/10 text-primary text-xl">
+                      {worker.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+                {isVerified && !isAnonymous && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>

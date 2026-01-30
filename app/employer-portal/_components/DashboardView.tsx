@@ -85,9 +85,9 @@ export default function DashboardView() {
           
           <div className="bg-white rounded-xl border shadow-sm divide-y overflow-hidden">
             {[
-              { title: "RBT - Part Time", location: "Decatur, GA", applicants: 8, status: "Closing Soon", posted: "1 week ago", type: "Part-time" },
+              { title: "RBT - Part Time", location: "Decatur, GA", applicants: 8, status: "Active", posted: "1 week ago", type: "Part-time" },
               { title: "RBT - Full Time", location: "Atlanta, GA", applicants: 5, status: "Active", posted: "2 days ago", type: "Full-time" },
-              { title: "BCBA - Clinic Director", location: "Marietta, GA", applicants: 2, status: "Active", posted: "5 days ago", type: "Full-time" },
+              { title: "BCBA - Clinic Director", location: "Marietta, GA", applicants: 2, status: "Paused", posted: "5 days ago", type: "Full-time" },
             ].map((job, i) => (
               <Link key={i} href={`/employer-portal/jobs/${i}`} className="block p-6 hover:bg-muted/30 transition-colors group">
                 <div className="flex items-start justify-between">

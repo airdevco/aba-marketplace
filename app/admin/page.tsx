@@ -2,14 +2,15 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, Suspense } from "react";
-import MatchesView from "./_components/MatchesView";
-import ApplicationsView from "./_components/ApplicationsView";
-import ProfileView from "./_components/ProfileView";
+import DashboardView from "./_components/DashboardView";
+import OrganizationsView from "./_components/OrganizationsView";
 import JobsView from "./_components/JobsView";
+import ProfessionalsView from "./_components/ProfessionalsView";
+import ConnectionsView from "./_components/ConnectionsView";
 
 export const dynamic = 'force-dynamic';
 
-function ProfessionalPortalContent() {
+function AdminPortalContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const tab = searchParams.get("tab");
@@ -17,7 +18,7 @@ function ProfessionalPortalContent() {
   // Redirect to dashboard if no tab is specified
   useEffect(() => {
     if (!tab) {
-      router.replace("/professional-portal?tab=dashboard");
+      router.replace("/admin?tab=dashboard");
     }
   }, [tab, router]);
 
@@ -27,22 +28,24 @@ function ProfessionalPortalContent() {
   }
 
   switch (tab) {
-    case "find-jobs":
+    case "organizations":
+      return <OrganizationsView />;
+    case "jobs":
       return <JobsView />;
-    case "my-jobs":
-      return <ApplicationsView />;
-    case "profile":
-      return <ProfileView />;
+    case "professionals":
+      return <ProfessionalsView />;
+    case "connections":
+      return <ConnectionsView />;
     case "dashboard":
     default:
-      return <MatchesView />;
+      return <DashboardView />;
   }
 }
 
-export default function ProfessionalPortalPage() {
+export default function AdminPortalPage() {
   return (
     <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
-      <ProfessionalPortalContent />
+      <AdminPortalContent />
     </Suspense>
   );
 }

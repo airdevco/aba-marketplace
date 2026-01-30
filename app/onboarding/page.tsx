@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -123,7 +122,7 @@ function StepNavigation({ currentStep, totalSteps }: { currentStep: number; tota
                     : "text-muted-foreground"
               }`}
             >
-              {step === 1 ? "Role" : step === 2 ? "Personal" : step === 3 ? "License" : step === 4 ? "Preferences" : "Review"}
+              {step === 1 ? "Role" : step === 2 ? "Preferences" : step === 3 ? "Personal" : step === 4 ? "License" : "Review"}
             </span>
           </div>
         ))}
@@ -147,12 +146,19 @@ export default function OnboardingPage() {
   const [zipCode, setZipCode] = useState("");
   const [zipCodeError, setZipCodeError] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
+  const [bio, setBio] = useState("");
+  const [resume, setResume] = useState<File | null>(null);
   const [hasLicense, setHasLicense] = useState(false);
   const [licenseNumber, setLicenseNumber] = useState("");
+  const [compensationPreference, setCompensationPreference] = useState<"hourly" | "salary" | "both">("hourly");
   const [minHourlyRate, setMinHourlyRate] = useState("");
+  const [minAnnualSalary, setMinAnnualSalary] = useState("");
   const [employmentType, setEmploymentType] = useState<string[]>([]);
-  const [workSetting, setWorkSetting] = useState("");
+  const [telehealthOnly, setTelehealthOnly] = useState<boolean | null>(null);
+  const [workSettings, setWorkSettings] = useState<string[]>([]);
   const [geographicRadius, setGeographicRadius] = useState("");
+  const [schedulePreference, setSchedulePreference] = useState<"standard" | "flexible">("standard");
+  const [scheduleDetails, setScheduleDetails] = useState<string[]>([]);
 
   // Employer form state
   const [companyName, setCompanyName] = useState("");
@@ -166,12 +172,12 @@ export default function OnboardingPage() {
   const [companyInfoCompleted, setCompanyInfoCompleted] = useState(false);
 
   const handleUserTypeSelect = (type: "worker" | "employer") => {
-    setUserType(type);
-    if (type === "worker") {
-      setCurrentStep(1);
+    if (type === "employer") {
+      // Redirect to request access page instead of onboarding
+      router.push("/request-access");
     } else {
-      // For employer, show company info form first
-      setCompanyInfoCompleted(false);
+      setUserType(type);
+      setCurrentStep(1);
     }
   };
 
@@ -274,6 +280,35 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleScheduleDetailsChange = (detail: string, checked: boolean) => {
+    if (checked) {
+      setScheduleDetails([...scheduleDetails, detail]);
+    } else {
+      setScheduleDetails(scheduleDetails.filter((d) => d !== detail));
+    }
+  };
+
+  const handleWorkSettingsChange = (option: string, checked: boolean) => {
+    if (checked) {
+      setWorkSettings([...workSettings, option]);
+    } else {
+      setWorkSettings(workSettings.filter((s) => s !== option));
+    }
+  };
+
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type (PDF or DOC)
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (validTypes.includes(file.type)) {
+        setResume(file);
+      } else {
+        alert("Please upload a PDF or DOC file");
+      }
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
@@ -301,7 +336,8 @@ export default function OnboardingPage() {
       licenseNumber,
       minHourlyRate,
       employmentType,
-      workSetting,
+      telehealthOnly,
+      workSettings,
       geographicRadius,
     });
 
@@ -503,11 +539,182 @@ export default function OnboardingPage() {
                     </div>
                   )}
 
-                  {/* Step 2: Personal Information */}
+                  {/* Step 2: Job Preferences */}
                   {currentStep === 2 && (
                   <div className="space-y-6">
-                    {/* Header */}
-                    <div className="flex items-center gap-2">
+                    <div>
+                      <Label className="text-base font-semibold mb-4 block">Job Preferences</Label>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        Tell us what you&apos;re looking for in your next role
+                      </p>
+
+
+                      {/* Compensation Preference */}
+                      <div className="space-y-3 mb-6">
+                        <Label>Compensation Preference</Label>
+                        <RadioGroup value={compensationPreference} onValueChange={(value) => setCompensationPreference(value as "hourly" | "salary" | "both")}>
+                          <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                            <RadioGroupItem value="hourly" id="comp-hourly" />
+                            <Label htmlFor="comp-hourly" className="flex-1 cursor-pointer">Hourly only</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                            <RadioGroupItem value="salary" id="comp-salary" />
+                            <Label htmlFor="comp-salary" className="flex-1 cursor-pointer">Salary only</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                            <RadioGroupItem value="both" id="comp-both" />
+                            <Label htmlFor="comp-both" className="flex-1 cursor-pointer">Open to hourly or salary</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+
+                      {/* Minimum Hourly Rate */}
+                      {(compensationPreference === "hourly" || compensationPreference === "both") && (
+                        <div className="space-y-2 mb-6">
+                          <Label htmlFor="minHourlyRate">Minimum Hourly Rate ($)</Label>
+                          <Input
+                            id="minHourlyRate"
+                            type="number"
+                            value={minHourlyRate}
+                            onChange={(e) => setMinHourlyRate(e.target.value)}
+                            placeholder="Enter minimum hourly rate"
+                          />
+                        </div>
+                      )}
+
+                      {/* Minimum Annual Salary */}
+                      {(compensationPreference === "salary" || compensationPreference === "both") && (
+                        <div className="space-y-2 mb-6">
+                          <Label htmlFor="minAnnualSalary">Minimum Annual Salary ($)</Label>
+                          <Input
+                            id="minAnnualSalary"
+                            type="number"
+                            value={minAnnualSalary}
+                            onChange={(e) => setMinAnnualSalary(e.target.value)}
+                            placeholder="Enter minimum annual salary"
+                          />
+                        </div>
+                      )}
+
+                      {/* Employment Type */}
+                      <div className="space-y-2 mb-6">
+                        <Label>Employment Type</Label>
+                        <div className="flex flex-wrap gap-3 mt-2">
+                          {["W2 – Full Time", "W2 – Part Time", "1099 Contractor"].map((type) => (
+                            <div key={type} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`onboard-${type}`}
+                                checked={employmentType.includes(type)}
+                                onCheckedChange={(checked) =>
+                                  handleEmploymentTypeChange(type, checked === true)
+                                }
+                              />
+                              <Label htmlFor={`onboard-${type}`} className="cursor-pointer text-sm">
+                                {type}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Telehealth Only */}
+                      <div className="space-y-2 mb-6">
+                        <Label>Telehealth Only</Label>
+                        <RadioGroup
+                          value={telehealthOnly === null ? "" : telehealthOnly ? "yes" : "no"}
+                          onValueChange={(value) => setTelehealthOnly(value === "yes")}
+                        >
+                          <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                            <RadioGroupItem value="yes" id="telehealth-yes" />
+                            <Label htmlFor="telehealth-yes" className="flex-1 cursor-pointer">Yes</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                            <RadioGroupItem value="no" id="telehealth-no" />
+                            <Label htmlFor="telehealth-no" className="flex-1 cursor-pointer">No</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+
+                      {/* Work Setting (multi-select, required if Telehealth Only = No) */}
+                      {telehealthOnly === false && (
+                        <div className="space-y-2 mb-6">
+                          <Label>Work Setting <span className="text-destructive">*</span></Label>
+                          <div className="flex flex-wrap gap-3 mt-2">
+                            {["Center-based", "In-home", "School-based"].map((setting) => (
+                              <div key={setting} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`work-setting-${setting}`}
+                                  checked={workSettings.includes(setting)}
+                                  onCheckedChange={(checked) =>
+                                    handleWorkSettingsChange(setting, checked === true)
+                                  }
+                                />
+                                <Label htmlFor={`work-setting-${setting}`} className="cursor-pointer text-sm">
+                                  {setting}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Geographic Radius */}
+                      <div className="space-y-2 mb-6">
+                        <Label htmlFor="geographicRadius">Geographic Radius (miles)</Label>
+                        <Input
+                          id="geographicRadius"
+                          type="number"
+                          value={geographicRadius}
+                          onChange={(e) => setGeographicRadius(e.target.value)}
+                          placeholder="Enter radius in miles"
+                        />
+                      </div>
+
+                      {/* Schedule Preference */}
+                      <div className="space-y-3 mb-6">
+                        <Label>Schedule Preference</Label>
+                        <RadioGroup value={schedulePreference} onValueChange={(value) => setSchedulePreference(value as "standard" | "flexible")}>
+                          <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                            <RadioGroupItem value="standard" id="sched-standard" />
+                            <Label htmlFor="sched-standard" className="flex-1 cursor-pointer">Standard Full-Time (Weekday daytime hours)</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                            <RadioGroupItem value="flexible" id="sched-flexible" />
+                            <Label htmlFor="sched-flexible" className="flex-1 cursor-pointer">Non-Standard / Flexible Schedule</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+
+                      {/* Schedule Details (conditional) */}
+                      {schedulePreference === "flexible" && (
+                        <div className="space-y-2 mb-6">
+                          <Label>Schedule Availability</Label>
+                          <div className="flex flex-wrap gap-3 mt-2">
+                            {["Weekdays", "Weekends", "Mornings", "Afternoons", "Evenings"].map((detail) => (
+                              <div key={detail} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`schedule-${detail}`}
+                                  checked={scheduleDetails.includes(detail)}
+                                  onCheckedChange={(checked) =>
+                                    handleScheduleDetailsChange(detail, checked === true)
+                                  }
+                                />
+                                <Label htmlFor={`schedule-${detail}`} className="cursor-pointer text-sm">
+                                  {detail}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                  {/* Step 3: Personal Information */}
+                  {currentStep === 3 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2 mb-4">
                       <Label className="text-base font-semibold block">Personal Information</Label>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -529,7 +736,7 @@ export default function OnboardingPage() {
                               Anonymous Profile
                             </p>
                             <p className="text-sm">
-                              Your personal information (photo, name, contact info) stays private. Employers will only see it when you apply to a job or accept a message request.
+                              Your personal information stays private. Employers will only see it when you apply to a job or accept a message request.
                             </p>
                           </div>
                         </PopoverContent>
@@ -599,28 +806,48 @@ export default function OnboardingPage() {
                       </div>
                     </div>
 
-                    {/* Email */}
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email"
-                      />
+                    {/* Note about email/password */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-xs text-blue-900">
+                        <Check className="w-3 h-3 inline mr-1" />
+                        Email and password already captured during account creation
+                      </p>
                     </div>
 
-                    {/* Phone */}
+                    {/* Bio */}
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="Enter your phone number"
+                      <Label htmlFor="bio">
+                        Bio / About You <span className="text-muted-foreground text-xs">(Optional)</span>
+                      </Label>
+                      <Textarea
+                        id="bio"
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        placeholder="Tell employers about your experience, specializations, and what makes you a great fit..."
+                        className="min-h-[100px] resize-none"
+                        maxLength={500}
                       />
+                      <p className="text-xs text-muted-foreground text-right">{bio.length}/500</p>
+                    </div>
+
+                    {/* Resume Upload */}
+                    <div className="space-y-2">
+                      <Label htmlFor="resume">
+                        Resume <span className="text-muted-foreground text-xs">(Optional)</span>
+                      </Label>
+                      <Input
+                        id="resume"
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleResumeUpload}
+                        className="cursor-pointer"
+                      />
+                      {resume && (
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                          <Check className="w-3 h-3" /> {resume.name}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground">PDF or DOC format, max 5MB</p>
                     </div>
 
                     {/* ZIP Code */}
@@ -637,17 +864,22 @@ export default function OnboardingPage() {
                         <p className="text-sm text-destructive mt-1">{zipCodeError}</p>
                       )}
                       {!zipCodeError && zipCode.length === 5 && (
-                        <p className="text-sm text-green-600 mt-1">Location verified</p>
+                        <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+                          <Check className="w-3 h-3" /> Location verified
+                        </p>
                       )}
                     </div>
                   </div>
                 )}
 
-                  {/* Step 3: License Verification */}
-                  {currentStep === 3 && (
+                  {/* Step 4: License Attestation */}
+                  {currentStep === 4 && (
                   <div className="space-y-6">
                     <div>
                       <Label className="text-base font-semibold mb-4 block">License Verification</Label>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        Confirm your professional credentials
+                      </p>
                       
                       <div className="flex items-start space-x-2 p-4 border rounded-lg">
                         <Checkbox
@@ -665,7 +897,7 @@ export default function OnboardingPage() {
 
                       {hasLicense && (
                         <div className="mt-4 space-y-2">
-                          <Label htmlFor="licenseNumber">License Number (Optional)</Label>
+                          <Label htmlFor="licenseNumber">License Number <span className="text-muted-foreground text-xs">(Optional)</span></Label>
                           <Input
                             id="licenseNumber"
                             value={licenseNumber}
@@ -677,71 +909,6 @@ export default function OnboardingPage() {
                           </p>
                         </div>
                       )}
-                    </div>
-                  </div>
-                )}
-
-                  {/* Step 4: Job Preferences */}
-                  {currentStep === 4 && (
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-base font-semibold mb-4 block">Job Preferences</Label>
-                      
-                      <div className="space-y-2 mb-6">
-                        <Label htmlFor="minHourlyRate">Minimum Hourly Rate ($)</Label>
-                        <Input
-                          id="minHourlyRate"
-                          type="number"
-                          value={minHourlyRate}
-                          onChange={(e) => setMinHourlyRate(e.target.value)}
-                          placeholder="Enter minimum hourly rate"
-                        />
-                      </div>
-
-                      <div className="space-y-2 mb-6">
-                        <Label>Employment Type</Label>
-                        <div className="flex flex-wrap gap-3 mt-2">
-                          {["Full-time", "Part-time", "Weekends"].map((type) => (
-                            <div key={type} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={type}
-                                checked={employmentType.includes(type)}
-                                onCheckedChange={(checked) =>
-                                  handleEmploymentTypeChange(type, checked === true)
-                                }
-                              />
-                              <Label htmlFor={type} className="cursor-pointer">
-                                {type}
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 mb-6">
-                        <Label htmlFor="workSetting">Work Setting</Label>
-                        <Select value={workSetting} onValueChange={setWorkSetting}>
-                          <SelectTrigger id="workSetting">
-                            <SelectValue placeholder="Select work setting" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="in-person">In-Person</SelectItem>
-                            <SelectItem value="hybrid">Hybrid</SelectItem>
-                            <SelectItem value="remote">Remote</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="geographicRadius">Geographic Radius (miles)</Label>
-                        <Input
-                          id="geographicRadius"
-                          type="number"
-                          value={geographicRadius}
-                          onChange={(e) => setGeographicRadius(e.target.value)}
-                          placeholder="Enter radius in miles"
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
@@ -800,29 +967,81 @@ export default function OnboardingPage() {
                         </div>
                       </div>
 
-                      <div>
+                      <div className="border-b pb-4">
                         <h3 className="text-lg font-semibold mb-4">Job Preferences</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                           <div>
-                            <p className="text-sm text-muted-foreground">Minimum Hourly Rate</p>
-                            <p className="font-medium">${minHourlyRate || "25"}/hr</p>
+                            <p className="text-sm text-muted-foreground">Compensation Preference</p>
+                            <p className="font-medium capitalize">{compensationPreference === "both" ? "Hourly or Salary" : compensationPreference}</p>
                           </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Work Setting</p>
-                            <p className="font-medium capitalize">{workSetting || "In-person"}</p>
-                          </div>
+                          {(compensationPreference === "hourly" || compensationPreference === "both") && minHourlyRate && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Minimum Hourly Rate</p>
+                              <p className="font-medium">${minHourlyRate}/hr</p>
+                            </div>
+                          )}
+                          {(compensationPreference === "salary" || compensationPreference === "both") && minAnnualSalary && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Minimum Annual Salary</p>
+                              <p className="font-medium">${parseInt(minAnnualSalary).toLocaleString()}/year</p>
+                            </div>
+                          )}
                           <div>
                             <p className="text-sm text-muted-foreground">Employment Type</p>
                             <p className="font-medium">
                               {employmentType.length > 0 
                                 ? employmentType.join(", ") 
-                                : "Full-time, Part-time"}
+                                : "Not specified"}
                             </p>
                           </div>
+                          {telehealthOnly !== null && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Telehealth Only</p>
+                              <p className="font-medium">{telehealthOnly ? "Yes" : "No"}</p>
+                            </div>
+                          )}
+                          {telehealthOnly === false && workSettings.length > 0 && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Work Setting</p>
+                              <p className="font-medium">{workSettings.join(", ")}</p>
+                            </div>
+                          )}
                           <div>
                             <p className="text-sm text-muted-foreground">Geographic Radius</p>
                             <p className="font-medium">{geographicRadius || "25"} miles</p>
                           </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Schedule</p>
+                            <p className="font-medium capitalize">
+                              {schedulePreference === "standard" ? "Standard Full-Time (Weekday daytime hours)" : "Non-Standard / Flexible Schedule"}
+                            </p>
+                          </div>
+                          {schedulePreference === "flexible" && scheduleDetails.length > 0 && (
+                            <div className="col-span-2">
+                              <p className="text-sm text-muted-foreground">Schedule Availability</p>
+                              <p className="font-medium">{scheduleDetails.join(", ")}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
+                        <div className="space-y-4">
+                          {bio && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Bio</p>
+                              <p className="font-medium text-sm">{bio}</p>
+                            </div>
+                          )}
+                          {resume && (
+                            <div>
+                              <p className="text-sm text-muted-foreground">Resume</p>
+                              <p className="font-medium text-sm flex items-center gap-1">
+                                <Check className="w-3 h-3 text-green-600" /> {resume.name}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

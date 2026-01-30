@@ -77,8 +77,21 @@ const getMessagesForWorker = (workerId: string) => {
   if (!worker) return [];
   
   return [
-    { id: 1, sender: "employer", text: `Hi ${worker.workerName.split(' ')[0]}, thanks for your application. Are you available for a quick call?`, time: "Yesterday 2:30 PM" },
-    { id: 2, sender: "worker", text: worker.lastMessage, time: worker.time },
+    { 
+      id: 1, 
+      sender: "employer", 
+      senderName: "Andrew Johnson",
+      senderCompany: "Airdev",
+      text: `Hi ${worker.workerName.split(' ')[0]}, thanks for your application. Are you available for a quick call?`, 
+      time: "Yesterday 2:30 PM" 
+    },
+    { 
+      id: 2, 
+      sender: "worker", 
+      senderName: worker.workerName,
+      text: worker.lastMessage, 
+      time: worker.time 
+    },
   ];
 };
 
@@ -305,6 +318,18 @@ function EmployerPortalLayoutContent({
                     key={msg.id} 
                     className={`flex flex-col ${msg.sender === 'employer' ? 'items-end' : 'items-start'}`}
                   >
+                    {/* Sender Attribution */}
+                    {msg.sender === 'employer' && msg.senderName && (
+                      <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                        {msg.senderName} from {msg.senderCompany}
+                      </div>
+                    )}
+                    {msg.sender === 'worker' && msg.senderName && (
+                      <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                        {msg.senderName}
+                      </div>
+                    )}
+
                     <div 
                       className={`max-w-[85%] rounded-lg p-3 text-sm ${
                         msg.sender === 'employer' 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, MessageSquare, User } from "lucide-react";
+import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,9 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
-import { Textarea } from "@/components/ui/textarea";
+import { GenericAvatarByRole } from "@/components/GenericAvatar";
+import { InviteToApplyModal } from "@/components/InviteToApplyModal";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
 
 // Mock Directory Data (Anonymized)
@@ -28,12 +27,18 @@ const directoryWorkers = [
   { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], status: "Available" },
 ];
 
+// Mock Active Jobs for employer (for invite modal)
+const mockActiveJobs = [
+  { id: 1, title: "RBT - Full Time", location: "Atlanta, GA" },
+  { id: 2, title: "BCBA - Clinic Director", location: "Marietta, GA" },
+  { id: 3, title: "RBT - Part Time", location: "Decatur, GA" },
+];
+
 export default function DirectoryPage() {
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedWorker, setSelectedWorker] = useState<typeof directoryWorkers[0] | null>(null);
-  const [messageText, setMessageText] = useState("");
-  const [isMessageOpen, setIsMessageOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const filteredWorkers = directoryWorkers.filter(worker => {
     if (selectedRole !== "all" && worker.role.toLowerCase() !== selectedRole) return false;
@@ -41,11 +46,10 @@ export default function DirectoryPage() {
     return true;
   });
 
-  const handleSendMessage = () => {
-    // In a real app, this would verify the user and send the message
-    setIsMessageOpen(false);
-    setMessageText("");
-    // Could show a toast here
+  const handleSendInvite = (jobId: string | number, message: string) => {
+    // TODO: API call to send invitation and create message thread
+    console.log("Sending invite", { workerId: selectedWorker?.id, jobId, message });
+    // Could show a success toast here
   };
 
   return (
@@ -182,11 +186,7 @@ export default function DirectoryPage() {
                   <CardHeader className="pb-3 bg-muted/20">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border bg-white">
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            <User className="h-5 w-5" />
-                          </AvatarFallback>
-                        </Avatar>
+                        <GenericAvatarByRole roleType={worker.role as "RBT" | "BCBA"} size="sm" />
                         <div>
                           <CardTitle className="text-base font-semibold flex items-center gap-2">
                             {worker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}
@@ -242,52 +242,15 @@ export default function DirectoryPage() {
                         View Profile
                       </Link>
                     </Button>
-                    <Sheet open={isMessageOpen && selectedWorker?.id === worker.id} onOpenChange={(open) => {
-                      setIsMessageOpen(open);
-                      if (!open) setSelectedWorker(null);
-                    }}>
-                      <SheetTrigger asChild>
-                        <Button className="flex-1 gap-2" onClick={() => {
-                          setSelectedWorker(worker);
-                          setIsMessageOpen(true);
-                        }}>
-                          <MessageSquare className="h-4 w-4" />
-                          Message Candidate
-                        </Button>
-                      </SheetTrigger>
-                      <SheetContent>
-                        <SheetHeader>
-                          <SheetTitle>Contact {worker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}</SheetTitle>
-                          <SheetDescription>
-                            Send a message to initiate contact. Your full company profile will be visible to them.
-                          </SheetDescription>
-                        </SheetHeader>
-                        <div className="py-6 space-y-4">
-                          <div className="space-y-2">
-                            <Label>Candidate Details</Label>
-                            <div className="bg-muted p-3 rounded-md text-sm space-y-1">
-                              <p><span className="font-medium">Role:</span> {worker.role}</p>
-                              <p><span className="font-medium">Location:</span> {worker.location}</p>
-                              <p><span className="font-medium">ID:</span> #{worker.id}</p>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="message">Your Message</Label>
-                            <Textarea 
-                              id="message" 
-                              placeholder="Hi, we'd like to discuss a potential opportunity..." 
-                              className="min-h-[150px]"
-                              value={messageText}
-                              onChange={(e) => setMessageText(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        <SheetFooter>
-                          <Button variant="outline" onClick={() => setIsMessageOpen(false)}>Cancel</Button>
-                          <Button onClick={handleSendMessage}>Send Message</Button>
-                        </SheetFooter>
-                      </SheetContent>
-                    </Sheet>
+                    <Button 
+                      className="flex-1 gap-2" 
+                      onClick={() => {
+                        setSelectedWorker(worker);
+                        setIsInviteModalOpen(true);
+                      }}
+                    >
+                      Invite to Apply
+                    </Button>
                   </CardFooter>
                 </Card>
               ))}
@@ -311,6 +274,21 @@ export default function DirectoryPage() {
           </div>
         </div>
       </div>
+
+      {/* Invite to Apply Modal */}
+      {selectedWorker && (
+        <InviteToApplyModal
+          isOpen={isInviteModalOpen}
+          onClose={() => {
+            setIsInviteModalOpen(false);
+            setSelectedWorker(null);
+          }}
+          candidateLabel={selectedWorker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}
+          candidateId={selectedWorker.id}
+          jobs={mockActiveJobs}
+          onSend={handleSendInvite}
+        />
+      )}
     </div>
   );
 }

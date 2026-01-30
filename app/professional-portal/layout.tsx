@@ -10,7 +10,8 @@ import {
   LogOut,
   Menu,
   Settings,
-  MoreVertical
+  MoreVertical,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -25,7 +26,8 @@ import {
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", value: "dashboard" },
-  { icon: Briefcase, label: "My Jobs", value: "jobs" },
+  { icon: Search, label: "Jobs", value: "find-jobs" },
+  { icon: Briefcase, label: "My Jobs", value: "my-jobs" },
   { icon: User, label: "My Profile", value: "profile" },
 ];
 
@@ -143,13 +145,7 @@ function ProfessionalPortalLayoutContent({
       {/* Main Content */}
       <main className="flex-1 md:ml-72">
         {/* Top Header */}
-        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-8 flex items-center justify-between">
-          <Link 
-            href="/search" 
-            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-          >
-            Job listings
-          </Link>
+        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-8 flex items-center justify-end">
           <div className="flex items-center gap-4">
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
               SW

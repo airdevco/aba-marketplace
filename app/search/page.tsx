@@ -24,8 +24,10 @@ const jobPostings = [
     zipCode: "30308",
     role: "RBT",
     rate: "$24-28/hr",
-    employmentType: "Full-time",
+    employmentType: "W2 – Full Time",
     schedule: ["Weekdays"],
+    telehealthOnly: false,
+    benefits: ["Medical / Dental / Vision", "Paid Time Off (PTO)", "CEU Stipend"],
     posted: "2 days ago",
     matchScore: 98
   },
@@ -38,8 +40,10 @@ const jobPostings = [
     zipCode: "30030",
     role: "RBT",
     rate: "$25-30/hr",
-    employmentType: "Part-time",
+    employmentType: "W2 – Part Time",
     schedule: ["School Hours"],
+    telehealthOnly: false,
+    benefits: ["Mileage Reimbursement"],
     posted: "1 day ago",
     matchScore: 92
   },
@@ -59,44 +63,50 @@ const jobPostings = [
   },
   {
     id: 4,
-    title: "BCBA - Clinical Director",
-    company: "Behavioral Health Co.",
+    title: "BCBA - Clinical Supervisor",
+    company: "Metro Behavioral Health",
     companyLogo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=100&h=100&fit=crop",
-    location: "Sandy Springs, GA",
-    zipCode: "30328",
+    location: "Atlanta, GA",
+    zipCode: "30303",
     role: "BCBA",
-    rate: "$75-90/hr",
-    employmentType: "Full-time",
+    rate: "$75,000-90,000/yr",
+    employmentType: "W2 – Full Time",
     schedule: ["Weekdays"],
-    posted: "5 days ago",
-    matchScore: 88
+    telehealthOnly: false,
+    benefits: ["Medical / Dental / Vision", "401(k) with Matching", "Paid Time Off (PTO)"],
+    posted: "1 week ago",
+    matchScore: 85
   },
   {
     id: 5,
-    title: "RBT - Weekend Shift",
-    company: "Helping Hands ABA",
-    companyLogo: "https://images.unsplash.com/photo-1516876437184-593fda40c6ed?w=100&h=100&fit=crop",
+    title: "RBT - Weekend Coverage",
+    company: "Spectrum ABA Services",
+    companyLogo: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=100&h=100&fit=crop",
     location: "Alpharetta, GA",
-    zipCode: "30004",
+    zipCode: "30009",
     role: "RBT",
-    rate: "$28-35/hr",
-    employmentType: "Part-time",
+    rate: "$28-34/hr",
+    employmentType: "W2 – Part Time",
     schedule: ["Weekends"],
-    posted: "1 week ago",
+    telehealthOnly: false,
+    benefits: ["Paid Indirect Time", "CEU Stipend"],
+    posted: "5 days ago",
     matchScore: 90
   },
   {
     id: 6,
-    title: "Senior BCBA",
-    company: "Spectrum Support",
-    companyLogo: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&h=100&fit=crop",
-    location: "Dunwoody, GA",
-    zipCode: "30338",
+    title: "BCBA - Program Director",
+    company: "Kids First ABA",
+    companyLogo: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=100&h=100&fit=crop",
+    location: "Roswell, GA",
+    zipCode: "30076",
     role: "BCBA",
-    rate: "$80-100/hr",
-    employmentType: "Full-time",
+    rate: "$80-95/hr",
+    employmentType: "W2 – Full Time",
     schedule: ["Flexible"],
-    posted: "4 days ago",
+    telehealthOnly: false,
+    benefits: ["Medical / Dental / Vision", "401(k) with Matching", "Work From Home Flexibility"],
+    posted: "2 weeks ago",
     matchScore: 82
   }
 ];
@@ -262,24 +272,24 @@ export default function SearchPage() {
                     <div className="flex items-center space-x-2">
                       <Checkbox 
                         id="filter-full-time" 
-                        checked={employmentTypes.includes("Full-time")}
-                        onCheckedChange={(checked) => handleEmploymentTypeChange("Full-time", checked === true)}
+                        checked={employmentTypes.includes("W2 – Full Time")}
+                        onCheckedChange={(checked) => handleEmploymentTypeChange("W2 – Full Time", checked === true)}
                       />
                       <Label htmlFor="filter-full-time" className="font-normal">Full-time</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox 
                         id="filter-part-time"
-                        checked={employmentTypes.includes("Part-time")}
-                        onCheckedChange={(checked) => handleEmploymentTypeChange("Part-time", checked === true)}
+                        checked={employmentTypes.includes("W2 – Part Time")}
+                        onCheckedChange={(checked) => handleEmploymentTypeChange("W2 – Part Time", checked === true)}
                       />
                       <Label htmlFor="filter-part-time" className="font-normal">Part-time</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox 
                         id="filter-contract"
-                        checked={employmentTypes.includes("Contract")}
-                        onCheckedChange={(checked) => handleEmploymentTypeChange("Contract", checked === true)}
+                        checked={employmentTypes.includes("1099 Contractor")}
+                        onCheckedChange={(checked) => handleEmploymentTypeChange("1099 Contractor", checked === true)}
                       />
                       <Label htmlFor="filter-contract" className="font-normal">Contract</Label>
                     </div>
@@ -415,8 +425,30 @@ export default function SearchPage() {
                             {sch}
                           </Badge>
                         ))}
+                        {job.telehealthOnly && (
+                          <Badge variant="secondary" className="text-xs font-normal bg-blue-50 text-blue-700 border-blue-200">
+                            Telehealth
+                          </Badge>
+                        )}
                       </div>
                     </div>
+
+                    {/* Benefits Preview */}
+                    {job.benefits && job.benefits.length > 0 && (
+                      <div className="space-y-1.5 pt-2 border-t">
+                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Benefits</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {job.benefits.slice(0, 2).map((benefit, i) => (
+                            <Badge key={i} variant="outline" className="text-xs font-normal bg-green-50 text-green-700 border-green-200">
+                              {benefit}
+                            </Badge>
+                          ))}
+                          {job.benefits.length > 2 && (
+                            <span className="text-xs text-muted-foreground">+{job.benefits.length - 2} more</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                   <CardFooter className="bg-muted/10 pt-4">
                     <Button className="w-full gap-2" asChild>
