@@ -334,7 +334,7 @@ export default function ProfileView() {
                       placeholder="Enter your license number"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Enter your license number to receive a &quot;Verified Professional&quot; badge after manual verification by admin
+                      Enter your license number to receive a &quot;Verified Professional&quot; badge after we verify your license
                     </p>
                   </div>
                 )}

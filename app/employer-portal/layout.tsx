@@ -16,7 +16,7 @@ import {
   Send
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader, SheetDescription, SheetFooter } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetHeader, SheetDescription, SheetFooter } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -214,12 +214,7 @@ function EmployerPortalLayoutContent({
 
       {/* Mobile Sidebar */}
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden fixed top-4 left-4 z-50 bg-white shadow-sm border">
-            <Menu className="w-5 h-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-72">
+        <SheetContent side="left" className="p-0 w-72 max-w-[85vw] z-[100]">
           <VisuallyHidden>
             <SheetTitle>Navigation Menu</SheetTitle>
           </VisuallyHidden>
@@ -230,8 +225,17 @@ function EmployerPortalLayoutContent({
       {/* Main Content */}
       <main className="flex-1 md:ml-72">
         {/* Top Header for Mobile/Context */}
-        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-8 flex items-center justify-end">
-          <div className="flex items-center gap-4">
+        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between md:justify-end gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden shrink-0 -ml-2"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+          <div className="flex items-center gap-4 md:flex-1 md:justify-end">
             {/* Messages Dropdown */}
             <DropdownMenu open={isMessageDropdownOpen} onOpenChange={setIsMessageDropdownOpen}>
               <DropdownMenuTrigger asChild>

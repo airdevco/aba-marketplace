@@ -122,19 +122,9 @@ function ProfessionalPortalLayoutContent({
         <SidebarContent />
       </aside>
 
-      {/* Mobile Hamburger Button */}
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="md:hidden fixed top-4 left-4 z-50 bg-white shadow-sm border"
-        onClick={() => setIsMobileMenuOpen(true)}
-      >
-        <Menu className="w-5 h-5" />
-      </Button>
-
       {/* Mobile Sidebar */}
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetContent side="left" className="p-0 w-72">
+        <SheetContent side="left" className="p-0 w-72 max-w-[85vw] z-[100]">
           <VisuallyHidden>
             <SheetTitle>Navigation Menu</SheetTitle>
           </VisuallyHidden>
@@ -145,11 +135,18 @@ function ProfessionalPortalLayoutContent({
       {/* Main Content */}
       <main className="flex-1 md:ml-72">
         {/* Top Header */}
-        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-8 flex items-center justify-end">
-          <div className="flex items-center gap-4">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
-              SW
-            </div>
+        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between md:justify-end gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden shrink-0 -ml-2"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm shrink-0">
+            SW
           </div>
         </header>
 

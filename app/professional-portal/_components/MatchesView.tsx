@@ -1,14 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DollarSign, Clock, Building, Send, ChevronLeft } from "lucide-react";
+
+// Placeholder company logos for messaging attribution
+const COMPANY_LOGOS = {
+  default: "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769804890523x838539645913488600/favicon.png",
+  parsley: "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769804920987x244544127826915600/parsley-favicon.png",
+  icon2: "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769804989697x108119687752882050/icon2.png",
+} as const;
 
 // Mock data for suggested matches
 const suggestedMatches = [
@@ -63,36 +70,44 @@ const allThreads = [
     id: 101,
     jobTitle: "RBT - Weekend Shift",
     company: "Helping Hands ABA",
-    companyLogo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=100&h=100&fit=crop",
+    companyLogo: COMPANY_LOGOS.default,
     lastMessage: "Hi Sarah, we liked your profile and think you'd be a great fit for our weekend team.",
     lastMessageTime: "Yesterday",
+    lastMessageSenderName: "Jessica Martinez",
+    lastMessageSenderCompany: "Helping Hands ABA",
     unread: true
   },
   {
     id: 1,
     jobTitle: "Registered Behavior Technician (RBT)",
     company: "Bright Future ABA",
-    companyLogo: "https://images.unsplash.com/photo-1516876437184-593fda40c6ed?w=100&h=100&fit=crop",
+    companyLogo: COMPANY_LOGOS.parsley,
     lastMessage: "Thanks for your interest! When would be a good time to discuss?",
     lastMessageTime: "2 hours ago",
+    lastMessageSenderName: "Robert Chen",
+    lastMessageSenderCompany: "Bright Future ABA",
     unread: false
   },
   {
     id: 2,
     jobTitle: "BCBA - Clinical Director",
     company: "Peach State Therapy",
-    companyLogo: "https://images.unsplash.com/photo-1554774853-719586f8c277?w=100&h=100&fit=crop",
+    companyLogo: COMPANY_LOGOS.icon2,
     lastMessage: "We'd love to schedule an interview with you next week.",
     lastMessageTime: "1 day ago",
+    lastMessageSenderName: "Emily Rodriguez",
+    lastMessageSenderCompany: "Peach State Therapy",
     unread: false
   },
   {
     id: 3,
     jobTitle: "Senior RBT",
     company: "Autism Care Partners",
-    companyLogo: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&h=100&fit=crop",
+    companyLogo: COMPANY_LOGOS.default,
     lastMessage: "Could you send over your latest certification?",
     lastMessageTime: "3 days ago",
+    lastMessageSenderName: "James Wilson",
+    lastMessageSenderCompany: "Autism Care Partners",
     unread: true
   }
 ];
@@ -100,24 +115,24 @@ const allThreads = [
 const getMessagesForThread = (threadId: number) => {
   if (threadId === 101) {
     return [
-      { id: 1, sender: "employer", senderName: "Jessica Martinez", senderCompany: "Helping Hands ABA", text: "Hi Sarah, we liked your profile and think you'd be a great fit for our weekend team.", time: "Yesterday 3:30 PM" },
+      { id: 1, sender: "employer", senderName: "Jessica Martinez", senderCompany: "Helping Hands ABA", senderCompanyLogo: COMPANY_LOGOS.default, text: "Hi Sarah, we liked your profile and think you'd be a great fit for our weekend team.", time: "Yesterday 3:30 PM" },
     ];
   } else if (threadId === 1) {
     return [
       { id: 1, sender: "worker", senderName: "Sarah Williams", text: "Hi, I'm very interested in this position. Could you tell me more about the schedule?", time: "Yesterday 2:00 PM" },
-      { id: 2, sender: "employer", senderName: "Robert Chen", senderCompany: "Bright Future ABA", text: "Thanks for your interest! When would be a good time to discuss?", time: "2 hours ago" },
+      { id: 2, sender: "employer", senderName: "Robert Chen", senderCompany: "Bright Future ABA", senderCompanyLogo: COMPANY_LOGOS.parsley, text: "Thanks for your interest! When would be a good time to discuss?", time: "2 hours ago" },
     ];
   } else if (threadId === 2) {
     return [
-      { id: 1, sender: "employer", senderName: "Emily Rodriguez", senderCompany: "Peach State Therapy", text: "Hello Sarah, your experience looks impressive.", time: "2 days ago 10:00 AM" },
+      { id: 1, sender: "employer", senderName: "Emily Rodriguez", senderCompany: "Peach State Therapy", senderCompanyLogo: COMPANY_LOGOS.icon2, text: "Hello Sarah, your experience looks impressive.", time: "2 days ago 10:00 AM" },
       { id: 2, sender: "worker", senderName: "Sarah Williams", text: "Thank you! I've been working in the field for 5 years now.", time: "2 days ago 11:30 AM" },
-      { id: 3, sender: "employer", senderName: "Emily Rodriguez", senderCompany: "Peach State Therapy", text: "We'd love to schedule an interview with you next week.", time: "1 day ago" },
+      { id: 3, sender: "employer", senderName: "Emily Rodriguez", senderCompany: "Peach State Therapy", senderCompanyLogo: COMPANY_LOGOS.icon2, text: "We'd love to schedule an interview with you next week.", time: "1 day ago" },
     ];
   } else {
     return [
-      { id: 1, sender: "employer", senderName: "James Wilson", senderCompany: "Metro Behavioral Health", text: "Hi Sarah, are you still available?", time: "4 days ago" },
+      { id: 1, sender: "employer", senderName: "James Wilson", senderCompany: "Metro Behavioral Health", senderCompanyLogo: COMPANY_LOGOS.default, text: "Hi Sarah, are you still available?", time: "4 days ago" },
       { id: 2, sender: "worker", senderName: "Sarah Williams", text: "Yes, I am.", time: "3 days ago" },
-      { id: 3, sender: "employer", senderName: "James Wilson", senderCompany: "Metro Behavioral Health", text: "Could you send over your latest certification?", time: "3 days ago" },
+      { id: 3, sender: "employer", senderName: "James Wilson", senderCompany: "Metro Behavioral Health", senderCompanyLogo: COMPANY_LOGOS.default, text: "Could you send over your latest certification?", time: "3 days ago" },
     ];
   }
 };
@@ -127,6 +142,20 @@ export default function MatchesView() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showThreadList, setShowThreadList] = useState(false);
   const [messageInput, setMessageInput] = useState("");
+  const messageInputRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustMessageInputHeight = () => {
+    const textarea = messageInputRef.current;
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    const lineHeight = 20;
+    const maxHeight = lineHeight * 3;
+    textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+  };
+
+  useEffect(() => {
+    adjustMessageInputHeight();
+  }, [messageInput]);
 
   const handleOpenDrawer = (job: typeof employerReachouts[0]) => {
     // Find or create thread for this job
@@ -134,9 +163,11 @@ export default function MatchesView() {
       id: job.id,
       jobTitle: job.title,
       company: job.company,
-      companyLogo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=100&h=100&fit=crop",
+      companyLogo: COMPANY_LOGOS.default,
       lastMessage: job.message,
       lastMessageTime: job.date,
+      lastMessageSenderName: "Jessica Martinez",
+      lastMessageSenderCompany: job.company,
       unread: true
     };
     setSelectedThread(thread);
@@ -203,9 +234,9 @@ export default function MatchesView() {
         </Card>
       </div>
 
-      {/* Two-Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: New Opportunities (2/3 width) */}
+      {/* Two-Column Layout - matches metrics grid (lg:grid-cols-4 gap-4) so Recent Messages = 2 tiles width */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Left Column: New Opportunities */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">New Opportunities</h2>
@@ -300,8 +331,8 @@ export default function MatchesView() {
           </div>
         </div>
 
-        {/* Right Column: Recent Messages (1/3 width) */}
-        <div className="space-y-6">
+        {/* Right Column: Recent Messages (1/2 width) */}
+        <div className="lg:col-span-2 space-y-6">
           <h2 className="text-2xl font-semibold">Recent Messages</h2>
           <div className="space-y-3">
             {allThreads.slice(0, 5).map((thread) => (
@@ -316,24 +347,25 @@ export default function MatchesView() {
               >
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <Avatar className="h-10 w-10 border">
-                      <AvatarImage src={thread.companyLogo} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        <Building className="h-5 w-5" />
-                      </AvatarFallback>
-                    </Avatar>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border">
+                      <img src={thread.companyLogo} alt="" className="h-8 w-8 object-contain" />
+                    </span>
                     <div className="flex-1 min-w-0 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-semibold text-sm truncate">{thread.companyName}</p>
-                        {thread.unread && (
-                          <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
-                        )}
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-semibold text-sm truncate flex items-center gap-1.5">
+                          {thread.unread && (
+                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: "#2663EB" }} />
+                          )}
+                          {"lastMessageSenderName" in thread && thread.lastMessageSenderName
+                            ? `${thread.lastMessageSenderName} from ${thread.lastMessageSenderCompany}`
+                            : thread.company}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground shrink-0">{thread.lastMessageTime}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground truncate">{thread.jobTitle}</p>
+                      <p className="text-xs text-foreground truncate">{thread.jobTitle}</p>
                       <p className="text-xs text-muted-foreground truncate overflow-hidden">
                         {thread.lastMessage}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">{thread.lastMessageTime}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -360,25 +392,26 @@ export default function MatchesView() {
                     <div
                       key={thread.id}
                       onClick={() => handleSelectThread(thread)}
-                      className={`p-2.5 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors ${
-                        selectedThread?.id === thread.id ? "bg-muted border-primary" : ""
-                      }`}
+                      className="p-2.5 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex items-start gap-2.5">
-                        <Avatar className="h-10 w-10 border shrink-0">
-                          <AvatarImage src={thread.companyLogo} className="object-cover" />
-                          <AvatarFallback>{thread.company.charAt(0)}</AvatarFallback>
-                        </Avatar>
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border">
+                          <img src={thread.companyLogo} alt="" className="h-8 w-8 object-contain" />
+                        </span>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-sm truncate">{thread.company}</span>
-                            {thread.unread && (
-                              <span className="w-2 h-2 bg-primary rounded-full shrink-0"></span>
-                            )}
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <span className="font-semibold text-sm truncate flex items-center gap-1.5">
+                              {thread.unread && (
+                                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: "#2663EB" }} />
+                              )}
+                              {"lastMessageSenderName" in thread && thread.lastMessageSenderName
+                                ? `${thread.lastMessageSenderName} from ${thread.lastMessageSenderCompany}`
+                                : thread.company}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground shrink-0">{thread.lastMessageTime}</span>
                           </div>
-                          <p className="text-xs text-muted-foreground truncate">{thread.jobTitle}</p>
+                          <p className="text-xs text-foreground truncate">{thread.jobTitle}</p>
                           <p className="text-xs text-muted-foreground mt-1 truncate">{thread.lastMessage}</p>
-                          <p className="text-[10px] text-muted-foreground mt-1">{thread.lastMessageTime}</p>
                         </div>
                       </div>
                     </div>
@@ -401,13 +434,18 @@ export default function MatchesView() {
                   </Button>
                   {selectedThread && (
                     <>
-                      <Avatar>
-                        <AvatarImage src={selectedThread.companyLogo} />
-                        <AvatarFallback>{selectedThread.company.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col items-start flex-1">
-                        <span className="font-semibold">{selectedThread.company}</span>
-                        <span className="text-xs text-muted-foreground">{selectedThread.jobTitle}</span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border">
+                        <img src={selectedThread.companyLogo} alt="" className="h-5 w-5 object-contain" />
+                      </span>
+                      <div className="flex flex-col items-start flex-1 min-w-0">
+                        <div className="flex items-center gap-2 w-full">
+                          <span className="font-semibold text-sm truncate">
+                            {"lastMessageSenderName" in selectedThread && selectedThread.lastMessageSenderName
+                              ? `${selectedThread.lastMessageSenderName} from ${selectedThread.lastMessageSenderCompany}`
+                              : selectedThread.company}
+                          </span>
+                        </div>
+                        <span className="text-xs text-foreground truncate">{selectedThread.jobTitle}</span>
                       </div>
                     </>
                   )}
@@ -419,46 +457,69 @@ export default function MatchesView() {
                   {currentMessages.map((msg) => (
                     <div 
                       key={msg.id} 
-                      className={`flex flex-col ${msg.sender === 'worker' ? 'items-end' : 'items-start'}`}
+                      className={`flex flex-col ${msg.sender === "worker" ? "items-end" : "items-start"}`}
                     >
-                      {/* Sender Attribution */}
-                      {msg.sender === 'employer' && msg.senderName && (
-                        <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                      {msg.sender === "employer" && msg.senderName && (
+                        <div className="text-xs font-medium text-black mb-1 px-1 max-w-[85%]">
                           {msg.senderName} from {msg.senderCompany}
                         </div>
                       )}
-                      {msg.sender === 'worker' && msg.senderName && (
-                        <div className="text-[10px] text-muted-foreground mb-1 px-1">
+                      {msg.sender === "worker" && msg.senderName && (
+                        <div className="text-xs font-medium text-black mb-1 px-1">
                           {msg.senderName}
                         </div>
                       )}
-
-                      <div 
-                        className={`max-w-[85%] rounded-lg p-3 text-sm ${
-                          msg.sender === 'worker' 
-                            ? 'bg-primary text-primary-foreground rounded-br-none' 
-                            : 'bg-muted rounded-bl-none'
-                        }`}
-                      >
-                        {msg.text}
+                      <div className={`flex ${msg.sender === "worker" ? "flex-col items-end" : "items-end gap-2"} max-w-[85%]`}>
+                        {/* Company message: logo aligned to bottom of bubble only (not timestamp) */}
+                        {msg.sender === "employer" && (("senderCompanyLogo" in msg && msg.senderCompanyLogo) || selectedThread?.companyLogo) && (
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={("senderCompanyLogo" in msg && msg.senderCompanyLogo) || selectedThread?.companyLogo || ""} alt="" className="h-5 w-5 object-contain" />
+                          </span>
+                        )}
+                        <div className={`flex flex-col ${msg.sender === "worker" ? "items-end" : "items-start"}`}>
+                          <div 
+                            className={`rounded-lg p-3 text-sm ${
+                              msg.sender === "worker" 
+                                ? "bg-primary text-primary-foreground rounded-br-none" 
+                                : "bg-muted rounded-bl-none"
+                            }`}
+                          >
+                            {msg.text}
+                          </div>
+                          {msg.sender === "worker" && (
+                            <span className="text-[10px] text-muted-foreground mt-1 px-1">
+                              {msg.time}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <span className="text-[10px] text-muted-foreground mt-1 px-1">
-                        {msg.time}
-                      </span>
+                      {msg.sender === "employer" && (
+                        <span className="text-[10px] text-muted-foreground mt-1 px-1 max-w-[85%] ml-10">
+                          {msg.time}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <SheetFooter className="pt-4 border-t mt-auto">
-                <div className="flex items-center gap-2 w-full">
-                  <Input 
-                    placeholder="Type your message..." 
+              <SheetFooter className="pt-4 mt-auto">
+                <div className="relative w-full">
+                  <Textarea
+                    ref={messageInputRef}
+                    placeholder="Type your message..."
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
-                    className="flex-1"
+                    onInput={adjustMessageInputHeight}
+                    rows={1}
+                    className="w-full min-h-[48px] max-h-[60px] overflow-y-auto resize-none py-3 pr-12"
                   />
-                  <Button size="icon" onClick={() => setMessageInput("")}>
+                  <Button
+                    size="icon"
+                    className="absolute bottom-2.5 right-2.5 h-8 w-8 shrink-0"
+                    onClick={() => setMessageInput("")}
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>

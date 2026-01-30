@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { 
@@ -28,7 +28,7 @@ import {
   SheetFooter
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
@@ -78,6 +78,9 @@ const getApplicantsForJob = (jobId: number, count: number) => {
   return selected;
 };
 
+// Placeholder company logo for employer messaging attribution
+const EMPLOYER_COMPANY_LOGO = "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769804890523x838539645913488600/favicon.png";
+
 const getMessagesForWorker = (workerId: string) => {
   // Generate unique messages based on worker ID
   const worker = allMockApplicants.find(a => a.id === workerId);
@@ -90,6 +93,7 @@ const getMessagesForWorker = (workerId: string) => {
       sender: "employer", 
       senderName: "Andrew Johnson",
       senderCompany: "Airdev",
+      senderCompanyLogo: EMPLOYER_COMPANY_LOGO,
       senderRole: "Hiring Manager",
       text: `Hi ${workerFirstName}, thanks for your application. Are you available for a quick call?`, 
       time: "Yesterday 2:30 PM" 
@@ -98,15 +102,15 @@ const getMessagesForWorker = (workerId: string) => {
   
   if (workerId.endsWith("GR") || workerId.endsWith("CD")) {
     messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Yes, I am available tomorrow afternoon.", time: "Yesterday 3:45 PM" });
-    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderRole: "Hiring Manager", text: "Great, I'll send an invite.", time: "Today 9:00 AM" });
+    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderCompanyLogo: EMPLOYER_COMPANY_LOGO, senderRole: "Hiring Manager", text: "Great, I'll send an invite.", time: "Today 9:00 AM" });
   } else if (workerId.endsWith("ZW") || workerId.endsWith("OP")) {
     messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Hi! I'm currently working but free after 5pm.", time: "Yesterday 5:15 PM" });
-    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderRole: "Hiring Manager", text: "Perfect, let's schedule for 5:30 PM then.", time: "Today 10:00 AM" });
+    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderCompanyLogo: EMPLOYER_COMPANY_LOGO, senderRole: "Hiring Manager", text: "Perfect, let's schedule for 5:30 PM then.", time: "Today 10:00 AM" });
   } else if (workerId.endsWith("ST") || workerId.endsWith("WX")) {
     messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Thank you! I'm very interested. When would be a good time?", time: "Yesterday 4:20 PM" });
   } else if (workerId.endsWith("MN") || workerId.endsWith("IJ")) {
     messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Hi, I'd love to learn more about the position.", time: "Yesterday 6:00 PM" });
-    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderRole: "Hiring Manager", text: "Great! Let me know your availability this week.", time: "Today 8:30 AM" });
+    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderCompanyLogo: EMPLOYER_COMPANY_LOGO, senderRole: "Hiring Manager", text: "Great! Let me know your availability this week.", time: "Today 8:30 AM" });
   } else {
     messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Thanks for reaching out! I'm definitely interested.", time: "Yesterday 3:00 PM" });
   }
@@ -119,6 +123,20 @@ export default function JobsView() {
   const [selectedWorker, setSelectedWorker] = useState<typeof allMockApplicants[0] | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [messageInput, setMessageInput] = useState("");
+  const messageInputRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustMessageInputHeight = () => {
+    const textarea = messageInputRef.current;
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    const lineHeight = 20;
+    const maxHeight = lineHeight * 3;
+    textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+  };
+
+  useEffect(() => {
+    adjustMessageInputHeight();
+  }, [messageInput]);
 
   const toggleExpand = (id: number) => {
     setExpandedJobId(expandedJobId === id ? null : id);
@@ -373,15 +391,23 @@ export default function JobsView() {
               {currentMessages.map((msg) => (
                 <div 
                   key={msg.id} 
-                  className={`flex flex-col ${msg.sender === 'employer' ? 'items-end' : 'items-start'}`}
+                  className={`flex flex-col ${msg.sender === "employer" ? "items-end" : "items-start"}`}
                 >
-                  {/* Sender Name */}
-                  {msg.sender === 'employer' && msg.senderName && (
-                    <div className="text-[10px] text-muted-foreground mb-1 px-1">
-                      {msg.senderName} from {msg.senderCompany}
+                  {/* Sender attribution: name + company, optional logo, timestamp below bubble */}
+                  {msg.sender === "employer" && msg.senderName && (
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-1 px-1">
+                      {"senderCompanyLogo" in msg && msg.senderCompanyLogo && (
+                        <span className="relative w-4 h-4 rounded overflow-hidden shrink-0 bg-muted">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={msg.senderCompanyLogo} alt="" className="w-full h-full object-cover" />
+                        </span>
+                      )}
+                      <span>
+                        {msg.senderName} from {msg.senderCompany}
+                      </span>
                     </div>
                   )}
-                  {msg.sender === 'worker' && msg.senderName && (
+                  {msg.sender === "worker" && msg.senderName && (
                     <div className="text-[10px] text-muted-foreground mb-1 px-1">
                       {msg.senderName}
                     </div>
@@ -389,9 +415,9 @@ export default function JobsView() {
                   
                   <div 
                     className={`max-w-[85%] rounded-lg p-3 text-sm ${
-                      msg.sender === 'employer' 
-                        ? 'bg-primary text-primary-foreground rounded-br-none' 
-                        : 'bg-muted rounded-bl-none'
+                      msg.sender === "employer" 
+                        ? "bg-primary text-primary-foreground rounded-br-none" 
+                        : "bg-muted rounded-bl-none"
                     }`}
                   >
                     {msg.text}
@@ -404,15 +430,22 @@ export default function JobsView() {
             </div>
           </ScrollArea>
 
-          <SheetFooter className="pt-4 border-t mt-auto">
-            <div className="flex items-center gap-2 w-full">
-              <Input 
-                placeholder="Type your message..." 
+          <SheetFooter className="pt-4 mt-auto">
+            <div className="relative w-full">
+              <Textarea
+                ref={messageInputRef}
+                placeholder="Type your message..."
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
-                className="flex-1"
+                onInput={adjustMessageInputHeight}
+                rows={1}
+                className="w-full min-h-[48px] max-h-[60px] overflow-y-auto resize-none py-3 pr-12"
               />
-              <Button size="icon" onClick={() => setMessageInput("")}>
+              <Button
+                size="icon"
+                className="absolute bottom-2.5 right-2.5 h-8 w-8 shrink-0"
+                onClick={() => setMessageInput("")}
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </div>

@@ -2,29 +2,49 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, User } from "lucide-react";
+import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, User, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { GenericAvatarByRole } from "@/components/GenericAvatar";
 import { InviteToApplyModal } from "@/components/InviteToApplyModal";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
 
-// Mock Directory Data (Anonymized)
-const directoryWorkers = [
-  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], status: "Available" },
-  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], status: "Available" },
-  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], status: "Looking" },
-  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], status: "Available" },
-  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], status: "Available" },
-  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], status: "Looking" },
-  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], status: "Available" },
-  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], status: "Available" },
+// Worker type matching professional onboarding preferences + licensed
+type DirectoryWorker = {
+  id: string;
+  role: "RBT" | "BCBA";
+  location: string;
+  experience: string;
+  rate: string;
+  schedule: string[];
+  compensationPreference: "hourly" | "salary" | "both";
+  employmentType: string[];
+  telehealthOnly: boolean | null;
+  workSettings: string[];
+  radius: number;
+  schedulePreference: "standard" | "flexible";
+  scheduleDetails: string[];
+  licensed: boolean;
+  licenseNumber?: string;
+};
+
+// Mock Directory Data (fields align with professional preferences)
+const directoryWorkers: DirectoryWorker[] = [
+  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], compensationPreference: "hourly", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], licensed: true, licenseNumber: "RBT-101234" },
+  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 30, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-102345" },
+  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["School-based"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false },
+  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], compensationPreference: "hourly", employmentType: ["Full-time", "Contractor"], telehealthOnly: false, workSettings: ["Center-based", "In-home", "School-based"], radius: 20, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "RBT-104567" },
+  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], compensationPreference: "salary", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 35, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], licensed: true, licenseNumber: "BCBA-105678" },
+  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["In-home"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Afternoons"], licensed: false },
+  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], compensationPreference: "hourly", employmentType: ["Part-time", "Contractor"], telehealthOnly: null, workSettings: ["Center-based"], radius: 10, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false },
+  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-108901" },
 ];
 
 // Mock Active Jobs for employer (for invite modal)
@@ -37,12 +57,32 @@ const mockActiveJobs = [
 export default function DirectoryPage() {
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedWorker, setSelectedWorker] = useState<typeof directoryWorkers[0] | null>(null);
+  const [locationQuery, setLocationQuery] = useState("");
+  const [radiusMiles, setRadiusMiles] = useState<string>("all");
+  const [compensationFilter, setCompensationFilter] = useState<string[]>([]);
+  const [employmentTypeFilter, setEmploymentTypeFilter] = useState<string[]>([]);
+  const [telehealthFilter, setTelehealthFilter] = useState<string>("all");
+  const [workSettingFilter, setWorkSettingFilter] = useState<string[]>([]);
+  const [schedulePreferenceFilter, setSchedulePreferenceFilter] = useState<string>("all");
+  const [scheduleDetailsFilter, setScheduleDetailsFilter] = useState<string[]>([]);
+  const [licensedFilter, setLicensedFilter] = useState<string>("all");
+  const [selectedWorker, setSelectedWorker] = useState<DirectoryWorker | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-  const filteredWorkers = directoryWorkers.filter(worker => {
+  const filteredWorkers = directoryWorkers.filter((worker) => {
     if (selectedRole !== "all" && worker.role.toLowerCase() !== selectedRole) return false;
     if (searchQuery && !worker.location.toLowerCase().includes(searchQuery.toLowerCase()) && !worker.role.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (locationQuery && !worker.location.toLowerCase().includes(locationQuery.toLowerCase())) return false;
+    if (radiusMiles !== "all" && worker.radius > parseInt(radiusMiles, 10)) return false;
+    if (compensationFilter.length > 0 && !compensationFilter.includes(worker.compensationPreference)) return false;
+    if (employmentTypeFilter.length > 0 && !employmentTypeFilter.some((t) => worker.employmentType.includes(t))) return false;
+    if (telehealthFilter === "yes" && !worker.telehealthOnly) return false;
+    if (telehealthFilter === "no" && worker.telehealthOnly !== false) return false;
+    if (workSettingFilter.length > 0 && !workSettingFilter.some((s) => worker.workSettings.includes(s))) return false;
+    if (schedulePreferenceFilter !== "all" && worker.schedulePreference !== schedulePreferenceFilter) return false;
+    if (scheduleDetailsFilter.length > 0 && !scheduleDetailsFilter.some((d) => worker.scheduleDetails.includes(d))) return false;
+    if (licensedFilter === "yes" && !worker.licensed) return false;
+    if (licensedFilter === "no" && worker.licensed) return false;
     return true;
   });
 
@@ -82,7 +122,7 @@ export default function DirectoryPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                {/* Role Filter */}
+                {/* Role Type */}
                 <div className="space-y-3">
                   <Label>Role Type</Label>
                   <Select value={selectedRole} onValueChange={setSelectedRole}>
@@ -97,69 +137,156 @@ export default function DirectoryPage() {
                   </Select>
                 </div>
 
-                <Separator />
-
-                {/* Location Filter */}
+                {/* Location & Geographic Radius */}
                 <div className="space-y-3">
                   <Label>Location</Label>
                   <div className="relative">
                     <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="City or ZIP" className="pl-9" />
+                    <Input placeholder="City or ZIP" className="pl-9" value={locationQuery} onChange={(e) => setLocationQuery(e.target.value)} />
                   </div>
-                  <Select defaultValue="10">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Max radius (miles)</Label>
+                    <Select value={radiusMiles} onValueChange={setRadiusMiles}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Any" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Any</SelectItem>
+                        <SelectItem value="10">10 miles</SelectItem>
+                        <SelectItem value="15">15 miles</SelectItem>
+                        <SelectItem value="20">20 miles</SelectItem>
+                        <SelectItem value="25">25 miles</SelectItem>
+                        <SelectItem value="30">30 miles</SelectItem>
+                        <SelectItem value="35">35 miles</SelectItem>
+                        <SelectItem value="50">50 miles</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Compensation Preference - multi checkbox, none = Any */}
+                <div className="space-y-3">
+                  <Label>Compensation Preference</Label>
+                  <div className="space-y-2">
+                    {[
+                      { value: "hourly", label: "Hourly only" },
+                      { value: "salary", label: "Salary only" },
+                      { value: "both", label: "Open to hourly or salary" },
+                    ].map((opt) => (
+                      <div key={opt.value} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`comp-${opt.value}`}
+                          checked={compensationFilter.includes(opt.value)}
+                          onCheckedChange={(c) => setCompensationFilter((prev) => (c ? [...prev, opt.value] : prev.filter((v) => v !== opt.value)))}
+                        />
+                        <Label htmlFor={`comp-${opt.value}`} className="font-normal text-sm">{opt.label}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Employment Type */}
+                <div className="space-y-3">
+                  <Label>Employment Type</Label>
+                  <div className="space-y-2">
+                    {["Full-time", "Part-time", "Contractor"].map((type) => (
+                      <div key={type} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`emp-${type}`}
+                          checked={employmentTypeFilter.includes(type)}
+                          onCheckedChange={(c) => setEmploymentTypeFilter((prev) => (c ? [...prev, type] : prev.filter((t) => t !== type)))}
+                        />
+                        <Label htmlFor={`emp-${type}`} className="font-normal text-sm">{type}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Telehealth Only - toggle */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between space-x-2">
+                    <Label htmlFor="telehealth-toggle" className="flex-1">Telehealth Only</Label>
+                    <Switch
+                      id="telehealth-toggle"
+                      checked={telehealthFilter === "yes"}
+                      onCheckedChange={(checked) => setTelehealthFilter(checked ? "yes" : "no")}
+                    />
+                  </div>
+                </div>
+
+                {/* Work Setting - only when Telehealth = No */}
+                {telehealthFilter === "no" && (
+                  <div className="space-y-3">
+                    <Label>Work Setting</Label>
+                    <div className="space-y-2">
+                      {["Center-based", "In-home", "School-based"].map((setting) => (
+                        <div key={setting} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`ws-${setting}`}
+                            checked={workSettingFilter.includes(setting)}
+                            onCheckedChange={(c) => setWorkSettingFilter((prev) => (c ? [...prev, setting] : prev.filter((s) => s !== setting)))}
+                          />
+                          <Label htmlFor={`ws-${setting}`} className="font-normal text-sm">{setting}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Schedule Preference - radio */}
+                <div className="space-y-3">
+                  <Label>Schedule Preference</Label>
+                  <RadioGroup value={schedulePreferenceFilter} onValueChange={setSchedulePreferenceFilter} className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="all" id="sched-pref-all" />
+                      <Label htmlFor="sched-pref-all" className="font-normal text-sm cursor-pointer">Any</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="standard" id="sched-pref-standard" />
+                      <Label htmlFor="sched-pref-standard" className="font-normal text-sm cursor-pointer">Standard Full-Time</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="flexible" id="sched-pref-flexible" />
+                      <Label htmlFor="sched-pref-flexible" className="font-normal text-sm cursor-pointer">Non-Standard / Flexible</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Schedule Availability - only when Any or Non-Standard selected */}
+                {(schedulePreferenceFilter === "all" || schedulePreferenceFilter === "flexible") && (
+                  <div className="space-y-3">
+                    <Label className="text-xs text-muted-foreground">Schedule Availability</Label>
+                    <div className="space-y-2">
+                      {["Weekdays", "Weekends", "Mornings", "Afternoons", "Evenings"].map((detail) => (
+                        <div key={detail} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`sched-${detail}`}
+                            checked={scheduleDetailsFilter.includes(detail)}
+                            onCheckedChange={(c) => setScheduleDetailsFilter((prev) => (c ? [...prev, detail] : prev.filter((d) => d !== detail)))}
+                          />
+                          <Label htmlFor={`sched-${detail}`} className="font-normal text-sm">{detail}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Licensed */}
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2">
+                    <Award className="h-4 w-4 text-muted-foreground" />
+                    Licensed
+                  </Label>
+                  <Select value={licensedFilter} onValueChange={setLicensedFilter}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Within 10 miles" />
+                      <SelectValue placeholder="Any" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="5">Within 5 miles</SelectItem>
-                      <SelectItem value="10">Within 10 miles</SelectItem>
-                      <SelectItem value="25">Within 25 miles</SelectItem>
-                      <SelectItem value="50">Within 50 miles</SelectItem>
+                      <SelectItem value="all">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-
-                <Separator />
-
-                {/* Availability */}
-                <div className="space-y-3">
-                  <Label>Availability</Label>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="full-time" />
-                      <Label htmlFor="full-time" className="font-normal">Full-time</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="part-time" />
-                      <Label htmlFor="part-time" className="font-normal">Part-time</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="weekends" />
-                      <Label htmlFor="weekends" className="font-normal">Weekends</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="evenings" />
-                      <Label htmlFor="evenings" className="font-normal">Evenings</Label>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Pay Rate */}
-                <div className="space-y-3">
-                  <Label>Hourly Rate</Label>
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <span className="absolute left-2.5 top-2.5 text-muted-foreground">$</span>
-                      <Input placeholder="Min" className="pl-6" type="number" />
-                    </div>
-                    <span className="text-muted-foreground">-</span>
-                    <div className="relative flex-1">
-                      <span className="absolute left-2.5 top-2.5 text-muted-foreground">$</span>
-                      <Input placeholder="Max" className="pl-6" type="number" />
-                    </div>
-                  </div>
                 </div>
                 </CardContent>
               </Card>
@@ -180,58 +307,75 @@ export default function DirectoryPage() {
             </div>
 
             {/* Results Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
               {filteredWorkers.map((worker) => (
-                <Card key={worker.id} className="overflow-hidden hover:border-primary/50 transition-colors">
-                  <CardHeader className="pb-3 bg-muted/20">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3">
-                        <GenericAvatarByRole roleType={worker.role as "RBT" | "BCBA"} size="sm" />
-                        <div>
-                          <CardTitle className="text-base font-semibold flex items-center gap-2">
-                            {worker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}
-                            <span className="text-xs font-normal text-muted-foreground">#{worker.id}</span>
-                          </CardTitle>
-                          <div className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3" /> {worker.location}
-                          </div>
+                <Card key={worker.id} className="overflow-hidden hover:border-primary/50 transition-colors flex flex-col h-full">
+                  <CardHeader className="pb-2 pt-4 px-4 bg-muted/20">
+                    <div className="flex items-start gap-3">
+                      <GenericAvatarByRole roleType={worker.role as "RBT" | "BCBA"} size="sm" className="shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <CardTitle className="text-base font-semibold flex items-center gap-2">
+                          {worker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}
+                          <span className="text-sm font-normal text-muted-foreground">#{worker.id}</span>
+                        </CardTitle>
+                        <p className="text-sm font-medium text-foreground mt-1">
+                          {worker.employmentType.join(", ")} · {worker.rate}
+                        </p>
+                        <div className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                          <MapPin className="h-3.5 w-3.5 shrink-0" /> {worker.location}
                         </div>
+                        {worker.licensed ? (
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                            <Award className="h-3.5 w-3.5 text-green-600 shrink-0" />
+                            <span className="text-sm font-medium text-green-700">
+                              Licensed{worker.licenseNumber ? ` · ${worker.licenseNumber}` : ""}
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground mt-1.5">Not licensed</p>
+                        )}
                       </div>
-                      <Badge variant="secondary" className="font-normal text-xs bg-white border-input text-foreground hover:bg-white">
-                        {worker.status}
-                      </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-4 pb-2 space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Experience</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
-                          {worker.experience}
+                  <CardContent className="pt-3 pb-3 px-4 flex-1 min-h-0">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                      <div>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Experience</span>
+                        <span className="font-medium flex items-center gap-1.5 mt-0.5"><Briefcase className="h-3.5 w-3.5 text-muted-foreground shrink-0" />{worker.experience}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Compensation</span>
+                        <span className="font-medium mt-0.5 capitalize">{worker.compensationPreference === "both" ? "Hourly or salary" : worker.compensationPreference}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Telehealth</span>
+                        <span className="font-medium mt-0.5">{worker.telehealthOnly === null ? "—" : worker.telehealthOnly ? "Yes" : "No"}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Radius</span>
+                        <span className="font-medium mt-0.5">{worker.radius} mi</span>
+                      </div>
+                      {worker.workSettings.length > 0 && (
+                        <div className="col-span-2">
+                          <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Work Setting</span>
+                          <div className="flex flex-wrap gap-1.5 mt-0.5">{worker.workSettings.map((s, i) => <Badge key={i} variant="outline" className="text-xs font-normal py-0.5 px-2 h-5 bg-gray-50">{s}</Badge>)}</div>
                         </div>
+                      )}
+                      <div>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Schedule</span>
+                        <span className="font-medium mt-0.5">{worker.schedulePreference === "standard" ? "Standard FT" : "Flexible"}</span>
                       </div>
-                      <div className="space-y-1">
-                        <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Rate Expectation</span>
-                        <div className="font-medium flex items-center gap-1.5">
-                          <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                          {worker.rate}
+                      {worker.scheduleDetails.length > 0 ? (
+                        <div>
+                          <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Availability</span>
+                          <div className="flex flex-wrap gap-1.5 mt-0.5">{worker.scheduleDetails.map((d, i) => <Badge key={i} variant="outline" className="text-xs font-normal py-0.5 px-2 h-5 bg-gray-50">{d}</Badge>)}</div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1.5">
-                      <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Schedule Availability</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {worker.schedule.map((sch, i) => (
-                          <Badge key={i} variant="outline" className="text-xs font-normal bg-gray-50">
-                            {sch}
-                          </Badge>
-                        ))}
-                      </div>
+                      ) : (
+                        <div />
+                      )}
                     </div>
                   </CardContent>
-                  <CardFooter className="bg-muted/10 pt-4 flex gap-2">
+                  <CardFooter className="bg-muted/10 pt-3 pb-4 px-4 flex gap-2 shrink-0">
                     <Button 
                       variant="outline" 
                       className="flex-1 gap-2"
@@ -266,6 +410,15 @@ export default function DirectoryPage() {
                  <Button variant="link" onClick={() => {
                    setSelectedRole("all");
                    setSearchQuery("");
+                   setLocationQuery("");
+                   setRadiusMiles("all");
+                   setCompensationFilter([]);
+                   setEmploymentTypeFilter([]);
+                   setTelehealthFilter("all");
+                   setWorkSettingFilter([]);
+                   setSchedulePreferenceFilter("all");
+                   setScheduleDetailsFilter([]);
+                   setLicensedFilter("all");
                  }} className="mt-2">
                    Clear all filters
                  </Button>

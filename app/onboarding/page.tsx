@@ -312,12 +312,14 @@ export default function OnboardingPage() {
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -600,7 +602,7 @@ export default function OnboardingPage() {
                       <div className="space-y-2 mb-6">
                         <Label>Employment Type</Label>
                         <div className="flex flex-wrap gap-3 mt-2">
-                          {["W2 – Full Time", "W2 – Part Time", "1099 Contractor"].map((type) => (
+                          {["Full-time", "Part-time", "Contractor"].map((type) => (
                             <div key={type} className="flex items-center space-x-2">
                               <Checkbox
                                 id={`onboard-${type}`}
@@ -638,7 +640,7 @@ export default function OnboardingPage() {
                       {/* Work Setting (multi-select, required if Telehealth Only = No) */}
                       {telehealthOnly === false && (
                         <div className="space-y-2 mb-6">
-                          <Label>Work Setting <span className="text-destructive">*</span></Label>
+                          <Label>Work Setting</Label>
                           <div className="flex flex-wrap gap-3 mt-2">
                             {["Center-based", "In-home", "School-based"].map((setting) => (
                               <div key={setting} className="flex items-center space-x-2">
@@ -806,18 +808,10 @@ export default function OnboardingPage() {
                       </div>
                     </div>
 
-                    {/* Note about email/password */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-xs text-blue-900">
-                        <Check className="w-3 h-3 inline mr-1" />
-                        Email and password already captured during account creation
-                      </p>
-                    </div>
-
                     {/* Bio */}
                     <div className="space-y-2">
                       <Label htmlFor="bio">
-                        Bio / About You <span className="text-muted-foreground text-xs">(Optional)</span>
+                        Bio / About You
                       </Label>
                       <Textarea
                         id="bio"
@@ -826,14 +820,14 @@ export default function OnboardingPage() {
                         placeholder="Tell employers about your experience, specializations, and what makes you a great fit..."
                         className="min-h-[100px] resize-none"
                         maxLength={500}
+                        required
                       />
-                      <p className="text-xs text-muted-foreground text-right">{bio.length}/500</p>
                     </div>
 
                     {/* Resume Upload */}
                     <div className="space-y-2">
                       <Label htmlFor="resume">
-                        Resume <span className="text-muted-foreground text-xs">(Optional)</span>
+                        Resume
                       </Label>
                       <Input
                         id="resume"
@@ -841,6 +835,7 @@ export default function OnboardingPage() {
                         accept=".pdf,.doc,.docx"
                         onChange={handleResumeUpload}
                         className="cursor-pointer"
+                        required
                       />
                       {resume && (
                         <p className="text-xs text-green-600 flex items-center gap-1">
@@ -905,7 +900,7 @@ export default function OnboardingPage() {
                             placeholder="Enter your license number"
                           />
                           <p className="text-xs text-muted-foreground mt-1">
-                            Enter your license number to receive a &quot;Verified Professional&quot; badge after manual verification by admin
+                            Enter your license number to receive a &quot;Verified Professional&quot; badge after we verify your license
                           </p>
                         </div>
                       )}
@@ -917,58 +912,20 @@ export default function OnboardingPage() {
                   {currentStep === 5 && (
                   <div className="space-y-8">
                     <div className="space-y-6">
+                      {/* 1. Role (Step 1) */}
                       <div className="border-b pb-4">
-                        <h3 className="text-lg font-semibold mb-4">Professional Profile</h3>
+                        <h3 className="text-lg font-semibold mb-4">Role</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                           <div>
-                            <p className="text-sm text-muted-foreground">Role</p>
+                            <p className="text-sm text-muted-foreground">Role Type</p>
                             <p className="font-medium">{roleType || "RBT"}</p>
                           </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">License Status</p>
-                            <p className="font-medium flex items-center gap-2">
-                              {hasLicense ? (
-                                <span className="text-green-600 flex items-center gap-1">
-                                  <Check className="w-3 h-3" /> Licensed
-                                </span>
-                              ) : (
-                                "Not Licensed"
-                              )}
-                            </p>
-                          </div>
-                          {licenseNumber && (
-                            <div className="col-span-2">
-                              <p className="text-sm text-muted-foreground">License Number</p>
-                              <p className="font-medium">{licenseNumber}</p>
-                            </div>
-                          )}
                         </div>
                       </div>
 
+                      {/* 2. Job Preferences (Step 2) */}
                       <div className="border-b pb-4">
-                        <h3 className="text-lg font-semibold mb-4">Personal Details</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Full Name</p>
-                            <p className="font-medium">{firstName || "Sarah"} {lastName || "Hammer"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Location</p>
-                            <p className="font-medium">{zipCode || "30301"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Email</p>
-                            <p className="font-medium">{email || "sarah.hammer@example.com"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Phone</p>
-                            <p className="font-medium">{phone || "(555) 123-4567"}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-semibold mb-4">Job Preferences</h3>
+                        <h3 className="text-lg font-semibold mb-4">Preferences</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                           <div>
                             <p className="text-sm text-muted-foreground">Compensation Preference</p>
@@ -991,24 +948,22 @@ export default function OnboardingPage() {
                             <p className="font-medium">
                               {employmentType.length > 0 
                                 ? employmentType.join(", ") 
-                                : "Not specified"}
+                                : "Full-time, Part-time"}
                             </p>
                           </div>
-                          {telehealthOnly !== null && (
-                            <div>
-                              <p className="text-sm text-muted-foreground">Telehealth Only</p>
-                              <p className="font-medium">{telehealthOnly ? "Yes" : "No"}</p>
-                            </div>
-                          )}
-                          {telehealthOnly === false && workSettings.length > 0 && (
+                          <div>
+                            <p className="text-sm text-muted-foreground">Telehealth Only</p>
+                            <p className="font-medium">{telehealthOnly === null ? "No" : telehealthOnly ? "Yes" : "No"}</p>
+                          </div>
+                          {telehealthOnly === false && (
                             <div>
                               <p className="text-sm text-muted-foreground">Work Setting</p>
-                              <p className="font-medium">{workSettings.join(", ")}</p>
+                              <p className="font-medium">{workSettings.length > 0 ? workSettings.join(", ") : "Center-based, In-home"}</p>
                             </div>
                           )}
                           <div>
                             <p className="text-sm text-muted-foreground">Geographic Radius</p>
-                            <p className="font-medium">{geographicRadius || "25"} miles</p>
+                            <p className="font-medium">{geographicRadius ? `${geographicRadius} miles` : "25 miles"}</p>
                           </div>
                           <div>
                             <p className="text-sm text-muted-foreground">Schedule</p>
@@ -1016,32 +971,75 @@ export default function OnboardingPage() {
                               {schedulePreference === "standard" ? "Standard Full-Time (Weekday daytime hours)" : "Non-Standard / Flexible Schedule"}
                             </p>
                           </div>
-                          {schedulePreference === "flexible" && scheduleDetails.length > 0 && (
+                          {schedulePreference === "flexible" && (
                             <div className="col-span-2">
                               <p className="text-sm text-muted-foreground">Schedule Availability</p>
-                              <p className="font-medium">{scheduleDetails.join(", ")}</p>
+                              <p className="font-medium">{scheduleDetails.length > 0 ? scheduleDetails.join(", ") : "Weekdays, Mornings, Afternoons"}</p>
                             </div>
                           )}
                         </div>
                       </div>
 
+                      {/* 3. Personal Information (Step 3) */}
+                      <div className="border-b pb-4">
+                        <h3 className="text-lg font-semibold mb-4">Personal</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Profile Photo</p>
+                            <p className="font-medium">
+                              <a
+                                href={photo || "#"}
+                                target={photo ? "_blank" : undefined}
+                                rel={photo ? "noopener noreferrer" : undefined}
+                                className="text-primary hover:underline"
+                              >
+                                {photo ? "View photo" : "profile.jpg"}
+                              </a>
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Full Name</p>
+                            <p className="font-medium">{firstName || "Sarah"} {lastName || "Hammer"}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Location (ZIP Code)</p>
+                            <p className="font-medium">{zipCode || "30301"}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Email</p>
+                            <p className="font-medium">{email || "sarah.hammer@example.com"}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Phone</p>
+                            <p className="font-medium">{phone || "(555) 123-4567"}</p>
+                          </div>
+                          <div className="col-span-2">
+                            <p className="text-sm text-muted-foreground">Bio</p>
+                            <p className="font-medium">{bio || "Experienced ABA professional with a passion for helping clients achieve their goals. Specialized in early intervention and school-based services."}</p>
+                          </div>
+                          <div className="col-span-2">
+                            <p className="text-sm text-muted-foreground">Resume</p>
+                            <p className="font-medium">
+                              <a href="#" className="text-primary hover:underline">
+                                {resume ? resume.name : "resume.pdf"}
+                              </a>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 4. License (Step 4) */}
                       <div>
-                        <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
-                        <div className="space-y-4">
-                          {bio && (
-                            <div>
-                              <p className="text-sm text-muted-foreground">Bio</p>
-                              <p className="font-medium text-sm">{bio}</p>
-                            </div>
-                          )}
-                          {resume && (
-                            <div>
-                              <p className="text-sm text-muted-foreground">Resume</p>
-                              <p className="font-medium text-sm flex items-center gap-1">
-                                <Check className="w-3 h-3 text-green-600" /> {resume.name}
-                              </p>
-                            </div>
-                          )}
+                        <h3 className="text-lg font-semibold mb-4">License</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                          <div>
+                            <p className="text-sm text-muted-foreground">License</p>
+                            <p className="font-medium">
+                              {hasLicense
+                                ? (licenseNumber ? `Licensed · ${licenseNumber}` : `Licensed · ${roleType === "BCBA" ? "BCBA-" : "RBT-"}12345678`)
+                                : "Not Licensed"}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
