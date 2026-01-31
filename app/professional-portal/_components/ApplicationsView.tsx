@@ -18,7 +18,7 @@ const COMPANY_LOGOS = {
   icon2: "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769804989697x108119687752882050/icon2.png",
 } as const;
 
-// Mock data for applications
+// Mock data for applications — statuses: Active, Closed, Paused
 const applications = [
   {
     id: 1,
@@ -43,7 +43,7 @@ const applications = [
     title: "Clinical Technician",
     company: "Spectrum Support",
     location: "Dunwoody, GA",
-    status: "Accepted",
+    status: "Paused",
     appliedDate: "Jan 15, 2026",
     lastActivity: "Offer accepted - start date pending"
   }
@@ -170,7 +170,7 @@ export default function ApplicationsView() {
       <div className="border rounded-md bg-white overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="hover:bg-transparent">
               <TableHead>Job Title</TableHead>
               <TableHead>Company</TableHead>
               <TableHead>Status</TableHead>
@@ -194,19 +194,13 @@ export default function ApplicationsView() {
                   </div>
                 </TableCell>
                 <TableCell>
-                    <Badge 
+                    <Badge
                       variant={
-                      app.status === 'Accepted' ? 'default' :
-                      app.status === 'Active' ? 'secondary' :
-                      'outline'
-                    }
-                      className={
-                      app.status === 'Accepted' ? 'bg-green-600 hover:bg-green-700' :
-                      app.status === 'Active' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200' :
-                      app.status === 'Declined by Employer' ? 'bg-gray-100 text-gray-700' :
-                      app.status === 'Declined by Candidate' ? 'bg-gray-100 text-gray-700' :
-                      ''
-                    }
+                        app.status === "Active" ? "default" :
+                        app.status === "Closed" ? "secondary" :
+                        app.status === "Paused" ? "outline" :
+                        "secondary"
+                      }
                     >
                       {app.status}
                     </Badge>
@@ -316,25 +310,24 @@ export default function ApplicationsView() {
                       key={msg.id} 
                       className={`flex flex-col ${msg.sender === "worker" ? "items-end" : "items-start"}`}
                     >
-                      {msg.sender === "employer" && msg.senderName && (
-                        <div className="text-xs font-medium text-black mb-1 px-1 max-w-[85%]">
-                          {msg.senderName} from {msg.senderCompany}
-                        </div>
-                      )}
                       {msg.sender === "worker" && msg.senderName && (
                         <div className="text-xs font-medium text-black mb-1 px-1">
                           {msg.senderName}
                         </div>
                       )}
                       <div className={`flex ${msg.sender === "worker" ? "flex-col items-end" : "items-end gap-2"} max-w-[85%]`}>
-                        {/* Company message: logo aligned to bottom of bubble only (not timestamp) */}
                         {msg.sender === "employer" && (("senderCompanyLogo" in msg && msg.senderCompanyLogo) || selectedThread?.companyLogo) && (
-                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border">
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border self-end">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={("senderCompanyLogo" in msg && msg.senderCompanyLogo) || selectedThread?.companyLogo || ""} alt="" className="h-5 w-5 object-contain" />
                           </span>
                         )}
-                        <div className={`flex flex-col ${msg.sender === "worker" ? "items-end" : "items-start"}`}>
+                        <div className={`flex flex-col ${msg.sender === "worker" ? "items-end" : "items-start"} flex-1 min-w-0`}>
+                          {msg.sender === "employer" && msg.senderName && (
+                            <div className="text-xs font-medium text-black mb-1">
+                              {msg.senderName} from {msg.senderCompany}
+                            </div>
+                          )}
                           <div 
                             className={`rounded-lg p-3 text-sm ${
                               msg.sender === "worker" 

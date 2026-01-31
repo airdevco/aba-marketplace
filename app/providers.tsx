@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { HideDevIndicator } from "./hide-dev-indicator";
+import { EmployerMessageDrawerProvider } from "@/components/EmployerMessageDrawerContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -22,10 +23,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <HideDevIndicator />
-        <Toaster />
-        <Sonner position="top-right" />
-        {children}
+        <EmployerMessageDrawerProvider>
+          <HideDevIndicator />
+          <Toaster />
+          <Sonner position="top-right" />
+          {children}
+        </EmployerMessageDrawerProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

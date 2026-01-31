@@ -15,7 +15,7 @@ import {
   MoreVertical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
@@ -128,9 +128,10 @@ function AdminPortalLayoutContent({
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <SheetContent side="left" className="w-72 p-0">
+          <SheetContent side="left" className="p-0 w-72">
             <VisuallyHidden>
               <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetDescription>Admin navigation sidebar</SheetDescription>
             </VisuallyHidden>
             <div className="flex flex-col h-full">
               {/* Logo */}

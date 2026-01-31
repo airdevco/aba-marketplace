@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { GenericAvatarByRole } from "@/components/GenericAvatar";
 import { InviteToApplyModal } from "@/components/InviteToApplyModal";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
+import { addInvite } from "@/lib/invite-store";
 
 // Worker type matching professional onboarding preferences + licensed
 type DirectoryWorker = {
@@ -87,9 +88,11 @@ export default function DirectoryPage() {
   });
 
   const handleSendInvite = (jobId: string | number, message: string) => {
-    // TODO: API call to send invitation and create message thread
-    console.log("Sending invite", { workerId: selectedWorker?.id, jobId, message });
-    // Could show a success toast here
+    if (!selectedWorker) return;
+    const job = mockActiveJobs.find((j) => j.id === jobId || String(j.id) === String(jobId));
+    const jobTitle = job?.title ?? "Job";
+    const candidateLabel = selectedWorker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate";
+    addInvite("E1", selectedWorker.id, jobId, jobTitle, message, candidateLabel);
   };
 
   return (
@@ -101,7 +104,7 @@ export default function DirectoryPage() {
         <div className="space-y-4">
           <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary" asChild>
             <Link href="/employer-portal?tab=jobs">
-              <ChevronLeft className="w-4 h-4 mr-2" />
+              <ChevronLeft className="w-4 h-4 mr-1" />
               Back to Dashboard
             </Link>
           </Button>

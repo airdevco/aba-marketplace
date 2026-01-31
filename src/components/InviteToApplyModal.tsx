@@ -66,7 +66,7 @@ export function InviteToApplyModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent overlayClassName="bg-black/40" className="sm:max-w-lg bg-white border border-gray-200 shadow-xl">
         <DialogHeader>
           <DialogTitle>Invite {candidateLabel} to Apply</DialogTitle>
           <DialogDescription>
@@ -76,7 +76,7 @@ export function InviteToApplyModal({
 
         <div className="space-y-6 py-4">
           {/* Candidate Info */}
-          <div className="bg-muted p-3 rounded-md text-sm">
+          <div className="bg-gray-50 p-3 rounded-md text-sm">
             <p>
               <span className="font-medium">Candidate ID:</span> #{candidateId}
             </p>
@@ -84,10 +84,8 @@ export function InviteToApplyModal({
 
           {/* Job Selection */}
           <div className="space-y-2">
-            <Label htmlFor="job-select">
-              Select a Job <span className="text-destructive">*</span>
-            </Label>
-            <Select value={selectedJobId} onValueChange={setSelectedJobId}>
+            <Label htmlFor="job-select">Select a Job</Label>
+            <Select value={selectedJobId || undefined} onValueChange={setSelectedJobId}>
               <SelectTrigger id="job-select">
                 <SelectValue placeholder="Choose a job posting..." />
               </SelectTrigger>
@@ -109,9 +107,7 @@ export function InviteToApplyModal({
 
           {/* Message */}
           <div className="space-y-2">
-            <Label htmlFor="invite-message">
-              Your Message <span className="text-destructive">*</span>
-            </Label>
+            <Label htmlFor="invite-message">Your Message</Label>
             <Textarea
               id="invite-message"
               placeholder="Hi, we came across your profile and think you'd be a great fit for this position..."
@@ -131,8 +127,10 @@ export function InviteToApplyModal({
             Cancel
           </Button>
           <Button
+            type="button"
             onClick={handleSend}
-            disabled={!selectedJobId || !message.trim() || isSending}
+            disabled={isSending}
+            className="cursor-pointer"
           >
             {isSending ? "Sending..." : "Send Invitation"}
           </Button>

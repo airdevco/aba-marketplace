@@ -14,7 +14,7 @@ import {
   Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -23,6 +23,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { ProfessionalMessageDrawerProvider } from "@/components/ProfessionalMessageDrawerContext";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", value: "dashboard" },
@@ -83,8 +84,8 @@ function ProfessionalPortalLayoutContent({
       {/* User Profile */}
       <div className="p-4 border-t bg-gray-50/50">
         <div className="flex items-center gap-3 px-2">
-          <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop" />
+          <Avatar className="h-10 w-10">
+            <AvatarImage src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769817783115x473563165576327740/mary.jpeg" />
             <AvatarFallback>SW</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -124,9 +125,10 @@ function ProfessionalPortalLayoutContent({
 
       {/* Mobile Sidebar */}
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetContent side="left" className="p-0 w-72 max-w-[85vw] z-[100]">
+        <SheetContent side="left" className="p-0 w-72">
           <VisuallyHidden>
             <SheetTitle>Navigation Menu</SheetTitle>
+            <SheetDescription>Main navigation sidebar</SheetDescription>
           </VisuallyHidden>
           <SidebarContent />
         </SheetContent>
@@ -145,9 +147,10 @@ function ProfessionalPortalLayoutContent({
           >
             <Menu className="w-5 h-5" />
           </Button>
-          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm shrink-0">
-            SW
-          </div>
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769817783115x473563165576327740/mary.jpeg" alt="Sarah Williams" />
+            <AvatarFallback className="text-xs">SW</AvatarFallback>
+          </Avatar>
         </header>
 
         <div className="p-8 max-w-7xl mx-auto">
@@ -165,7 +168,9 @@ export default function ProfessionalPortalLayout({
 }) {
   return (
     <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
-      <ProfessionalPortalLayoutContent>{children}</ProfessionalPortalLayoutContent>
+      <ProfessionalMessageDrawerProvider>
+        <ProfessionalPortalLayoutContent>{children}</ProfessionalPortalLayoutContent>
+      </ProfessionalMessageDrawerProvider>
     </Suspense>
   );
 }

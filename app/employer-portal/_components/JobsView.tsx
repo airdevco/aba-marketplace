@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { 
@@ -19,17 +19,7 @@ import {
   DropdownMenuLabel, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle, 
-  SheetDescription,
-  SheetFooter
-} from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   MoreHorizontal, 
@@ -41,10 +31,10 @@ import {
   MapPin,
   Mail,
   MessageSquare,
-  Send,
   User,
   CheckCircle2
 } from "lucide-react";
+import { useEmployerMessageDrawer } from "@/components/EmployerMessageDrawerContext";
 
 // Mock data
 const jobs = [
@@ -55,17 +45,18 @@ const jobs = [
   { id: 5, title: "RBT - Weekend Shift", location: "Sandy Springs, GA", type: "Part-time", status: "Paused", applicants: 0, posted: "2026-01-20" },
 ];
 
+// Application/Connection status: Active (default), Accepted, Declined by Employer, Declined by Candidate
 const allMockApplicants = [
-  { id: "EF454GR", name: "Sarah Williams", email: "sarah.w@example.com", role: "RBT", location: "Atlanta, GA (5 miles)", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop", experience: "3 years", status: "Active" },
-  { id: "AB123CD", name: "Michael Chen", email: "m.chen@example.com", role: "RBT", location: "Decatur, GA (8 miles)", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop", experience: "1 year", status: "Active" },
-  { id: "XY987ZW", name: "Jessica Davis", email: "jess.davis@example.com", role: "BCBA", location: "Marietta, GA (15 miles)", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop", experience: "5 years", status: "Accepted" },
-  { id: "LM456OP", name: "David Wilson", email: "david.w@example.com", role: "RBT", location: "Alpharetta, GA (12 miles)", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop", experience: "2 years", status: "Active" },
-  { id: "QR789ST", name: "Emily Johnson", email: "emily.j@example.com", role: "BCBA", location: "Atlanta, GA (3 miles)", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop", experience: "4 years", status: "Active" },
-  { id: "UV321WX", name: "Robert Taylor", email: "robert.t@example.com", role: "RBT", location: "Roswell, GA (20 miles)", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop", experience: "6 months", status: "Declined by Employer" },
-  { id: "JK654MN", name: "Jennifer Brown", email: "jen.b@example.com", role: "Clinical Supervisor", location: "Smyrna, GA (10 miles)", image: "https://images.unsplash.com/photo-1554151228-14d9def656ec?w=400&h=400&fit=crop", experience: "7 years", status: "Active" },
-  { id: "GH987IJ", name: "James Miller", email: "james.m@example.com", role: "RBT", location: "Atlanta, GA (downtown)", image: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=400&h=400&fit=crop", experience: "2 years", status: "Active" },
-  { id: "DE123FG", name: "Ashley Moore", email: "ashley.m@example.com", role: "BCBA", location: "Dunwoody, GA (8 miles)", image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop", experience: "3 years", status: "Active" },
-  { id: "BC456HI", name: "Daniel Anderson", email: "daniel.a@example.com", role: "RBT", location: "Sandy Springs, GA (6 miles)", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop", experience: "1.5 years", status: "Active" },
+  { id: "EF454GR", name: "Sarah Williams", email: "sarah.w@example.com", role: "RBT", location: "Atlanta, GA (5 miles)", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop", experience: "3 years", status: "Active" as const },
+  { id: "AB123CD", name: "Michael Chen", email: "m.chen@example.com", role: "RBT", location: "Decatur, GA (8 miles)", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop", experience: "1 year", status: "Active" as const },
+  { id: "XY987ZW", name: "Jessica Davis", email: "jess.davis@example.com", role: "BCBA", location: "Marietta, GA (15 miles)", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop", experience: "5 years", status: "Accepted" as const },
+  { id: "LM456OP", name: "David Wilson", email: "david.w@example.com", role: "RBT", location: "Alpharetta, GA (12 miles)", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop", experience: "2 years", status: "Active" as const },
+  { id: "QR789ST", name: "Emily Johnson", email: "emily.j@example.com", role: "BCBA", location: "Atlanta, GA (3 miles)", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop", experience: "4 years", status: "Declined by Candidate" as const },
+  { id: "UV321WX", name: "Robert Taylor", email: "robert.t@example.com", role: "RBT", location: "Roswell, GA (20 miles)", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop", experience: "6 months", status: "Declined by Employer" as const },
+  { id: "JK654MN", name: "Jennifer Brown", email: "jen.b@example.com", role: "Clinical Supervisor", location: "Smyrna, GA (10 miles)", image: "https://images.unsplash.com/photo-1554151228-14d9def656ec?w=400&h=400&fit=crop", experience: "7 years", status: "Active" as const },
+  { id: "GH987IJ", name: "James Miller", email: "james.m@example.com", role: "RBT", location: "Atlanta, GA (downtown)", image: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=400&h=400&fit=crop", experience: "2 years", status: "Accepted" as const },
+  { id: "DE123FG", name: "Ashley Moore", email: "ashley.m@example.com", role: "BCBA", location: "Dunwoody, GA (8 miles)", image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop", experience: "3 years", status: "Active" as const },
+  { id: "BC456HI", name: "Daniel Anderson", email: "daniel.a@example.com", role: "RBT", location: "Sandy Springs, GA (6 miles)", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop", experience: "1.5 years", status: "Active" as const },
 ];
 
 const getApplicantsForJob = (jobId: number, count: number) => {
@@ -78,85 +69,18 @@ const getApplicantsForJob = (jobId: number, count: number) => {
   return selected;
 };
 
-// Placeholder company logo for employer messaging attribution
-const EMPLOYER_COMPANY_LOGO = "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769804890523x838539645913488600/favicon.png";
-
-const getMessagesForWorker = (workerId: string) => {
-  // Generate unique messages based on worker ID
-  const worker = allMockApplicants.find(a => a.id === workerId);
-  const workerName = worker?.name || "Candidate";
-  const workerFirstName = worker?.name.split(' ')[0] || "there";
-  
-  const messages = [
-    { 
-      id: 1, 
-      sender: "employer", 
-      senderName: "Andrew Johnson",
-      senderCompany: "Airdev",
-      senderCompanyLogo: EMPLOYER_COMPANY_LOGO,
-      senderRole: "Hiring Manager",
-      text: `Hi ${workerFirstName}, thanks for your application. Are you available for a quick call?`, 
-      time: "Yesterday 2:30 PM" 
-    },
-  ];
-  
-  if (workerId.endsWith("GR") || workerId.endsWith("CD")) {
-    messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Yes, I am available tomorrow afternoon.", time: "Yesterday 3:45 PM" });
-    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderCompanyLogo: EMPLOYER_COMPANY_LOGO, senderRole: "Hiring Manager", text: "Great, I'll send an invite.", time: "Today 9:00 AM" });
-  } else if (workerId.endsWith("ZW") || workerId.endsWith("OP")) {
-    messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Hi! I'm currently working but free after 5pm.", time: "Yesterday 5:15 PM" });
-    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderCompanyLogo: EMPLOYER_COMPANY_LOGO, senderRole: "Hiring Manager", text: "Perfect, let's schedule for 5:30 PM then.", time: "Today 10:00 AM" });
-  } else if (workerId.endsWith("ST") || workerId.endsWith("WX")) {
-    messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Thank you! I'm very interested. When would be a good time?", time: "Yesterday 4:20 PM" });
-  } else if (workerId.endsWith("MN") || workerId.endsWith("IJ")) {
-    messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Hi, I'd love to learn more about the position.", time: "Yesterday 6:00 PM" });
-    messages.push({ id: 3, sender: "employer", senderName: "Andrew Johnson", senderCompany: "Airdev", senderCompanyLogo: EMPLOYER_COMPANY_LOGO, senderRole: "Hiring Manager", text: "Great! Let me know your availability this week.", time: "Today 8:30 AM" });
-  } else {
-    messages.push({ id: 2, sender: "worker", senderName: workerName, text: "Thanks for reaching out! I'm definitely interested.", time: "Yesterday 3:00 PM" });
-  }
-  
-  return messages;
-};
-
 export default function JobsView() {
   const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
-  const [selectedWorker, setSelectedWorker] = useState<typeof allMockApplicants[0] | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [messageInput, setMessageInput] = useState("");
-  const messageInputRef = useRef<HTMLTextAreaElement>(null);
-
-  const adjustMessageInputHeight = () => {
-    const textarea = messageInputRef.current;
-    if (!textarea) return;
-    textarea.style.height = "auto";
-    const lineHeight = 20;
-    const maxHeight = lineHeight * 3;
-    textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
-  };
-
-  useEffect(() => {
-    adjustMessageInputHeight();
-  }, [messageInput]);
+  const messageDrawer = useEmployerMessageDrawer();
 
   const toggleExpand = (id: number) => {
     setExpandedJobId(expandedJobId === id ? null : id);
   };
 
-  const handleOpenDrawer = (worker: typeof allMockApplicants[0]) => {
-    setSelectedWorker(worker);
-    setIsDrawerOpen(true);
+  const handleMessageClick = (worker: typeof allMockApplicants[0]) => {
+    const jobTitle = jobs.find((j) => j.id === expandedJobId)?.title ?? "Application";
+    messageDrawer?.openMessageDrawer({ id: worker.id, name: worker.name, image: worker.image }, jobTitle);
   };
-
-  const handleCloseDrawer = (open: boolean) => {
-    setIsDrawerOpen(open);
-    if (!open) {
-      // Reset state when drawer closes
-      setSelectedWorker(null);
-      setMessageInput("");
-    }
-  };
-
-  const currentMessages = selectedWorker ? getMessagesForWorker(selectedWorker.id) : [];
 
   return (
     <div className="space-y-8">
@@ -231,7 +155,7 @@ export default function JobsView() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                          <Link href={`/listing/${job.id}?mode=edit`}>
+                          <Link href={`/listing/new?id=${job.id}`}>
                             <Edit className="mr-1.5 h-4 w-4" />
                             Edit listing
                           </Link>
@@ -299,16 +223,16 @@ export default function JobsView() {
                                   <div className="space-y-1">
                                     <div className="flex items-center gap-2">
                                       <h4 className="font-semibold text-base">{worker.name}</h4>
-                                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide border ${
-                                        worker.status === 'New' 
-                                          ? 'bg-green-50 text-green-700 border-green-200' 
-                                          : worker.status === 'Reviewing' 
-                                          ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                          : worker.status === 'Shortlisted'
-                                          ? 'bg-purple-50 text-purple-700 border-purple-200'
-                                          : worker.status === 'Interviewing'
-                                          ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                          : 'bg-gray-50 text-gray-700 border-gray-200'
+                                      <span className={`inline-flex items-center rounded-full border px-2 py-0 text-[10px] font-medium uppercase tracking-wide ${
+                                        worker.status === "Active"
+                                          ? "bg-green-50 text-green-700 border-green-200"
+                                          : worker.status === "Accepted"
+                                          ? "bg-blue-50 text-blue-700 border-blue-200"
+                                          : worker.status === "Declined by Employer"
+                                          ? "bg-red-50 text-red-700 border-red-200"
+                                          : worker.status === "Declined by Candidate"
+                                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                                          : "bg-gray-50 text-gray-700 border-gray-200"
                                       }`}>
                                         {worker.status}
                                       </span>
@@ -343,7 +267,7 @@ export default function JobsView() {
                                   <Button 
                                     size="sm" 
                                     className="gap-1.5 flex-1 sm:flex-none"
-                                    onClick={() => handleOpenDrawer(worker)}
+                                    onClick={() => handleMessageClick(worker)}
                                   >
                                     <MessageSquare className="h-4 w-4" />
                                     Message
@@ -362,96 +286,6 @@ export default function JobsView() {
           </TableBody>
         </Table>
       </div>
-
-      {/* Messaging Drawer */}
-      <Sheet open={isDrawerOpen} onOpenChange={handleCloseDrawer}>
-        <SheetContent className="sm:max-w-md flex flex-col h-full">
-          <SheetHeader className="border-b pb-4">
-            <SheetTitle className="flex items-center gap-3">
-              {selectedWorker && (
-                <>
-                  <Avatar>
-                    <AvatarImage src={selectedWorker.image} />
-                    <AvatarFallback>{selectedWorker.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-start">
-                    <span>{selectedWorker.name}</span>
-                    <span className="text-xs font-normal text-muted-foreground">{selectedWorker.role} • {selectedWorker.location}</span>
-                  </div>
-                </>
-              )}
-            </SheetTitle>
-            <SheetDescription>
-              Messages regarding {jobs.find(j => j.id === expandedJobId)?.title || "Application"}
-            </SheetDescription>
-          </SheetHeader>
-          
-          <ScrollArea className="flex-1 pr-4 -mr-4 py-4">
-            <div className="space-y-4">
-              {currentMessages.map((msg) => (
-                <div 
-                  key={msg.id} 
-                  className={`flex flex-col ${msg.sender === "employer" ? "items-end" : "items-start"}`}
-                >
-                  {/* Sender attribution: name + company, optional logo, timestamp below bubble */}
-                  {msg.sender === "employer" && msg.senderName && (
-                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-1 px-1">
-                      {"senderCompanyLogo" in msg && msg.senderCompanyLogo && (
-                        <span className="relative w-4 h-4 rounded overflow-hidden shrink-0 bg-muted">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={msg.senderCompanyLogo} alt="" className="w-full h-full object-cover" />
-                        </span>
-                      )}
-                      <span>
-                        {msg.senderName} from {msg.senderCompany}
-                      </span>
-                    </div>
-                  )}
-                  {msg.sender === "worker" && msg.senderName && (
-                    <div className="text-[10px] text-muted-foreground mb-1 px-1">
-                      {msg.senderName}
-                    </div>
-                  )}
-                  
-                  <div 
-                    className={`max-w-[85%] rounded-lg p-3 text-sm ${
-                      msg.sender === "employer" 
-                        ? "bg-primary text-primary-foreground rounded-br-none" 
-                        : "bg-muted rounded-bl-none"
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                  <span className="text-[10px] text-muted-foreground mt-1 px-1">
-                    {msg.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-
-          <SheetFooter className="pt-4 mt-auto">
-            <div className="relative w-full">
-              <Textarea
-                ref={messageInputRef}
-                placeholder="Type your message..."
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                onInput={adjustMessageInputHeight}
-                rows={1}
-                className="w-full min-h-[48px] max-h-[60px] overflow-y-auto resize-none py-3 pr-12"
-              />
-              <Button
-                size="icon"
-                className="absolute bottom-2.5 right-2.5 h-8 w-8 shrink-0"
-                onClick={() => setMessageInput("")}
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
     </div>
   );
 }
