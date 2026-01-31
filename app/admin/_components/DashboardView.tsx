@@ -76,17 +76,17 @@ export default function DashboardView() {
           </CardContent>
         </Card>
 
-        <Card className="border-orange-200 bg-orange-50/50">
+        <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-orange-700 font-medium">Pending Actions</p>
-                <p className="text-3xl font-bold text-orange-700">
+                <p className="text-sm text-muted-foreground">Pending Actions</p>
+                <p className="text-3xl font-bold">
                   {metrics.pendingVerifications + metrics.pendingAccessRequests}
                 </p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-orange-200 flex items-center justify-center">
-                <AlertCircle className="h-6 w-6 text-orange-700" />
+              <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
+                <AlertCircle className="h-6 w-6 text-orange-600" />
               </div>
             </div>
           </CardContent>
@@ -96,7 +96,7 @@ export default function DashboardView() {
       {/* Quick Access Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Pending License Verifications */}
-        <Card className="border-amber-200">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -117,7 +117,7 @@ export default function DashboardView() {
         </Card>
 
         {/* Pending Access Requests */}
-        <Card className="border-blue-200">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -157,18 +157,18 @@ export default function DashboardView() {
                     </div>
                   )}
                   {activity.type === "application_submitted" && (
-                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                      <Briefcase className="h-4 w-4 text-blue-600" />
+                    <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <Briefcase className="h-4 w-4 text-green-600" />
                     </div>
                   )}
                   {activity.type === "verification_requested" && (
-                    <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                    <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
+                      <AlertCircle className="h-4 w-4 text-orange-600" />
                     </div>
                   )}
                   {activity.type === "access_requested" && (
-                    <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                      <Building className="h-4 w-4 text-indigo-600" />
+                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <Building className="h-4 w-4 text-blue-600" />
                     </div>
                   )}
                 </div>

@@ -377,6 +377,7 @@ export default function JobListingPage({ params }: { params: Promise<{ id: strin
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode") || "view"; // Default to view if no mode
   const viewType = searchParams.get("view"); // "professional" for professional view
+  const fromSearch = searchParams.get("from") === "search"; // opened from search page (new tab)
   const isViewMode = mode === "view";
   const isProfessionalView = viewType === "professional";
 
@@ -426,12 +427,14 @@ export default function JobListingPage({ params }: { params: Promise<{ id: strin
       <div className="max-w-3xl mx-auto py-8 px-4 space-y-8">
         {/* Navigation */}
         <div className="space-y-4">
-          <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary" asChild>
-            <Link href={isProfessionalView ? "/professional-portal?tab=dashboard" : "/employer-portal?tab=jobs"}>
-              <ChevronLeft className="w-4 h-4 mr-1" />
-              Back to Dashboard
-            </Link>
-          </Button>
+          {!fromSearch && (
+            <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary" asChild>
+              <Link href={isProfessionalView ? "/professional-portal?tab=dashboard" : "/employer-portal?tab=jobs"}>
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Back to Dashboard
+              </Link>
+            </Button>
+          )}
           <div className="space-y-1">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">

@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,19 +13,13 @@ import {
   TableRow
 } from "@/components/ui/table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Search, MoreHorizontal, Eye, Edit, XCircle, ExternalLink } from "lucide-react";
+import { Search } from "lucide-react";
 
 // Mock jobs data
 const jobs = [
@@ -102,7 +94,7 @@ export default function JobsView() {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableHead>Job Title</TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead>Position Type</TableHead>
@@ -110,7 +102,6 @@ export default function JobsView() {
                 <TableHead>Status</TableHead>
                 <TableHead>Applicants</TableHead>
                 <TableHead>Posted Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -123,12 +114,10 @@ export default function JobsView() {
                   </TableCell>
                   <TableCell>{job.location}</TableCell>
                   <TableCell>
-                    <Badge 
-                      variant={job.status === "Active" ? "default" : "outline"}
-                      className={
-                        job.status === "Active" ? "" :
-                        job.status === "Paused" ? "bg-yellow-100 text-yellow-700 border-yellow-200" :
-                        "bg-gray-100 text-gray-700 border-gray-200"
+                    <Badge
+                      variant={
+                        job.status === "Active" ? "default" :
+                        job.status === "Paused" ? "outline" : "secondary"
                       }
                     >
                       {job.status}
@@ -137,32 +126,6 @@ export default function JobsView() {
                   <TableCell>{job.applicants}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {new Date(job.posted).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={`/listing/${job.id}?mode=view`} target="_blank">
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Job
-                            <ExternalLink className="h-3 w-3 ml-auto" />
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
-                          <XCircle className="h-4 w-4 mr-2" />
-                          Close Job
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

@@ -22,13 +22,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { Search, Plus, MoreHorizontal, Eye, Edit, XCircle } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 // Mock organizations data
@@ -75,7 +69,7 @@ export default function OrganizationsView() {
               Create New Organization
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent overlayClassName="bg-black/40">
             <DialogHeader>
               <DialogTitle>Create New Organization</DialogTitle>
               <DialogDescription>
@@ -133,14 +127,13 @@ export default function OrganizationsView() {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableHead>Company Name</TableHead>
                 <TableHead>Admin User</TableHead>
                 <TableHead>Team Members</TableHead>
                 <TableHead>Active Jobs</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -163,29 +156,6 @@ export default function OrganizationsView() {
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {new Date(org.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
-                          <XCircle className="h-4 w-4 mr-2" />
-                          Deactivate
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

@@ -1,14 +1,13 @@
-"use client";
-
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MapPin, Briefcase, Banknote, Calendar, BadgeCheck, Building2, Filter } from "lucide-react";
 import { useProfessionalMessageDrawer } from "@/components/ProfessionalMessageDrawerContext";
+import { JobCard, JobCardData } from "@/components/JobCard";
 
 // Placeholder company logos for messaging attribution
 const COMPANY_LOGOS = {
@@ -18,91 +17,115 @@ const COMPANY_LOGOS = {
   icon2: "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769804989697x108119687752882050/icon2.png",
 } as const;
 
-// Mock data for suggested matches with full job posting fields
-const allJobMatches = [
+// Mock data for suggested matches - formatted for JobCard component
+const allJobMatches: JobCardData[] = [
   {
     id: 1,
     title: "Registered Behavior Technician (RBT)",
     company: "Bright Future ABA",
+    companyLogo: COMPANY_LOGOS.airdev,
     location: "Atlanta, GA (5 miles)",
     employmentType: "Full-time",
-    compensationDisplay: "Hourly $24 - $28/hr",
-    compensationValue: 26,
-    schedulePreference: "Standard Full-Time (Weekday daytime hours)",
-    licenseRequirement: "RBT",
+    rate: "$24 - $28/hr",
+    compensationType: "hourly",
+    schedulePreference: "standard",
+    schedule: ["Weekdays"],
+    telehealthOnly: false,
+    workSettings: ["Center-based", "In-home"],
+    licensed: true,
+    benefits: ["Medical / Dental / Vision", "Paid Time Off (PTO)", "CEU Stipend"],
+    postedDays: 2,
     matchScore: 98,
-    posted: "2 days ago",
-    postedOrder: 2,
   },
   {
     id: 2,
     title: "BCBA - Clinic Director",
     company: "Peach State Therapy",
+    companyLogo: COMPANY_LOGOS.parsley,
     location: "Marietta, GA (10 miles)",
     employmentType: "Full-time",
-    compensationDisplay: "Salary $75,000 - $90,000/yr",
-    compensationValue: 82500,
-    schedulePreference: "Standard Full-Time (Weekday daytime hours)",
-    licenseRequirement: "BCBA",
+    rate: "$75,000 - $90,000/yr",
+    compensationType: "salary",
+    schedulePreference: "standard",
+    schedule: ["Weekdays"],
+    telehealthOnly: false,
+    workSettings: ["Center-based"],
+    licensed: true,
+    benefits: ["Medical / Dental / Vision", "401(k) with Matching", "Paid Time Off (PTO)"],
+    postedDays: 1,
     matchScore: 95,
-    posted: "1 day ago",
-    postedOrder: 1,
   },
   {
     id: 3,
     title: "RBT - School Based",
     company: "Autism Care Partners",
+    companyLogo: COMPANY_LOGOS.icon2,
     location: "Decatur, GA (8 miles)",
     employmentType: "Part-time",
-    compensationDisplay: "Hourly $25 - $30/hr",
-    compensationValue: 27.5,
-    schedulePreference: "Non-Standard / Flexible Schedule",
-    licenseRequirement: "RBT",
+    rate: "$25 - $30/hr",
+    compensationType: "hourly",
+    schedulePreference: "flexible",
+    schedule: ["School Hours"],
+    telehealthOnly: false,
+    workSettings: ["School-based"],
+    licensed: true,
+    benefits: ["Mileage Reimbursement"],
+    postedDays: 3,
     matchScore: 88,
-    posted: "3 days ago",
-    postedOrder: 3,
   },
   {
     id: 4,
     title: "Lead RBT",
     company: "Metro Behavioral Health",
+    companyLogo: COMPANY_LOGOS.default,
     location: "Sandy Springs, GA (6 miles)",
     employmentType: "Full-time",
-    compensationDisplay: "Hourly $26 - $32/hr",
-    compensationValue: 29,
-    schedulePreference: "Standard Full-Time (Weekday daytime hours)",
-    licenseRequirement: "RBT",
+    rate: "$26 - $32/hr",
+    compensationType: "hourly",
+    schedulePreference: "standard",
+    schedule: ["Weekdays"],
+    telehealthOnly: false,
+    workSettings: ["Center-based", "In-home"],
+    licensed: true,
+    benefits: ["Medical / Dental / Vision", "Paid Time Off (PTO)"],
+    postedDays: 5,
     matchScore: 92,
-    posted: "5 days ago",
-    postedOrder: 5,
   },
   {
     id: 5,
     title: "RBT - Weekend Shift",
     company: "Helping Hands ABA",
+    companyLogo: COMPANY_LOGOS.airdev,
     location: "Alpharetta, GA (15 miles)",
     employmentType: "Part-time",
-    compensationDisplay: "Hourly $28 - $35/hr",
-    compensationValue: 31.5,
-    schedulePreference: "Weekends",
-    licenseRequirement: "RBT",
+    rate: "$28 - $35/hr",
+    compensationType: "hourly",
+    schedulePreference: "flexible",
+    schedule: ["Weekends"],
+    telehealthOnly: false,
+    workSettings: ["In-home"],
+    licensed: true,
+    benefits: ["Paid Indirect Time", "CEU Stipend"],
+    postedDays: 7,
     matchScore: 90,
-    posted: "1 week ago",
-    postedOrder: 7,
   },
   {
     id: 6,
     title: "Senior BCBA",
     company: "Spectrum Support",
+    companyLogo: COMPANY_LOGOS.parsley,
     location: "Dunwoody, GA (12 miles)",
     employmentType: "Full-time",
-    compensationDisplay: "Hourly $80 - $100/hr",
-    compensationValue: 90,
-    schedulePreference: "Non-Standard / Flexible Schedule",
-    licenseRequirement: "BCBA",
+    rate: "$80 - $100/hr",
+    compensationType: "both",
+    schedulePreference: "flexible",
+    schedule: ["Flexible"],
+    telehealthOnly: false,
+    workSettings: ["Center-based", "In-home"],
+    licensed: true,
+    benefits: ["Medical / Dental / Vision", "401(k) with Matching", "Work From Home Flexibility"],
+    postedDays: 4,
     matchScore: 82,
-    posted: "4 days ago",
-    postedOrder: 4,
   },
 ];
 
@@ -210,21 +233,38 @@ export default function JobsView() {
       list = list.filter(job => filters.employmentType.includes(job.employmentType));
     }
     if (filters.licenseRequirement.length > 0) {
-      list = list.filter(job => filters.licenseRequirement.includes(job.licenseRequirement));
+      list = list.filter(job => {
+        // RBT filter matches jobs that require licenses
+        // BCBA filter matches BCBA-specific jobs
+        if (filters.licenseRequirement.includes("RBT")) {
+          return job.licensed;
+        }
+        if (filters.licenseRequirement.includes("BCBA")) {
+          return job.title.includes("BCBA");
+        }
+        return true;
+      });
     }
     if (filters.schedulePreference.length > 0) {
       list = list.filter(job =>
         filters.schedulePreference.some(pref =>
-          job.schedulePreference.toLowerCase().includes(pref.toLowerCase())
+          job.schedulePreference.toLowerCase().includes(pref.toLowerCase()) ||
+          job.schedule.some(s => s.toLowerCase().includes(pref.toLowerCase()))
         )
       );
     }
 
     // Apply sorting
-    if (sortBy === "match") list.sort((a, b) => b.matchScore - a.matchScore);
-    else if (sortBy === "date") list.sort((a, b) => (a.postedOrder ?? a.id) - (b.postedOrder ?? b.id));
+    if (sortBy === "match") list.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+    else if (sortBy === "date") list.sort((a, b) => a.postedDays - b.postedDays);
     else if (sortBy === "location") list.sort((a, b) => a.location.localeCompare(b.location));
-    else if (sortBy === "compensation") list.sort((a, b) => b.compensationValue - a.compensationValue);
+    else if (sortBy === "compensation") {
+      list.sort((a, b) => {
+        const aVal = parseFloat(a.rate.split("-")[0].replace(/[$,]/g, ""));
+        const bVal = parseFloat(b.rate.split("-")[0].replace(/[$,]/g, ""));
+        return bVal - aVal;
+      });
+    }
 
     return list;
   }, [sortBy, filters]);
@@ -255,160 +295,155 @@ export default function JobsView() {
         </Button>
       </div>
 
-      {/* Filter and Sort row - right justified */}
-      <div className="flex flex-wrap items-center justify-end gap-4">
-        {/* Filter dropdown - improved styling */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="default" className="gap-2 h-9 px-4 font-medium">
-              <Filter className="w-4 h-4 text-muted-foreground" />
-              Filter{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-64 p-0">
-            <div className="px-3 py-2.5 border-b bg-muted/40">
-              <p className="text-sm font-semibold text-foreground">Filter recommendations</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Select one or more options</p>
-            </div>
-            <div className="py-2">
-              <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Employment Type
-              </DropdownMenuLabel>
-              <DropdownMenuCheckboxItem
-                checked={filters.employmentType.includes("Full-time")}
-                onCheckedChange={() => toggleFilter("employmentType", "Full-time")}
-                className="py-2 px-3 cursor-pointer"
-              >
-                Full-time
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={filters.employmentType.includes("Part-time")}
-                onCheckedChange={() => toggleFilter("employmentType", "Part-time")}
-                className="py-2 px-3 cursor-pointer"
-              >
-                Part-time
-              </DropdownMenuCheckboxItem>
-            </div>
-            <div className="py-2 border-t">
-              <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                License Requirement
-              </DropdownMenuLabel>
-              <DropdownMenuCheckboxItem
-                checked={filters.licenseRequirement.includes("RBT")}
-                onCheckedChange={() => toggleFilter("licenseRequirement", "RBT")}
-                className="py-2 px-3 cursor-pointer"
-              >
-                RBT
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={filters.licenseRequirement.includes("BCBA")}
-                onCheckedChange={() => toggleFilter("licenseRequirement", "BCBA")}
-                className="py-2 px-3 cursor-pointer"
-              >
-                BCBA
-              </DropdownMenuCheckboxItem>
-            </div>
-            <div className="py-2 border-t">
-              <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Schedule
-              </DropdownMenuLabel>
-              <DropdownMenuCheckboxItem
-                checked={filters.schedulePreference.includes("Standard")}
-                onCheckedChange={() => toggleFilter("schedulePreference", "Standard")}
-                className="py-2 px-3 cursor-pointer"
-              >
-                Standard (Weekday daytime)
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={filters.schedulePreference.includes("Flexible")}
-                onCheckedChange={() => toggleFilter("schedulePreference", "Flexible")}
-                className="py-2 px-3 cursor-pointer"
-              >
-                Flexible Schedule
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={filters.schedulePreference.includes("Weekends")}
-                onCheckedChange={() => toggleFilter("schedulePreference", "Weekends")}
-                className="py-2 px-3 cursor-pointer"
-              >
-                Weekends
-              </DropdownMenuCheckboxItem>
-            </div>
-            {activeFilterCount > 0 && (
-              <div className="border-t p-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-center text-muted-foreground hover:text-foreground"
-                  onClick={() => setFilters({ employmentType: [], licenseRequirement: [], schedulePreference: [] })}
-                >
-                  Clear all filters
-                </Button>
-              </div>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Sort dropdown */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by</span>
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-            <SelectTrigger className="w-[180px] h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="match">Match quality</SelectItem>
-              <SelectItem value="date">Date posted</SelectItem>
-              <SelectItem value="location">Location (A-Z)</SelectItem>
-              <SelectItem value="compensation">Compensation</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Section 1: Invitations (count) - horizontal scroll, one row only */}
+      {/* Section 1: Invitations - title with filter/sort on the right */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Invitations ({employerInvitations.length})</h2>
-        <div className="w-full min-w-0 overflow-x-auto overflow-y-hidden pb-4 -mx-px">
-          <div className="flex gap-4 w-max">
-            {employerInvitations.map((item) => (
-              <Card
-                key={`invite-${item.id}`}
-                className="w-[380px] min-w-[380px] shrink-0 border-blue-200 bg-white hover:border-blue-300 transition-colors"
-              >
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge className="bg-blue-600 hover:bg-blue-700">Invitation</Badge>
-                    <span className="text-xs text-muted-foreground">{item.date}</span>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold">Invitations ({employerInvitations.length})</h2>
+          <div className="flex flex-wrap items-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="default" className="gap-2 h-9 px-4 font-medium">
+                  <Filter className="w-4 h-4 text-muted-foreground" />
+                  Filter{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 p-0">
+                <div className="px-3 py-2.5 border-b bg-muted/40">
+                  <p className="text-sm font-semibold text-foreground">Filter recommendations</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Select one or more options</p>
+                </div>
+                <div className="py-2">
+                  <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Employment Type
+                  </DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem
+                    checked={filters.employmentType.includes("Full-time")}
+                    onCheckedChange={() => toggleFilter("employmentType", "Full-time")}
+                    className="py-2 px-3 cursor-pointer"
+                  >
+                    Full-time
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={filters.employmentType.includes("Part-time")}
+                    onCheckedChange={() => toggleFilter("employmentType", "Part-time")}
+                    className="py-2 px-3 cursor-pointer"
+                  >
+                    Part-time
+                  </DropdownMenuCheckboxItem>
+                </div>
+                <div className="py-2 border-t">
+                  <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    License Requirement
+                  </DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem
+                    checked={filters.licenseRequirement.includes("RBT")}
+                    onCheckedChange={() => toggleFilter("licenseRequirement", "RBT")}
+                    className="py-2 px-3 cursor-pointer"
+                  >
+                    RBT
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={filters.licenseRequirement.includes("BCBA")}
+                    onCheckedChange={() => toggleFilter("licenseRequirement", "BCBA")}
+                    className="py-2 px-3 cursor-pointer"
+                  >
+                    BCBA
+                  </DropdownMenuCheckboxItem>
+                </div>
+                <div className="py-2 border-t">
+                  <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Schedule
+                  </DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem
+                    checked={filters.schedulePreference.includes("Standard")}
+                    onCheckedChange={() => toggleFilter("schedulePreference", "Standard")}
+                    className="py-2 px-3 cursor-pointer"
+                  >
+                    Standard (Weekday daytime)
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={filters.schedulePreference.includes("Flexible")}
+                    onCheckedChange={() => toggleFilter("schedulePreference", "Flexible")}
+                    className="py-2 px-3 cursor-pointer"
+                  >
+                    Flexible Schedule
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={filters.schedulePreference.includes("Weekends")}
+                    onCheckedChange={() => toggleFilter("schedulePreference", "Weekends")}
+                    className="py-2 px-3 cursor-pointer"
+                  >
+                    Weekends
+                  </DropdownMenuCheckboxItem>
+                </div>
+                {activeFilterCount > 0 && (
+                  <div className="border-t p-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-center text-muted-foreground hover:text-foreground"
+                      onClick={() => setFilters({ employmentType: [], licenseRequirement: [], schedulePreference: [] })}
+                    >
+                      Clear all filters
+                    </Button>
                   </div>
-                  <CardTitle className="text-base">{item.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 shrink-0" />{item.company}
-                  </p>
-                  <div className="flex flex-col gap-y-1 text-sm text-muted-foreground mt-2">
-                    <span className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis"><MapPin className="w-3 h-3 shrink-0" />{item.location}</span>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis"><Briefcase className="w-3 h-3 shrink-0" />{item.employmentType}</span>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis"><Banknote className="w-3 h-3 shrink-0" />{item.compensationDisplay}</span>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis"><Calendar className="w-3 h-3 shrink-0" />{item.schedulePreference}</span>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis"><BadgeCheck className="w-3 h-3 shrink-0" />License: {item.licenseRequirement}</span>
-                  </div>
-                  <div className="bg-blue-50 p-3 rounded-md text-sm text-blue-900 border border-blue-100 mt-3 flex items-start gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border">
-                      <img src={item.companyLogo} alt="" className="h-8 w-8 object-contain" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground mb-1">{item.senderName} from {item.senderCompany}</p>
-                      <p className="whitespace-normal">{item.message}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardFooter className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1 text-destructive hover:text-destructive border-destructive/20">Decline</Button>
-                  <Button size="sm" className="flex-1" onClick={() => handleAcceptAndReply(item)}>Accept &amp; Reply</Button>
-                </CardFooter>
-              </Card>
-            ))}
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by</span>
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+                <SelectTrigger className="w-[180px] h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="match">Match quality</SelectItem>
+                  <SelectItem value="date">Date posted</SelectItem>
+                  <SelectItem value="location">Location (A-Z)</SelectItem>
+                  <SelectItem value="compensation">Compensation</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {employerInvitations.map((item) => (
+            <Card
+              key={`invite-${item.id}`}
+              className="border-blue-200 bg-white hover:border-blue-300 transition-colors"
+            >
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge className="bg-blue-600 hover:bg-blue-700">Invitation</Badge>
+                  <span className="text-xs text-muted-foreground">{item.date}</span>
+                </div>
+                <CardTitle className="text-base">{item.title}</CardTitle>
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 shrink-0" />{item.company}
+                </p>
+                <div className="flex flex-col gap-y-1 text-sm text-muted-foreground mt-2">
+                  <span className="flex items-center gap-1.5"><MapPin className="w-3 h-3 shrink-0" />{item.location}</span>
+                  <span className="flex items-center gap-1.5"><Briefcase className="w-3 h-3 shrink-0" />{item.employmentType}</span>
+                  <span className="flex items-center gap-1.5"><Banknote className="w-3 h-3 shrink-0" />{item.compensationDisplay}</span>
+                  <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3 shrink-0" />{item.schedulePreference}</span>
+                  <span className="flex items-center gap-1.5"><BadgeCheck className="w-3 h-3 shrink-0" />License: {item.licenseRequirement}</span>
+                </div>
+                <div className="bg-blue-50 p-3 rounded-md text-sm text-blue-900 border border-blue-100 mt-3 flex items-start gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-white border">
+                    <img src={item.companyLogo} alt="" className="h-8 w-8 object-contain" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-foreground mb-1">{item.senderName} from {item.senderCompany}</p>
+                    <p className="whitespace-normal">{item.message}</p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardFooter className="flex gap-2 pt-2">
+                <Button variant="outline" size="sm" className="flex-1 text-destructive hover:text-destructive border-destructive/20">Decline</Button>
+                <Button size="sm" className="flex-1" onClick={() => handleAcceptAndReply(item)}>Accept &amp; Reply</Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
         {employerInvitations.length === 0 && (
           <p className="text-sm text-muted-foreground py-4">No pending invitations.</p>
@@ -418,32 +453,14 @@ export default function JobsView() {
       {/* Section 2: Recommendations (count) */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Recommendations ({filteredAndSortedRecommendations.length})</h2>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
           {filteredAndSortedRecommendations.map((job) => (
-            <Card key={job.id} className="hover:border-primary/50 transition-colors">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">{job.matchScore}% Match</Badge>
-                  <span className="text-xs text-muted-foreground">{job.posted}</span>
-                </div>
-                <CardTitle className="text-base">{job.title}</CardTitle>
-                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5" />{job.company}
-                </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground mt-2">
-                  <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{job.location}</span>
-                  <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{job.employmentType}</span>
-                  <span className="flex items-center gap-1"><Banknote className="w-3 h-3" />{job.compensationDisplay}</span>
-                  <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{job.schedulePreference}</span>
-                  <span className="flex items-center gap-1"><BadgeCheck className="w-3 h-3" />License required: {job.licenseRequirement}</span>
-                </div>
-              </CardHeader>
-              <CardFooter className="pt-2">
-                <Button className="w-full sm:w-auto" asChild>
-                  <Link href={`/listing/${job.id}?view=professional`}>View &amp; Apply</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+            <JobCard
+              key={job.id}
+              job={job}
+              href={`/listing/${job.id}?view=professional`}
+              showExternalIcon={true}
+            />
           ))}
         </div>
         {filteredAndSortedRecommendations.length === 0 && (

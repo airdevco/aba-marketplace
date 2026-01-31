@@ -94,7 +94,7 @@ export default function ConnectionsView() {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableHead>Worker</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Company</TableHead>

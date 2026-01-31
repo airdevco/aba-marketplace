@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, User, Award } from "lucide-react";
+import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, User, Award, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,18 +34,19 @@ type DirectoryWorker = {
   scheduleDetails: string[];
   licensed: boolean;
   licenseNumber?: string;
+  postedDays: number;
 };
 
 // Mock Directory Data (fields align with professional preferences)
 const directoryWorkers: DirectoryWorker[] = [
-  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], compensationPreference: "hourly", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], licensed: true, licenseNumber: "RBT-101234" },
-  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 30, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-102345" },
-  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["School-based"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false },
-  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], compensationPreference: "hourly", employmentType: ["Full-time", "Contractor"], telehealthOnly: false, workSettings: ["Center-based", "In-home", "School-based"], radius: 20, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "RBT-104567" },
-  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], compensationPreference: "salary", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 35, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], licensed: true, licenseNumber: "BCBA-105678" },
-  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["In-home"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Afternoons"], licensed: false },
-  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], compensationPreference: "hourly", employmentType: ["Part-time", "Contractor"], telehealthOnly: null, workSettings: ["Center-based"], radius: 10, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false },
-  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-108901" },
+  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], compensationPreference: "hourly", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], licensed: true, licenseNumber: "RBT-101234", postedDays: 2 },
+  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 30, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-102345", postedDays: 1 },
+  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["School-based"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 5 },
+  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], compensationPreference: "hourly", employmentType: ["Full-time", "Contractor"], telehealthOnly: false, workSettings: ["Center-based", "In-home", "School-based"], radius: 20, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "RBT-104567", postedDays: 3 },
+  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], compensationPreference: "salary", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 35, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], licensed: true, licenseNumber: "BCBA-105678", postedDays: 7 },
+  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["In-home"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Afternoons"], licensed: false, postedDays: 4 },
+  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], compensationPreference: "hourly", employmentType: ["Part-time", "Contractor"], telehealthOnly: null, workSettings: ["Center-based"], radius: 10, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 10 },
+  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-108901", postedDays: 14 },
 ];
 
 // Mock Active Jobs for employer (for invite modal)
@@ -342,6 +343,13 @@ export default function DirectoryPage() {
                   </CardHeader>
                   <CardContent className="pt-3 pb-3 px-4 flex-1 min-h-0">
                     <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                      <div>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Posted</span>
+                        <span className="font-medium flex items-center gap-1.5 mt-0.5">
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          {worker.postedDays === 1 ? "1 day ago" : worker.postedDays < 7 ? `${worker.postedDays} days ago` : worker.postedDays === 7 ? "1 week ago" : `${Math.floor(worker.postedDays / 7)} weeks ago`}
+                        </span>
+                      </div>
                       <div>
                         <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Experience</span>
                         <span className="font-medium flex items-center gap-1.5 mt-0.5"><Briefcase className="h-3.5 w-3.5 text-muted-foreground shrink-0" />{worker.experience}</span>

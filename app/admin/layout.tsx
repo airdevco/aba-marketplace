@@ -57,7 +57,6 @@ function AdminPortalLayoutContent({
                 alt="Behavoya Admin"
                 className="h-8 w-auto"
               />
-              <span className="text-sm font-semibold text-primary">Admin Portal</span>
             </Link>
           </div>
 
@@ -90,7 +89,7 @@ function AdminPortalLayoutContent({
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">Admin User</p>
-                <p className="text-xs text-muted-foreground truncate">admin@behavoya.com</p>
+                <p className="text-xs text-muted-foreground truncate">admin@gmail.com</p>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -181,7 +180,7 @@ function AdminPortalLayoutContent({
       </div>
 
       {/* Main Content */}
-      <main className="md:pl-72">
+      <main className="md:pl-72 bg-white">
         <div className="p-8 max-w-7xl mx-auto">
           {children}
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, use } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, MapPin, Briefcase, MessageSquare, CheckCircle2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -83,7 +84,9 @@ const mockActiveJobs = [
 
 export default function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id: workerId } = use(params);
-  
+  const searchParams = useSearchParams();
+  const fromAdmin = searchParams.get("from") === "admin";
+
   // Find worker from applicants or directory
   let foundWorker = allMockApplicants.find(a => a.id === workerId);
   if (!foundWorker) {
@@ -153,9 +156,9 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
       <HeaderWithProfile />
 
       <div className="max-w-3xl mx-auto py-8 px-4 space-y-8">
-        {/* Navigation - hide Back to Dashboard when viewing from directory */}
+        {/* Navigation - hide Back to Dashboard when viewing from directory or as admin */}
         <div className="space-y-2">
-          {!isDirectoryWorker && (
+          {!isDirectoryWorker && !fromAdmin && (
             <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary" asChild>
               <Link href="/employer-portal?tab=jobs">
                 <ChevronLeft className="w-4 h-4 mr-1" />
@@ -167,26 +170,30 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
             <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
               {pageTitle}
             </h1>
-            {/* Directory worker, anonymous: same Invite to Apply modal as directory */}
-            {isDirectoryWorker && !showFullProfile && (
-              <Button onClick={() => setIsInviteModalOpen(true)}>
-                <MessageSquare className="w-4 h-4" />
-                Invite to Apply
-              </Button>
-            )}
-            {/* Directory worker, profile revealed: open message drawer (stay on profile) */}
-            {isDirectoryWorker && showFullProfile && (
-              <Button onClick={() => employerMessageDrawer?.openDrawer(worker.id)}>
-                <MessageSquare className="w-4 h-4" />
-                Message
-              </Button>
-            )}
-            {/* Applicant (non-directory): open message drawer (stay on profile) */}
-            {!isDirectoryWorker && (
-              <Button onClick={() => employerMessageDrawer?.openDrawer(worker.id)}>
-                <MessageSquare className="w-4 h-4" />
-                Message Candidate
-              </Button>
+            {!fromAdmin && (
+              <>
+                {/* Directory worker, anonymous: same Invite to Apply modal as directory */}
+                {isDirectoryWorker && !showFullProfile && (
+                  <Button onClick={() => setIsInviteModalOpen(true)}>
+                    <MessageSquare className="w-4 h-4" />
+                    Invite to Apply
+                  </Button>
+                )}
+                {/* Directory worker, profile revealed: open message drawer (stay on profile) */}
+                {isDirectoryWorker && showFullProfile && (
+                  <Button onClick={() => employerMessageDrawer?.openDrawer(worker.id)}>
+                    <MessageSquare className="w-4 h-4" />
+                    Message
+                  </Button>
+                )}
+                {/* Applicant (non-directory): open message drawer (stay on profile) */}
+                {!isDirectoryWorker && (
+                  <Button onClick={() => employerMessageDrawer?.openDrawer(worker.id)}>
+                    <MessageSquare className="w-4 h-4" />
+                    Message Candidate
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>

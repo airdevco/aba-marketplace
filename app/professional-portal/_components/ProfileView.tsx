@@ -90,12 +90,9 @@ export default function ProfileView() {
 
   return (
     <div className="space-y-8 max-w-xl mx-auto">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">My Profile</h1>
-          <p className="text-muted-foreground mt-1">Manage your professional information and preferences.</p>
-        </div>
-        <Button>Save Changes</Button>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">My Profile</h1>
+        <p className="text-muted-foreground mt-1">Manage your professional information and preferences.</p>
       </div>
 
       {/* Section 1: Personal Information (first) */}
@@ -203,9 +200,7 @@ export default function ProfileView() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="bio">
-                Bio / About You <span className="text-muted-foreground text-xs">(Optional)</span>
-              </Label>
+              <Label htmlFor="bio">Bio / About You</Label>
               <Textarea
                 id="bio"
                 value={bio}
@@ -214,13 +209,10 @@ export default function ProfileView() {
                 className="min-h-[100px] resize-none"
                 maxLength={500}
               />
-              <p className="text-xs text-muted-foreground text-right">{bio.length}/500</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="resume">
-                Resume <span className="text-muted-foreground text-xs">(Optional)</span>
-              </Label>
+              <Label htmlFor="resume">Resume</Label>
               <Input
                 id="resume"
                 type="file"
@@ -463,6 +455,10 @@ export default function ProfileView() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="flex justify-end">
+        <Button>Save Changes</Button>
+      </div>
     </div>
   );
 }

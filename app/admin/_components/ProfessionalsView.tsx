@@ -15,19 +15,13 @@ import {
   TableRow
 } from "@/components/ui/table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Search, MoreHorizontal, Eye, CheckCircle, XCircle, ExternalLink } from "lucide-react";
+import { Search, Eye, CheckCircle, XCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -35,7 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const pendingVerifications = [
   { workerId: "XY987ZW", workerName: "Jessica Davis", roleType: "BCBA", licenseNumber: "BCBA-34567890", submittedAt: "2026-01-25", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" },
   { workerId: "QR789ST", workerName: "Emily Johnson", roleType: "BCBA", licenseNumber: "BCBA-56789012", submittedAt: "2026-01-24", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop" },
-  { workerId: "JK654MN", workerName: "Jennifer Brown", roleType: "RBT", licenseNumber: "RBT-67890123", submittedAt: "2026-01-23", photo: "https://images.unsplash.com/photo-1554151228-14d9def656ec?w=400&h=400&fit=crop" },
+  { workerId: "JK654MN", workerName: "Jennifer Brown", roleType: "RBT", licenseNumber: "RBT-67890123", submittedAt: "2026-01-23", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop" },
 ];
 
 // Mock professionals data
@@ -99,17 +93,25 @@ export default function ProfessionalsView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pendingVerifications.map((verification) => (
-              <Card key={verification.workerId} className="border-amber-200">
+              <Card key={verification.workerId}>
                 <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12 border-2 border-amber-200">
-                      <AvatarImage src={verification.photo} />
-                      <AvatarFallback>{verification.workerName.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-base">{verification.workerName}</CardTitle>
-                      <p className="text-xs text-muted-foreground">ID: {verification.workerId}</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar className="h-12 w-12 border border-border shrink-0">
+                        <AvatarImage src={verification.photo} />
+                        <AvatarFallback>{verification.workerName.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <CardTitle className="text-base">{verification.workerName}</CardTitle>
+                        <p className="text-xs text-muted-foreground">Role: {verification.roleType}</p>
+                      </div>
                     </div>
+                    <Button size="sm" variant="outline" className="shrink-0 gap-1" asChild>
+                      <Link href={`/profile/${verification.workerId}?from=admin`} target="_blank" className="flex items-center gap-1">
+                        <Eye className="h-3 w-3" />
+                        Profile
+                      </Link>
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -120,7 +122,7 @@ export default function ProfessionalsView() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">License #:</span>
-                      <span className="font-medium font-mono text-xs">{verification.licenseNumber}</span>
+                      <span className="font-normal">{verification.licenseNumber}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Submitted:</span>
@@ -128,34 +130,23 @@ export default function ProfessionalsView() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex gap-2 pt-2 justify-end">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="flex-1"
-                      asChild
-                    >
-                      <Link href={`/profile/${verification.workerId}`} target="_blank">
-                        <Eye className="h-3 w-3 mr-1" />
-                        View
-                      </Link>
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="flex-1 bg-green-600 hover:bg-green-700"
-                      onClick={() => handleApproveVerification(verification.workerId)}
-                    >
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      Approve
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="flex-1"
+                      className="gap-1 text-destructive border-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => handleDenyVerification(verification.workerId)}
                     >
-                      <XCircle className="h-3 w-3 mr-1" />
+                      <XCircle className="h-3 w-3" />
                       Deny
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="gap-1 bg-green-600 hover:bg-green-700"
+                      onClick={() => handleApproveVerification(verification.workerId)}
+                    >
+                      <CheckCircle className="h-3 w-3" />
+                      Approve
                     </Button>
                   </div>
                 </CardContent>
@@ -207,14 +198,13 @@ export default function ProfessionalsView() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="hover:bg-transparent">
                   <TableHead>Name</TableHead>
                   <TableHead>Role Type</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead>Verification</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Registered</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Date registered</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -245,34 +235,6 @@ export default function ProfessionalsView() {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {new Date(prof.registered).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem asChild>
-                            <Link href={`/profile/${prof.id}`} target="_blank">
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Profile
-                              <ExternalLink className="h-3 w-3 ml-auto" />
-                            </Link>
-                          </DropdownMenuItem>
-                          {!prof.verified && (
-                            <DropdownMenuItem onClick={() => handleApproveVerification(prof.id)}>
-                              <CheckCircle className="h-4 w-4 mr-2" />
-                              Verify
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem className="text-destructive">
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Deactivate
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
