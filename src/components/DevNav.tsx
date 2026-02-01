@@ -6,16 +6,21 @@ import Link from "next/link";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 const pages = [
-  { name: "Home", path: "/" },
-  { name: "Login", path: "/login" },
-  { name: "Onboarding", path: "/onboarding" },
-  { name: "Professional Portal", path: "/professional-portal?tab=dashboard" },
-  { name: "Search Jobs", path: "/search" },
-  { name: "Employer Portal", path: "/employer-portal?tab=dashboard" },
-  { name: "New Listing", path: "/listing/new" },
-  { name: "Directory", path: "/directory" },
-  { name: "Sample Profile", path: "/profile/1" },
-  { name: "Sample Listing", path: "/listing/1" },
+  { name: "/", path: "/" },
+  { name: "/login", path: "/login" },
+  { name: "/onboarding", path: "/onboarding" },
+  { name: "/request-access", path: "/request-access" },
+  { name: "/request-access/setup", path: "/request-access/setup" },
+  { name: "/request-access/confirmation", path: "/request-access/confirmation" },
+  { name: "/professional-portal", path: "/professional-portal" },
+  { name: "/search", path: "/search" },
+  { name: "/employer-portal", path: "/employer-portal" },
+  { name: "/listing/new", path: "/listing/new" },
+  { name: "/listing/1", path: "/listing/1" },
+  { name: "/directory", path: "/directory" },
+  { name: "/profile/1", path: "/profile/1" },
+  { name: "/account", path: "/account" },
+  { name: "/admin", path: "/admin" },
 ];
 
 export default function DevNav() {

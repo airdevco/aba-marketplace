@@ -11,8 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { JobCard, JobCardData } from "@/components/JobCard";
+import { AppHeader } from "@/components/AppHeader";
 
 // Company logos
 const COMPANY_LOGOS = {
@@ -42,7 +42,7 @@ const jobPostings: JobCardData[] = [
     licensed: true,
     benefits: ["Medical / Dental / Vision", "Paid Time Off (PTO)", "CEU Stipend"],
     postedDays: 2,
-    matchScore: 98
+    description: "Join our team providing one-on-one ABA therapy to children with autism. Work in a supportive environment with ongoing training and supervision from experienced BCBAs."
   },
   {
     id: 2,
@@ -62,7 +62,7 @@ const jobPostings: JobCardData[] = [
     licensed: true,
     benefits: ["Mileage Reimbursement"],
     postedDays: 1,
-    matchScore: 92
+    description: "Provide behavioral support services in local schools. Perfect for candidates seeking consistent school-year schedules with summers off."
   },
   {
     id: 3,
@@ -81,7 +81,7 @@ const jobPostings: JobCardData[] = [
     workSettings: ["Center-based", "In-home"],
     licensed: false,
     postedDays: 3,
-    matchScore: 85
+    description: "Leadership opportunity for experienced RBTs. Mentor new technicians while maintaining your own caseload. Path to BCBA supervision hours available."
   },
   {
     id: 4,
@@ -101,7 +101,7 @@ const jobPostings: JobCardData[] = [
     licensed: true,
     benefits: ["Medical / Dental / Vision", "401(k) with Matching", "Paid Time Off (PTO)"],
     postedDays: 7,
-    matchScore: 85
+    description: "Oversee clinical programs and supervise a team of RBTs. Ideal for BCBAs with 2+ years experience seeking leadership roles with competitive benefits."
   },
   {
     id: 5,
@@ -121,7 +121,7 @@ const jobPostings: JobCardData[] = [
     licensed: true,
     benefits: ["Paid Indirect Time", "CEU Stipend"],
     postedDays: 5,
-    matchScore: 90
+    description: "Weekend-only position perfect for students or those seeking supplemental income. Premium weekend rates with flexible Saturday/Sunday scheduling."
   },
   {
     id: 6,
@@ -141,7 +141,7 @@ const jobPostings: JobCardData[] = [
     licensed: true,
     benefits: ["Medical / Dental / Vision", "401(k) with Matching", "Work From Home Flexibility"],
     postedDays: 14,
-    matchScore: 82
+    description: "Lead our clinical team as Program Director. Set treatment protocols, train staff, and shape the future of our growing ABA practice."
   }
 ];
 
@@ -179,23 +179,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-gray-50/30">
-      <header className="border-b bg-background sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/professional-portal?tab=dashboard" className="flex items-center gap-2">
-            <img
-              src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769551902030x600833303719120300/aba.png"
-              alt="ABA Marketplace"
-              className="h-10 w-auto object-contain"
-            />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769817783115x473563165576327740/mary.jpeg" alt="Sarah Williams" />
-              <AvatarFallback className="text-xs">SW</AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
-      </header>
+      <AppHeader userType="professional" />
 
       <div className="max-w-7xl mx-auto py-8 px-4 space-y-8">
         {/* Header */}
@@ -401,15 +385,14 @@ export default function SearchPage() {
               />
             </div>
 
-            {/* Results Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            {/* Results - Single Column */}
+            <div className="space-y-4">
               {filteredJobs.map((job) => (
-                <JobCard 
+                <JobCard
                   key={job.id}
                   job={job}
                   href={`/listing/${job.id}?view=professional&from=search`}
                   linkTarget="_blank"
-                  showExternalIcon={true}
                 />
               ))}
             </div>

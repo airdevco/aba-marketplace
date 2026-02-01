@@ -2,20 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, User, Award, Clock } from "lucide-react";
+import { ChevronLeft, Search, MapPin, DollarSign, Briefcase, Filter, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { GenericAvatarByRole } from "@/components/GenericAvatar";
-import { InviteToApplyModal } from "@/components/InviteToApplyModal";
 import HeaderWithProfile from "@/components/HeaderWithProfile";
-import { addInvite } from "@/lib/invite-store";
 
 // Worker type matching professional onboarding preferences + licensed
 type DirectoryWorker = {
@@ -35,25 +32,19 @@ type DirectoryWorker = {
   licensed: boolean;
   licenseNumber?: string;
   postedDays: number;
+  bio?: string;
 };
 
 // Mock Directory Data (fields align with professional preferences)
 const directoryWorkers: DirectoryWorker[] = [
-  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], compensationPreference: "hourly", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], licensed: true, licenseNumber: "RBT-101234", postedDays: 2 },
-  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 30, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-102345", postedDays: 1 },
-  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["School-based"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 5 },
-  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], compensationPreference: "hourly", employmentType: ["Full-time", "Contractor"], telehealthOnly: false, workSettings: ["Center-based", "In-home", "School-based"], radius: 20, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "RBT-104567", postedDays: 3 },
-  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], compensationPreference: "salary", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 35, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], licensed: true, licenseNumber: "BCBA-105678", postedDays: 7 },
-  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["In-home"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Afternoons"], licensed: false, postedDays: 4 },
-  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], compensationPreference: "hourly", employmentType: ["Part-time", "Contractor"], telehealthOnly: null, workSettings: ["Center-based"], radius: 10, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 10 },
-  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-108901", postedDays: 14 },
-];
-
-// Mock Active Jobs for employer (for invite modal)
-const mockActiveJobs = [
-  { id: 1, title: "RBT - Full Time", location: "Atlanta, GA" },
-  { id: 2, title: "BCBA - Clinic Director", location: "Marietta, GA" },
-  { id: 3, title: "RBT - Part Time", location: "Decatur, GA" },
+  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], compensationPreference: "hourly", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], licensed: true, licenseNumber: "RBT-101234", postedDays: 2, bio: "Passionate RBT with experience working with children ages 3-12. Skilled in DTT, NET, and behavioral intervention strategies." },
+  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 30, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-102345", postedDays: 1, bio: "Board certified analyst specializing in early intervention and parent training. Experienced with telehealth service delivery." },
+  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["School-based"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 5, bio: "Recent graduate pursuing RBT certification. Experience with school-aged children and classroom behavior support." },
+  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], compensationPreference: "hourly", employmentType: ["Full-time", "Contractor"], telehealthOnly: false, workSettings: ["Center-based", "In-home", "School-based"], radius: 20, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "RBT-104567", postedDays: 3, bio: "Versatile RBT comfortable in all settings. Strong data collection skills and experience with adolescent clients." },
+  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], compensationPreference: "salary", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 35, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], licensed: true, licenseNumber: "BCBA-105678", postedDays: 7, bio: "Senior BCBA with expertise in complex cases and staff training. Published researcher in behavioral interventions." },
+  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["In-home"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Afternoons"], licensed: false, postedDays: 4, bio: "Dedicated technician focusing on in-home services. Great rapport with families and strong communication skills." },
+  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], compensationPreference: "hourly", employmentType: ["Part-time", "Contractor"], telehealthOnly: null, workSettings: ["Center-based"], radius: 10, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 10, bio: "Entry-level candidate eager to grow in the ABA field. Currently enrolled in RBT training program." },
+  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-108901", postedDays: 14, bio: "Collaborative BCBA passionate about team-based care. Experience supervising RBTs and developing treatment plans." },
 ];
 
 export default function DirectoryPage() {
@@ -68,8 +59,6 @@ export default function DirectoryPage() {
   const [schedulePreferenceFilter, setSchedulePreferenceFilter] = useState<string>("all");
   const [scheduleDetailsFilter, setScheduleDetailsFilter] = useState<string[]>([]);
   const [licensedFilter, setLicensedFilter] = useState<string>("all");
-  const [selectedWorker, setSelectedWorker] = useState<DirectoryWorker | null>(null);
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const filteredWorkers = directoryWorkers.filter((worker) => {
     if (selectedRole !== "all" && worker.role.toLowerCase() !== selectedRole) return false;
@@ -87,14 +76,6 @@ export default function DirectoryPage() {
     if (licensedFilter === "no" && worker.licensed) return false;
     return true;
   });
-
-  const handleSendInvite = (jobId: string | number, message: string) => {
-    if (!selectedWorker) return;
-    const job = mockActiveJobs.find((j) => j.id === jobId || String(j.id) === String(jobId));
-    const jobTitle = job?.title ?? "Job";
-    const candidateLabel = selectedWorker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate";
-    addInvite("E1", selectedWorker.id, jobId, jobTitle, message, candidateLabel);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50/30">
@@ -310,104 +291,54 @@ export default function DirectoryPage() {
               />
             </div>
 
-            {/* Results Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            {/* Results - Single Column */}
+            <div className="space-y-4">
               {filteredWorkers.map((worker) => (
-                <Card key={worker.id} className="overflow-hidden hover:border-primary/50 transition-colors flex flex-col h-full">
-                  <CardHeader className="pb-2 pt-4 px-4 bg-muted/20">
-                    <div className="flex items-start gap-3">
+                <div key={worker.id} className="bg-white rounded-xl border shadow-sm p-5 hover:border-primary/50 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
                       <GenericAvatarByRole roleType={worker.role as "RBT" | "BCBA"} size="sm" className="shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <CardTitle className="text-base font-semibold flex items-center gap-2">
+                        <h3 className="font-semibold text-base">
                           {worker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}
-                          <span className="text-sm font-normal text-muted-foreground">#{worker.id}</span>
-                        </CardTitle>
-                        <p className="text-sm font-medium text-foreground mt-1">
-                          {worker.employmentType.join(", ")} · {worker.rate}
-                        </p>
-                        <div className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                          <MapPin className="h-3.5 w-3.5 shrink-0" /> {worker.location}
-                        </div>
-                        {worker.licensed ? (
-                          <div className="flex items-center gap-1.5 mt-1.5">
-                            <Award className="h-3.5 w-3.5 text-green-600 shrink-0" />
-                            <span className="text-sm font-medium text-green-700">
-                              Licensed{worker.licenseNumber ? ` · ${worker.licenseNumber}` : ""}
-                            </span>
-                          </div>
-                        ) : (
-                          <p className="text-sm text-muted-foreground mt-1.5">Not licensed</p>
-                        )}
+                          <span className="text-sm font-normal text-muted-foreground ml-2">#{worker.id}</span>
+                        </h3>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="pt-3 pb-3 px-4 flex-1 min-h-0">
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                      <div>
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Posted</span>
-                        <span className="font-medium flex items-center gap-1.5 mt-0.5">
-                          <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                          {worker.postedDays === 1 ? "1 day ago" : worker.postedDays < 7 ? `${worker.postedDays} days ago` : worker.postedDays === 7 ? "1 week ago" : `${Math.floor(worker.postedDays / 7)} weeks ago`}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Experience</span>
-                        <span className="font-medium flex items-center gap-1.5 mt-0.5"><Briefcase className="h-3.5 w-3.5 text-muted-foreground shrink-0" />{worker.experience}</span>
-                      </div>
-                      <div>
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Compensation</span>
-                        <span className="font-medium mt-0.5 capitalize">{worker.compensationPreference === "both" ? "Hourly or salary" : worker.compensationPreference}</span>
-                      </div>
-                      <div>
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Telehealth</span>
-                        <span className="font-medium mt-0.5">{worker.telehealthOnly === null ? "—" : worker.telehealthOnly ? "Yes" : "No"}</span>
-                      </div>
-                      <div>
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Radius</span>
-                        <span className="font-medium mt-0.5">{worker.radius} mi</span>
-                      </div>
-                      {worker.workSettings.length > 0 && (
-                        <div className="col-span-2">
-                          <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Work Setting</span>
-                          <div className="flex flex-wrap gap-1.5 mt-0.5">{worker.workSettings.map((s, i) => <Badge key={i} variant="outline" className="text-xs font-normal py-0.5 px-2 h-5 bg-gray-50">{s}</Badge>)}</div>
-                        </div>
-                      )}
-                      <div>
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Schedule</span>
-                        <span className="font-medium mt-0.5">{worker.schedulePreference === "standard" ? "Standard FT" : "Flexible"}</span>
-                      </div>
-                      {worker.scheduleDetails.length > 0 ? (
-                        <div>
-                          <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium block">Availability</span>
-                          <div className="flex flex-wrap gap-1.5 mt-0.5">{worker.scheduleDetails.map((d, i) => <Badge key={i} variant="outline" className="text-xs font-normal py-0.5 px-2 h-5 bg-gray-50">{d}</Badge>)}</div>
-                        </div>
-                      ) : (
-                        <div />
-                      )}
-                    </div>
-                  </CardContent>
-                  <CardFooter className="bg-muted/10 pt-3 pb-4 px-4 flex gap-2 shrink-0">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1 gap-2"
-                      asChild
-                    >
-                      <Link href={`/profile/${worker.id}`} target="_blank">
-                        <User className="h-4 w-4" />
-                        View Profile
+                    <Button size="sm" asChild className="shrink-0">
+                      <Link href={`/profile/${worker.id}`}>
+                        View & Connect
                       </Link>
                     </Button>
-                    <Button 
-                      className="flex-1 gap-2" 
-                      onClick={() => {
-                        setSelectedWorker(worker);
-                        setIsInviteModalOpen(true);
-                      }}
-                    >
-                      Invite to Apply
-                    </Button>
-                  </CardFooter>
-                </Card>
+                  </div>
+
+                  {/* Condensed fields row with icons */}
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {worker.location}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <DollarSign className="h-3.5 w-3.5" />
+                      {worker.rate}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Briefcase className="h-3.5 w-3.5" />
+                      {worker.experience}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5" />
+                      {worker.schedulePreference === "standard" ? "Standard FT" : "Flexible"}
+                    </span>
+                  </div>
+
+                  {/* Bio - 2 line clamp */}
+                  {worker.bio && (
+                    <p className="mt-3 text-sm text-muted-foreground line-clamp-2">
+                      {worker.bio}
+                    </p>
+                  )}
+                </div>
               ))}
             </div>
 
@@ -439,20 +370,6 @@ export default function DirectoryPage() {
         </div>
       </div>
 
-      {/* Invite to Apply Modal */}
-      {selectedWorker && (
-        <InviteToApplyModal
-          isOpen={isInviteModalOpen}
-          onClose={() => {
-            setIsInviteModalOpen(false);
-            setSelectedWorker(null);
-          }}
-          candidateLabel={selectedWorker.role === "RBT" ? "RBT Candidate" : "BCBA Candidate"}
-          candidateId={selectedWorker.id}
-          jobs={mockActiveJobs}
-          onSend={handleSendInvite}
-        />
-      )}
     </div>
   );
 }

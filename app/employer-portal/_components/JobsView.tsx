@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { 
@@ -89,12 +89,20 @@ export default function JobsView() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Job Listings</h1>
           <p className="text-muted-foreground mt-1">Manage your open positions and view applicants</p>
         </div>
-        <Button asChild className="gap-1">
-          <Link href="/listing/new">
-            <Plus className="w-4 h-4" />
-            Post new job
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline" className="gap-1">
+            <Link href="/directory">
+              <User className="w-4 h-4" />
+              Find candidates
+            </Link>
+          </Button>
+          <Button asChild className="gap-1">
+            <Link href="/listing/new">
+              <Plus className="w-4 h-4" />
+              Post new job
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="border rounded-md bg-white overflow-x-auto">
@@ -112,8 +120,8 @@ export default function JobsView() {
           </TableHeader>
           <TableBody>
             {jobs.map((job) => (
-              <>
-                <TableRow key={job.id} className={expandedJobId === job.id ? "bg-muted/50" : ""}>
+              <React.Fragment key={job.id}>
+                <TableRow className={expandedJobId === job.id ? "bg-muted/50" : ""}>
                   <TableCell>
                     <div className="font-medium">{job.title}</div>
                     <div className="text-xs text-muted-foreground md:hidden">{job.location}</div>
@@ -281,7 +289,7 @@ export default function JobsView() {
                     </TableCell>
                   </TableRow>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>
