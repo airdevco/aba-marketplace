@@ -10,10 +10,11 @@ import {
   LogOut,
   Menu,
   Settings,
-  MoreVertical
+  MoreVertical,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -22,10 +23,12 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { ProfessionalMessageDrawerProvider } from "@/components/ProfessionalMessageDrawerContext";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", value: "dashboard" },
-  { icon: Briefcase, label: "My Jobs", value: "jobs" },
+  { icon: Search, label: "Jobs", value: "find-jobs" },
+  { icon: Briefcase, label: "My Jobs", value: "my-jobs" },
   { icon: User, label: "My Profile", value: "profile" },
 ];
 
@@ -81,8 +84,8 @@ function ProfessionalPortalLayoutContent({
       {/* User Profile */}
       <div className="p-4 border-t bg-gray-50/50">
         <div className="flex items-center gap-3 px-2">
-          <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop" />
+          <Avatar className="h-10 w-10">
+            <AvatarImage src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769817783115x473563165576327740/mary.jpeg" />
             <AvatarFallback>SW</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -120,21 +123,12 @@ function ProfessionalPortalLayoutContent({
         <SidebarContent />
       </aside>
 
-      {/* Mobile Hamburger Button */}
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="md:hidden fixed top-4 left-4 z-50 bg-white shadow-sm border"
-        onClick={() => setIsMobileMenuOpen(true)}
-      >
-        <Menu className="w-5 h-5" />
-      </Button>
-
       {/* Mobile Sidebar */}
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="p-0 w-72">
           <VisuallyHidden>
             <SheetTitle>Navigation Menu</SheetTitle>
+            <SheetDescription>Main navigation sidebar</SheetDescription>
           </VisuallyHidden>
           <SidebarContent />
         </SheetContent>
@@ -143,18 +137,20 @@ function ProfessionalPortalLayoutContent({
       {/* Main Content */}
       <main className="flex-1 md:ml-72">
         {/* Top Header */}
-        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-8 flex items-center justify-between">
-          <Link 
-            href="/search" 
-            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between md:justify-end gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden shrink-0 -ml-2"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
           >
-            Job listings
-          </Link>
-          <div className="flex items-center gap-4">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
-              SW
-            </div>
-          </div>
+            <Menu className="w-5 h-5" />
+          </Button>
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769817783115x473563165576327740/mary.jpeg" alt="Sarah Williams" />
+            <AvatarFallback className="text-xs">SW</AvatarFallback>
+          </Avatar>
         </header>
 
         <div className="p-8 max-w-7xl mx-auto">
@@ -172,7 +168,9 @@ export default function ProfessionalPortalLayout({
 }) {
   return (
     <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
-      <ProfessionalPortalLayoutContent>{children}</ProfessionalPortalLayoutContent>
+      <ProfessionalMessageDrawerProvider>
+        <ProfessionalPortalLayoutContent>{children}</ProfessionalPortalLayoutContent>
+      </ProfessionalMessageDrawerProvider>
     </Suspense>
   );
 }

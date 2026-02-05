@@ -27,9 +27,17 @@ export function HideDevIndicator() {
         (el as HTMLElement).style.pointerEvents = "none";
       });
 
-      // Hide fixed position elements in bottom-left
+      // Hide fixed position elements in bottom-left (Next.js dev indicator only)
+      // Exclude Radix dialogs/sheets - they use role="dialog" or data-state
       const allDivs = document.querySelectorAll("div");
       allDivs.forEach((div) => {
+        if (
+          div.closest('[role="dialog"]') ||
+          div.hasAttribute("data-state") ||
+          div.closest("[data-radix-portal]")
+        ) {
+          return; // Never hide Radix UI dialogs/sheets
+        }
         const style = window.getComputedStyle(div);
         if (style.position === "fixed") {
           const rect = div.getBoundingClientRect();
