@@ -26,7 +26,7 @@ type JobViewData = {
   clinicLocationName: string;
   employmentTypes: string[];
   scheduleOptions: string[];
-  compensationType: "hourly" | "salary";
+  compensationType: "hourly" | "salary" | "both";
   rateMin: string;
   rateMax: string;
   startDate: string;
@@ -38,6 +38,20 @@ type JobViewData = {
   jobDescription: string;
   benefitsOverview: string;
   postedDate?: string;
+  // New fields from spec
+  telehealthOnly?: boolean;
+  scheduleExpectation?: string;
+  travelRequirement?: string;
+  expectedWeeklyHours?: string;
+  guaranteedHours?: boolean;
+  weeklyBillableExpectation?: string;
+  nonBillableAdminIncluded?: boolean;
+  wfhFlexibility?: boolean;
+  clientAgeGroups?: string[];
+  workSettings?: string[];
+  benefitsOffered?: string[];
+  bonusesIncentives?: string[];
+  bonusDetails?: string;
 };
 
 // Employer data for company info display
@@ -71,6 +85,15 @@ function getJobForView(id: string): JobViewData | null {
       specializations: ["Verbal", "Mild / moderate behaviors", "Early learner programs"],
       caseloadSize: "4-6 clients",
       treatmentSetting: "clinic",
+      telehealthOnly: false,
+      scheduleExpectation: "Standard weekday",
+      travelRequirement: "Single site only",
+      expectedWeeklyHours: "36-40 hours",
+      guaranteedHours: true,
+      clientAgeGroups: ["Early Intervention (0-5)", "School Age (6-12)"],
+      workSettings: ["Center-based"],
+      benefitsOffered: ["Medical/Dental/Vision", "401(k) with Matching", "Paid Time Off (PTO)", "CEU Stipend", "Mileage Reimbursement"],
+      bonusesIncentives: ["Performance-based bonuses", "Referral bonus"],
       jobDescription: `We are seeking a compassionate and dedicated Registered Behavior Technician (RBT) to join our growing clinical team at our Midtown Atlanta location. This is a full-time position offering the opportunity to make a meaningful difference in the lives of children with autism spectrum disorder and their families.
 
 As an RBT at Bright Future ABA, you will work directly with clients ages 2-12, implementing individualized behavior intervention plans under the supervision of a Board Certified Behavior Analyst (BCBA). You'll be part of a supportive team environment where collaboration, ongoing training, and professional development are prioritized.
@@ -119,6 +142,18 @@ What We're Looking For:
       specializations: ["Severe behaviors", "School-based / IEP experience", "Parent / caregiver training required"],
       caseloadSize: "12-15 clients",
       treatmentSetting: "clinic",
+      telehealthOnly: false,
+      scheduleExpectation: "Standard weekday",
+      travelRequirement: "Some travel required",
+      guaranteedHours: true,
+      weeklyBillableExpectation: "26-30 hours",
+      nonBillableAdminIncluded: true,
+      wfhFlexibility: true,
+      clientAgeGroups: ["School Age (6-12)", "Adolescents (13-17)", "Adults (18+)"],
+      workSettings: ["Center-based", "School-based"],
+      benefitsOffered: ["Medical/Dental/Vision", "401(k) with Matching", "Paid Time Off (PTO)", "CEU Stipend", "Laptop/Tablet Provided", "Professional Liability Insurance"],
+      bonusesIncentives: ["Performance-based bonuses", "Sign-on bonus", "Relocation assistance"],
+      bonusDetails: "Sign-on bonus of $3,000 paid over first 6 months. Annual performance bonus up to 15% of base salary.",
       jobDescription: `Bright Future ABA is expanding and we're looking for an experienced BCBA to lead our new Marietta Regional Center as Clinic Director. This is a unique opportunity to shape the culture and clinical practices of a brand-new location while leveraging the resources and support of an established organization.
 
 As Clinic Director, you will oversee all clinical operations, manage a team of 8-12 RBTs, and maintain a reduced personal caseload while focusing on leadership, quality assurance, and program development. You'll report directly to our Clinical VP and participate in organizational strategy discussions.
@@ -549,6 +584,36 @@ export default function JobListingPage({ params }: { params: Promise<{ id: strin
                         <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Start Date</Label>
                         <div className="font-medium">{job.startDate ? formatPostedDate(job.startDate) : "Flexible"}</div>
                       </div>
+                      {job.telehealthOnly !== undefined && (
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Telehealth Only</Label>
+                          <div className="font-medium">{job.telehealthOnly ? "Yes" : "No"}</div>
+                        </div>
+                      )}
+                      {job.scheduleExpectation && (
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Schedule Expectation</Label>
+                          <div className="font-medium">{job.scheduleExpectation}</div>
+                        </div>
+                      )}
+                      {job.travelRequirement && (
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Travel</Label>
+                          <div className="font-medium">{job.travelRequirement}</div>
+                        </div>
+                      )}
+                      {job.expectedWeeklyHours && (
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Expected Weekly Hours</Label>
+                          <div className="font-medium">{job.expectedWeeklyHours}</div>
+                        </div>
+                      )}
+                      {job.guaranteedHours !== undefined && (
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Guaranteed Hours/Pay</Label>
+                          <div className="font-medium">{job.guaranteedHours ? "Yes" : "No"}</div>
+                        </div>
+                      )}
                     </div>
 
                     <Separator />
@@ -600,14 +665,102 @@ export default function JobListingPage({ params }: { params: Promise<{ id: strin
                       </div>
                     </div>
 
+                    {/* BCBA-Specific Fields */}
+                    {job.positionType === "BCBA" && (job.weeklyBillableExpectation || job.nonBillableAdminIncluded !== undefined || job.wfhFlexibility !== undefined) && (
+                      <>
+                        <Separator />
+                        <div className="space-y-4">
+                          <h3 className="font-semibold text-sm">BCBA Details</h3>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            {job.weeklyBillableExpectation && (
+                              <div className="space-y-1">
+                                <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Weekly Billable Expectation</Label>
+                                <div className="font-medium">{job.weeklyBillableExpectation}</div>
+                              </div>
+                            )}
+                            {job.nonBillableAdminIncluded !== undefined && (
+                              <div className="space-y-1">
+                                <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Non-Billable/Admin Included</Label>
+                                <div className="font-medium">{job.nonBillableAdminIncluded ? "Yes" : "No"}</div>
+                              </div>
+                            )}
+                            {job.wfhFlexibility !== undefined && (
+                              <div className="space-y-1">
+                                <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">WFH/Hybrid Flexibility</Label>
+                                <div className="font-medium">{job.wfhFlexibility ? "Yes" : "No"}</div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Work Settings */}
+                    {job.workSettings && job.workSettings.length > 0 && (
+                      <>
+                        <Separator />
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-sm">Work Settings</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {job.workSettings.map((s) => (
+                              <span key={s} className="px-2.5 py-1 bg-muted rounded-full text-sm font-medium">{s}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Client Age Groups */}
+                    {job.clientAgeGroups && job.clientAgeGroups.length > 0 && (
+                      <>
+                        <Separator />
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-sm">Client Population</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {job.clientAgeGroups.map((g) => (
+                              <span key={g} className="px-2.5 py-1 bg-muted rounded-full text-sm font-medium">{g}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
                     <Separator />
 
-                    {/* Benefits */}
-                    <div className="space-y-3">
+                    {/* Benefits & Incentives */}
+                    <div className="space-y-4">
                       <h3 className="font-semibold text-sm">Benefits & Compensation Details</h3>
-                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {job.benefitsOverview || "Contact employer for benefits information."}
-                      </div>
+                      {job.benefitsOffered && job.benefitsOffered.length > 0 && (
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Benefits Offered</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {job.benefitsOffered.map((b) => (
+                              <span key={b} className="px-2.5 py-1 bg-green-50 text-green-800 rounded-full text-sm font-medium border border-green-200">{b}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {job.bonusesIncentives && job.bonusesIncentives.length > 0 && (
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Bonuses & Incentives</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {job.bonusesIncentives.map((b) => (
+                              <span key={b} className="px-2.5 py-1 bg-blue-50 text-blue-800 rounded-full text-sm font-medium border border-blue-200">{b}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {job.bonusDetails && (
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Bonus Details</Label>
+                          <div className="text-sm text-gray-700 leading-relaxed">{job.bonusDetails}</div>
+                        </div>
+                      )}
+                      {job.benefitsOverview && (
+                        <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                          {job.benefitsOverview}
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

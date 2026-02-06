@@ -123,7 +123,7 @@ function StepNavigation({ currentStep, totalSteps }: { currentStep: number; tota
                     : "text-muted-foreground"
               }`}
             >
-              {step === 1 ? "Start" : step === 2 ? "Goals" : step === 3 ? "Experience" : step === 4 ? "Preferences" : "Profile"}
+              {step === 1 ? "Start" : step === 2 ? "Privacy" : step === 3 ? "Goals" : step === 4 ? "Experience" : step === 5 ? "Preferences" : "Profile"}
             </span>
           </div>
         ))}
@@ -181,7 +181,7 @@ export default function OnboardingPage() {
   const [companyLocationError, setCompanyLocationError] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
 
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   const [companyInfoCompleted, setCompanyInfoCompleted] = useState(false);
 
@@ -571,6 +571,60 @@ export default function OnboardingPage() {
                         </div>
                       </RadioGroup>
                     </div>
+
+                    {/* Name Fields */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          placeholder="Enter your first name"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          placeholder="Enter your last name"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Phone (optional) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number <span className="text-muted-foreground text-xs">(Optional)</span></Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
+
+                    {/* ZIP Code */}
+                    <div className="space-y-2">
+                      <Label htmlFor="zipCode">ZIP Code</Label>
+                      <Input
+                        id="zipCode"
+                        value={zipCode}
+                        onChange={(e) => handleZipCodeChange(e.target.value)}
+                        placeholder="Enter your ZIP code"
+                        maxLength={5}
+                      />
+                      {zipCodeError && (
+                        <p className="text-sm text-destructive mt-1">{zipCodeError}</p>
+                      )}
+                      {!zipCodeError && zipCode.length === 5 && (
+                        <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+                          <Check className="w-3 h-3" /> Location verified
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -584,8 +638,61 @@ export default function OnboardingPage() {
                     </div>
                   )}
 
-                  {/* Step 2: What Are You Looking For? */}
+                  {/* Step 2: Privacy Explainer */}
                   {currentStep === 2 && (
+                  <div className="space-y-6">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Lock className="w-5 h-5 text-primary" />
+                        <h2 className="text-xl font-semibold">Your Privacy Matters</h2>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        Your profile is private by default. Employers can&apos;t see your name or details unless you choose to apply to a role or accept a message.
+                      </p>
+
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3 p-4 bg-muted/40 rounded-lg border">
+                          <div className="mt-0.5 shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Lock className="w-4 h-4 text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm">Anonymous by Default</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Employers see your qualifications and preferences, but not your name, photo, or contact info.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-4 bg-muted/40 rounded-lg border">
+                          <div className="mt-0.5 shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Check className="w-4 h-4 text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm">You Choose When to Share</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Your identity is only revealed when you apply to a role or accept a message from an employer.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-4 bg-muted/40 rounded-lg border">
+                          <div className="mt-0.5 shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Info className="w-4 h-4 text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm">Browse Freely</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Explore opportunities and get matched without pressure. You&apos;re always in control.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                  {/* Step 3: What Are You Looking For? */}
+                  {currentStep === 3 && (
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-xl font-semibold mb-2">What Are You Looking For?</h2>
@@ -701,8 +808,8 @@ export default function OnboardingPage() {
                   </div>
                 )}
 
-                  {/* Step 3: Tell Us About Your Experience */}
-                  {currentStep === 3 && (
+                  {/* Step 4: Tell Us About Your Experience */}
+                  {currentStep === 4 && (
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-xl font-semibold mb-2">Tell Us About Your Experience</h2>
@@ -787,8 +894,8 @@ export default function OnboardingPage() {
                   </div>
                 )}
 
-                  {/* Step 4: Tell Us What's Important To You */}
-                  {currentStep === 4 && (
+                  {/* Step 5: Tell Us What's Important To You */}
+                  {currentStep === 5 && (
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-xl font-semibold mb-2">Tell Us What&apos;s Important To You</h2>
@@ -1008,8 +1115,8 @@ export default function OnboardingPage() {
                   </div>
                 )}
 
-                  {/* Step 5: Make Your Profile Shine */}
-                  {currentStep === 5 && (
+                  {/* Step 6: Make Your Profile Shine */}
+                  {currentStep === 6 && (
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-xl font-semibold mb-2">Make Your Profile Shine</h2>
@@ -1025,104 +1132,46 @@ export default function OnboardingPage() {
                         </p>
                       </div>
 
-                      {/* Personal Info Section */}
+                      {/* Profile Photo */}
                       <div className="border-b pb-6 mb-6">
-                        <h3 className="text-base font-semibold mb-4">Personal Information</h3>
-
-                        {/* Photo Upload */}
-                        <div className="mb-4">
-                          <Label className="text-sm font-medium mb-2 block">Profile Photo <span className="text-muted-foreground text-xs">(Optional)</span></Label>
-                          <div className="flex items-center gap-4">
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handlePhotoUpload(e, false)}
-                              className="hidden"
-                              id="photo-upload"
-                            />
-                            {photo ? (
-                              <div className="relative group cursor-pointer">
-                                <label htmlFor="photo-upload" className="cursor-pointer">
-                                  <img
-                                    src={photo}
-                                    alt="Profile"
-                                    className="w-20 h-20 rounded-full object-cover border-2 border-border hover:opacity-80 transition-opacity"
-                                  />
-                                </label>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setPhoto(null);
-                                  }}
-                                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center hover:bg-destructive/90 transition-colors"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            ) : (
+                        <h3 className="text-base font-semibold mb-4">Profile Photo</h3>
+                        <div className="flex items-center gap-4">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handlePhotoUpload(e, false)}
+                            className="hidden"
+                            id="photo-upload"
+                          />
+                          {photo ? (
+                            <div className="relative group cursor-pointer">
                               <label htmlFor="photo-upload" className="cursor-pointer">
-                                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-all">
-                                  <span className="text-muted-foreground text-xs text-center px-2">Click to upload</span>
-                                </div>
+                                <img
+                                  src={photo}
+                                  alt="Profile"
+                                  className="w-20 h-20 rounded-full object-cover border-2 border-border hover:opacity-80 transition-opacity"
+                                />
                               </label>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Name Fields */}
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="firstName">First Name</Label>
-                            <Input
-                              id="firstName"
-                              value={firstName}
-                              onChange={(e) => setFirstName(e.target.value)}
-                              placeholder="Enter your first name"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="lastName">Last Name</Label>
-                            <Input
-                              id="lastName"
-                              value={lastName}
-                              onChange={(e) => setLastName(e.target.value)}
-                              placeholder="Enter your last name"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Phone (optional) */}
-                        <div className="space-y-2 mb-4">
-                          <Label htmlFor="phone">Phone Number <span className="text-muted-foreground text-xs">(Optional)</span></Label>
-                          <Input
-                            id="phone"
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder="(555) 123-4567"
-                          />
-                        </div>
-
-                        {/* ZIP Code */}
-                        <div className="space-y-2">
-                          <Label htmlFor="zipCode">ZIP Code</Label>
-                          <Input
-                            id="zipCode"
-                            value={zipCode}
-                            onChange={(e) => handleZipCodeChange(e.target.value)}
-                            placeholder="Enter your ZIP code"
-                            maxLength={5}
-                          />
-                          {zipCodeError && (
-                            <p className="text-sm text-destructive mt-1">{zipCodeError}</p>
-                          )}
-                          {!zipCodeError && zipCode.length === 5 && (
-                            <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
-                              <Check className="w-3 h-3" /> Location verified
-                            </p>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPhoto(null);
+                                }}
+                                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center hover:bg-destructive/90 transition-colors"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ) : (
+                            <label htmlFor="photo-upload" className="cursor-pointer">
+                              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-all">
+                                <span className="text-muted-foreground text-xs text-center px-2">Click to upload</span>
+                              </div>
+                            </label>
                           )}
                         </div>
+                        <p className="text-xs text-muted-foreground mt-2">Optional — adds a personal touch to your profile</p>
                       </div>
 
                       {/* Profile Details Section */}

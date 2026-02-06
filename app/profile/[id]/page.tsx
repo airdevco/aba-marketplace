@@ -54,6 +54,18 @@ type DirectoryWorker = {
   schedulePreference?: "standard" | "flexible";
   scheduleDetails?: string[];
   bio?: string;
+  jobIntent?: "primary" | "supplemental";
+  jobSearchStatus?: string;
+  yearsExperience?: string;
+  ageGroups?: string[];
+  languages?: string[];
+  earliestStart?: string;
+  openToRelocation?: boolean | null;
+  multiSiteComfort?: string;
+  preferredWeeklyHours?: string;
+  targetRoles?: string[];
+  weeklyBillable?: string;
+  linkedinUrl?: string;
   /** Verified Professional badge (license verified by admin) */
   isVerified?: boolean;
   unlockedForEmployerIds?: string[];
@@ -65,8 +77,8 @@ type DirectoryWorker = {
 };
 
 const directoryWorkers: DirectoryWorker[] = [
-  { id: "W101", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Atlanta, GA", zipCode: "30301", image: "", experience: "3 years", licenseNumber: "RBT-W101", minRate: "24", employmentType: ["Full-time"], workSetting: "In-person", radius: "25", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["Center-based", "In-home"], schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], bio: "I have three years of experience as an RBT, primarily in early intervention and center-based ABA. I've worked with children ages 2–8 across verbal behavior, daily living skills, and reduction of challenging behaviors. I'm passionate about family-centered care and helping parents generalize strategies at home. I'm looking for a full-time role where I can grow under strong BCBA supervision and contribute to a collaborative team.", isVerified: true },
-  { id: "W102", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Marietta, GA", zipCode: "30060", image: "", experience: "5 years", licenseNumber: "BCBA-W102", minRate: "82", employmentType: ["Full-time"], workSetting: "In-person", radius: "30", compensationPreference: "both", telehealthOnly: true, workSettings: [], schedulePreference: "standard", scheduleDetails: [], bio: "Board Certified Behavior Analyst with over five years in clinical supervision and program design. My background includes school-based consultation, parent training, and telehealth service delivery. I specialize in verbal behavior and severe behavior reduction. I'm committed to ethical practice, staff development, and data-driven decision making. Open to full-time positions that offer a mix of direct care and supervision.", isVerified: true },
+  { id: "W101", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Atlanta, GA", zipCode: "30301", image: "", experience: "3 years", licenseNumber: "RBT-W101", minRate: "24", employmentType: ["Full-time"], workSetting: "In-person", radius: "25", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["Center-based", "In-home"], schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], bio: "I have three years of experience as an RBT, primarily in early intervention and center-based ABA. I've worked with children ages 2–8 across verbal behavior, daily living skills, and reduction of challenging behaviors. I'm passionate about family-centered care and helping parents generalize strategies at home. I'm looking for a full-time role where I can grow under strong BCBA supervision and contribute to a collaborative team.", isVerified: true, jobIntent: "primary", jobSearchStatus: "Actively looking", yearsExperience: "2-5 years", ageGroups: ["Early Intervention (0-5)", "School Age (6-12)"], languages: ["English", "Spanish"], earliestStart: "2 weeks", openToRelocation: false, multiSiteComfort: "Some travel required", preferredWeeklyHours: "36-40 hours", targetRoles: ["RBT", "Senior RBT"] },
+  { id: "W102", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Marietta, GA", zipCode: "30060", image: "", experience: "5 years", licenseNumber: "BCBA-W102", minRate: "82", employmentType: ["Full-time"], workSetting: "In-person", radius: "30", compensationPreference: "both", telehealthOnly: true, workSettings: [], schedulePreference: "standard", scheduleDetails: [], bio: "Board Certified Behavior Analyst with over five years in clinical supervision and program design. My background includes school-based consultation, parent training, and telehealth service delivery. I specialize in verbal behavior and severe behavior reduction. I'm committed to ethical practice, staff development, and data-driven decision making. Open to full-time positions that offer a mix of direct care and supervision.", isVerified: true, jobIntent: "primary", jobSearchStatus: "Open to opportunities", yearsExperience: "5-8 years", ageGroups: ["School Age (6-12)", "Adolescents (13-17)"], languages: ["English"], earliestStart: "30 days", openToRelocation: true, multiSiteComfort: "Multi-site travel", targetRoles: ["BCBA", "Clinical Director"], weeklyBillable: "21-25 hours", linkedinUrl: "https://linkedin.com/in/example-bcba" },
   { id: "W103", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Decatur, GA", zipCode: "30030", image: "", experience: "1 year", licenseNumber: "RBT-W103", minRate: "22", employmentType: ["Part-time"], workSetting: "Hybrid", radius: "15", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["School-based"], schedulePreference: "flexible", scheduleDetails: ["Weekends"], bio: "I'm an RBT with one year of experience and a background in special education. I've worked in school-based settings supporting students with autism and related disabilities. I'm seeking part-time opportunities that allow me to balance graduate coursework in ABA. I'm reliable, detail-oriented, and comfortable with data collection and behavior plans. Weekend and afternoon availability preferred.", isVerified: false },
   { id: "W104", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Alpharetta, GA", zipCode: "30009", image: "", experience: "4 years", licenseNumber: "RBT-W104", minRate: "26", employmentType: ["Full-time", "Contractor"], workSetting: "In-person", radius: "20", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["Center-based", "In-home"], schedulePreference: "standard", scheduleDetails: [], bio: "Senior RBT with four years of experience in center-based and in-home ABA. I've supported clients across early learner programs, verbal behavior, and mild to moderate challenging behaviors. I'm skilled at building rapport with families and maintaining treatment integrity. Open to full-time or 1099 contract roles. I value clear communication, ongoing training, and a supportive clinical culture.", isVerified: true },
   { id: "W105", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Sandy Springs, GA", zipCode: "30328", image: "", experience: "7 years", licenseNumber: "BCBA-W105", minRate: "90", employmentType: ["Full-time"], workSetting: "Hybrid", radius: "35", compensationPreference: "salary", telehealthOnly: true, workSettings: [], schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], bio: "BCBA with seven years of experience in clinic leadership, telehealth, and hybrid service delivery. I've led clinical teams, developed training programs, and maintained high-quality outcomes across center and remote settings. My focus is on sustainable caseloads, ethical supervision, and family-centered care. I'm looking for a leadership or senior clinical role that supports work-life balance and professional growth.", isVerified: true },
@@ -136,6 +148,18 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   const telehealthOnly = dirWorker?.telehealthOnly ?? (worker as { telehealthOnly?: boolean | null }).telehealthOnly;
   const schedulePreference = dirWorker?.schedulePreference ?? (worker as { schedulePreference?: string }).schedulePreference;
   const scheduleDetails = dirWorker?.scheduleDetails ?? (worker as { scheduleDetails?: string[] }).scheduleDetails ?? [];
+  const jobIntent = dirWorker?.jobIntent ?? (worker as { jobIntent?: string }).jobIntent;
+  const jobSearchStatus = dirWorker?.jobSearchStatus ?? (worker as { jobSearchStatus?: string }).jobSearchStatus;
+  const yearsExperience = dirWorker?.yearsExperience ?? (worker as { yearsExperience?: string }).yearsExperience;
+  const ageGroups = dirWorker?.ageGroups ?? (worker as { ageGroups?: string[] }).ageGroups ?? [];
+  const workerLanguages = dirWorker?.languages ?? (worker as { languages?: string[] }).languages ?? [];
+  const earliestStart = dirWorker?.earliestStart ?? (worker as { earliestStart?: string }).earliestStart;
+  const openToRelocation = dirWorker?.openToRelocation ?? (worker as { openToRelocation?: boolean | null }).openToRelocation;
+  const multiSiteComfort = dirWorker?.multiSiteComfort ?? (worker as { multiSiteComfort?: string }).multiSiteComfort;
+  const preferredWeeklyHours = dirWorker?.preferredWeeklyHours ?? (worker as { preferredWeeklyHours?: string }).preferredWeeklyHours;
+  const targetRoles = dirWorker?.targetRoles ?? (worker as { targetRoles?: string[] }).targetRoles ?? [];
+  const weeklyBillable = dirWorker?.weeklyBillable ?? (worker as { weeklyBillable?: string }).weeklyBillable;
+  const linkedinUrl = dirWorker?.linkedinUrl ?? (worker as { linkedinUrl?: string }).linkedinUrl;
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const employerMessageDrawer = useEmployerMessageDrawer();
@@ -299,6 +323,74 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
               </div>
             </div>
 
+            {/* Job Intent & Status */}
+            {(jobIntent || jobSearchStatus || earliestStart) && (
+              <>
+                <Separator />
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-sm">Job Intent</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {jobIntent && (
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Goal</Label>
+                        <div className="font-medium">{jobIntent === "primary" ? "Primary role" : "Supplemental / additional work"}</div>
+                      </div>
+                    )}
+                    {jobSearchStatus && (
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Search Status</Label>
+                        <div className="font-medium">{jobSearchStatus}</div>
+                      </div>
+                    )}
+                    {earliestStart && (
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Earliest Start</Label>
+                        <div className="font-medium">{earliestStart}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Experience & Background */}
+            {(yearsExperience || ageGroups.length > 0 || workerLanguages.length > 0) && (
+              <>
+                <Separator />
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-sm">Experience & Background</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {yearsExperience && (
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Years of Experience</Label>
+                        <div className="font-medium">{yearsExperience}</div>
+                      </div>
+                    )}
+                  </div>
+                  {ageGroups.length > 0 && (
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Age Groups Served</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {ageGroups.map((g: string, i: number) => (
+                          <span key={i} className="px-2.5 py-1 bg-muted rounded-full text-sm font-medium">{g}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {workerLanguages.length > 0 && (
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Languages Spoken</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {workerLanguages.map((l: string, i: number) => (
+                          <span key={i} className="px-2.5 py-1 bg-muted rounded-full text-sm font-medium">{l}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
             {(compensationPreference != null || telehealthOnly !== null || workSettingsDisplay.length > 0 || worker.radius || schedulePreference || scheduleDetails.length > 0) && (
               <>
                 <Separator />
@@ -326,7 +418,25 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                     {schedulePreference && (
                       <div className="space-y-1">
                         <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Schedule Preference</Label>
-                        <div className="font-medium">{schedulePreference === "standard" ? "Standard Full-Time" : schedulePreference === "flexible" ? "Non-Standard / Flexible" : schedulePreference}</div>
+                        <div className="font-medium">{schedulePreference === "standard" ? "Standard weekday" : schedulePreference === "flexible" ? "Non-standard / flexible" : schedulePreference}</div>
+                      </div>
+                    )}
+                    {openToRelocation !== null && openToRelocation !== undefined && (
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Open to Relocation</Label>
+                        <div className="font-medium">{openToRelocation ? "Yes" : "No"}</div>
+                      </div>
+                    )}
+                    {multiSiteComfort && (
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Multi-Site Comfort</Label>
+                        <div className="font-medium">{multiSiteComfort}</div>
+                      </div>
+                    )}
+                    {preferredWeeklyHours && (
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Preferred Weekly Hours</Label>
+                        <div className="font-medium">{preferredWeeklyHours}</div>
                       </div>
                     )}
                   </div>
@@ -352,6 +462,22 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                           </span>
                         ))}
                       </div>
+                    </div>
+                  )}
+                  {targetRoles.length > 0 && (
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Target Roles</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {targetRoles.map((r: string, i: number) => (
+                          <span key={i} className="px-2.5 py-1 bg-muted rounded-full text-sm font-medium">{r}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {weeklyBillable && worker.role === "BCBA" && (
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Weekly Billable Preference</Label>
+                      <div className="font-medium">{weeklyBillable}</div>
                     </div>
                   )}
                 </div>
@@ -382,6 +508,22 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                       >
                         <FileText className="h-4 w-4 shrink-0" />
                         View resume
+                      </a>
+                    </div>
+                  </>
+                )}
+                {showFullProfile && linkedinUrl && (
+                  <>
+                    <Separator />
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm">LinkedIn</h3>
+                      <a
+                        href={linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                      >
+                        View LinkedIn profile
                       </a>
                     </div>
                   </>
