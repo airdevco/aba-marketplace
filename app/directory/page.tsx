@@ -137,12 +137,10 @@ export default function DirectoryPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Any</SelectItem>
+                        <SelectItem value="5">5 miles</SelectItem>
                         <SelectItem value="10">10 miles</SelectItem>
                         <SelectItem value="15">15 miles</SelectItem>
-                        <SelectItem value="20">20 miles</SelectItem>
                         <SelectItem value="25">25 miles</SelectItem>
-                        <SelectItem value="30">30 miles</SelectItem>
-                        <SelectItem value="35">35 miles</SelectItem>
                         <SelectItem value="50">50 miles</SelectItem>
                       </SelectContent>
                     </Select>
@@ -174,7 +172,7 @@ export default function DirectoryPage() {
                 <div className="space-y-3">
                   <Label>Employment Type</Label>
                   <div className="space-y-2">
-                    {["Full-time", "Part-time", "Contractor"].map((type) => (
+                    {["Full-time", "Part-time", "Contract"].map((type) => (
                       <div key={type} className="flex items-center space-x-2">
                         <Checkbox
                           id={`emp-${type}`}
@@ -204,7 +202,7 @@ export default function DirectoryPage() {
                   <div className="space-y-3">
                     <Label>Work Setting</Label>
                     <div className="space-y-2">
-                      {["Center-based", "In-home", "School-based"].map((setting) => (
+                      {["Center-based", "In-home", "School-based", "Community-based"].map((setting) => (
                         <div key={setting} className="flex items-center space-x-2">
                           <Checkbox
                             id={`ws-${setting}`}
@@ -228,7 +226,7 @@ export default function DirectoryPage() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="standard" id="sched-pref-standard" />
-                      <Label htmlFor="sched-pref-standard" className="font-normal text-sm cursor-pointer">Standard Full-Time</Label>
+                      <Label htmlFor="sched-pref-standard" className="font-normal text-sm cursor-pointer">Standard weekday</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="flexible" id="sched-pref-flexible" />

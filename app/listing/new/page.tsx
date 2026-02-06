@@ -372,7 +372,7 @@ function CreateJobPageContent() {
     alert("Draft saved!");
   };
 
-  const employmentTypeOptions = ["Full-time", "Part-time", "Contract", "Per Diem", "Weekends"];
+  const employmentTypeOptions = ["Full-time", "Part-time", "Contract"];
   const scheduleOptionsList = ["Weekdays", "Weekends", "Mornings", "Afternoons", "Evenings"];
   const specializationOptions = [
     "Verbal",

@@ -28,7 +28,7 @@ export default function ProfileView() {
   const [compensationPreference, setCompensationPreference] = useState<"hourly" | "salary" | "both">("hourly");
   const [minHourlyRate, setMinHourlyRate] = useState("24");
   const [minAnnualSalary, setMinAnnualSalary] = useState("");
-  const [employmentType, setEmploymentType] = useState<string[]>(["W2 – Full Time", "Weekends"]);
+  const [employmentType, setEmploymentType] = useState<string[]>(["Full-time"]);
   const [workSetting, setWorkSetting] = useState("in-person");
   const [geographicRadius, setGeographicRadius] = useState("25");
   const [schedulePreference, setSchedulePreference] = useState<"standard" | "flexible">("standard");
@@ -330,7 +330,7 @@ export default function ProfileView() {
                 <div className="space-y-2 mb-6">
                   <Label>Employment Type</Label>
                   <div className="flex flex-wrap gap-3 mt-2">
-                    {["W2 – Full Time", "W2 – Part Time", "1099 Contractor", "Weekends"].map((type) => (
+                    {["Full-time", "Part-time", "Contract"].map((type) => (
                       <div key={type} className="flex items-center space-x-2">
                         <Checkbox
                           id={`profile-${type}`}
@@ -378,11 +378,11 @@ export default function ProfileView() {
                   <RadioGroup value={schedulePreference} onValueChange={(value) => setSchedulePreference(value as "standard" | "flexible")}>
                     <div className="flex items-center space-x-2 p-3 border rounded-lg">
                       <RadioGroupItem value="standard" id="sched-standard" />
-                      <Label htmlFor="sched-standard" className="flex-1 cursor-pointer">Standard Full-Time (Weekday daytime hours)</Label>
+                      <Label htmlFor="sched-standard" className="flex-1 cursor-pointer">Standard weekday</Label>
                     </div>
                     <div className="flex items-center space-x-2 p-3 border rounded-lg">
                       <RadioGroupItem value="flexible" id="sched-flexible" />
-                      <Label htmlFor="sched-flexible" className="flex-1 cursor-pointer">Flexible Schedule</Label>
+                      <Label htmlFor="sched-flexible" className="flex-1 cursor-pointer">Non-standard / flexible</Label>
                     </div>
                   </RadioGroup>
                 </div>
