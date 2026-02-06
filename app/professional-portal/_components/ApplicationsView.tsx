@@ -10,7 +10,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFo
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, MessageSquare, ExternalLink, Send, ChevronLeft } from "lucide-react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 // Placeholder company logos for messaging attribution
 const COMPANY_LOGOS = {
@@ -274,13 +273,6 @@ export default function ApplicationsView() {
           ) : (
             /* Message View */
             <>
-              <VisuallyHidden>
-                <SheetTitle>
-                  {selectedThread
-                    ? `Conversation with ${selectedThread.company}`
-                    : "Messages"}
-                </SheetTitle>
-              </VisuallyHidden>
               <SheetHeader className="border-b pb-4">
                 <div className="flex items-center gap-3">
                   <Button

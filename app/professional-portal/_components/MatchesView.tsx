@@ -100,6 +100,9 @@ export default function MatchesView() {
       {/* Welcome Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 pb-2">
         <div>
+          <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, Sarah</h1>
           <p className="text-muted-foreground mt-1">Here&apos;s what&apos;s happening today.</p>
         </div>

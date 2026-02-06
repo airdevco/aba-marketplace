@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
 
-const ANONYMOUS_RBT_IMAGE = "/avatar-rbt.svg";
-const ANONYMOUS_BCBA_IMAGE = "/avatar-bcba.svg";
+const ANONYMOUS_RBT_IMAGE =
+  "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769801148980x247012410569728450/RBT.png";
+const ANONYMOUS_BCBA_IMAGE =
+  "https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769801178173x343714905661155900/BCBA.png";
 
 interface GenericAvatarProps {
   size?: "sm" | "md" | "lg" | "xl";

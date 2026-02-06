@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useRef, useEffect, ReactNode } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft, Send } from "lucide-react";
@@ -376,13 +375,6 @@ export function ProfessionalMessageDrawerProvider({ children }: { children: Reac
           ) : (
             /* Message View */
             <>
-              <VisuallyHidden>
-                <SheetTitle>
-                  {selectedThread
-                    ? `Conversation with ${selectedThread.senderName}`
-                    : "Messages"}
-                </SheetTitle>
-              </VisuallyHidden>
               <SheetHeader className="border-b pb-4">
                 <div className="flex items-center gap-3">
                   <Button

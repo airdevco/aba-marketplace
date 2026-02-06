@@ -3,7 +3,7 @@
 import { useState, use } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, AlertTriangle, Check, MapPin, DollarSign, Eye, Edit, Building } from "lucide-react";
+import { ChevronLeft, AlertTriangle, Check, MapPin, DollarSign, Eye, Edit, Calendar, Briefcase, Building } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -564,13 +564,15 @@ export default function JobListingPage({ params }: { params: Promise<{ id: strin
                       </div>
                       <div className="space-y-1">
                         <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Position Type</Label>
-                        <div className="font-medium">
+                        <div className="font-medium flex items-center gap-1.5">
+                          <Briefcase className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                           {job.positionType === "RBT" ? "Registered Behavior Technician (RBT)" : "Board Certified Behavior Analyst (BCBA)"}
                         </div>
                       </div>
                       <div className="space-y-1">
                         <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Schedule</Label>
-                        <div className="font-medium">
+                        <div className="font-medium flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                           {job.scheduleOptions.length ? job.scheduleOptions.join(", ") : "—"}
                         </div>
                       </div>

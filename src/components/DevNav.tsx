@@ -18,8 +18,7 @@ const pages = [
   { name: "/listing/new", path: "/listing/new" },
   { name: "/listing/1", path: "/listing/1" },
   { name: "/directory", path: "/directory" },
-  { name: "/profile/anonymous", path: "/profile/anonymous" },
-  { name: "/profile/full", path: "/profile/full" },
+  { name: "/profile/1", path: "/profile/1" },
   { name: "/account", path: "/account" },
   { name: "/admin", path: "/admin" },
 ];

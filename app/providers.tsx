@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { HideDevIndicator } from "./hide-dev-indicator";
 import { EmployerMessageDrawerProvider } from "@/components/EmployerMessageDrawerContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -23,6 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <EmployerMessageDrawerProvider>
+          <HideDevIndicator />
           <Toaster />
           <Sonner position="top-right" />
           {children}
