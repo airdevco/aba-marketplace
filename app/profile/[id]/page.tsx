@@ -3,7 +3,7 @@
 import { useState, use } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, MapPin, Briefcase, MessageSquare, CheckCircle2, FileText } from "lucide-react";
+import { ChevronLeft, MapPin, MessageSquare, CheckCircle2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -66,6 +66,7 @@ type DirectoryWorker = {
   targetRoles?: string[];
   weeklyBillable?: string;
   linkedinUrl?: string;
+  resumeUrl?: string;
   /** Verified Professional badge (license verified by admin) */
   isVerified?: boolean;
   unlockedForEmployerIds?: string[];
@@ -77,8 +78,8 @@ type DirectoryWorker = {
 };
 
 const directoryWorkers: DirectoryWorker[] = [
-  { id: "W101", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Atlanta, GA", zipCode: "30301", image: "", experience: "3 years", licenseNumber: "RBT-W101", minRate: "24", employmentType: ["Full-time"], workSetting: "In-person", radius: "25", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["Center-based", "In-home"], schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], bio: "I have three years of experience as an RBT, primarily in early intervention and center-based ABA. I've worked with children ages 2–8 across verbal behavior, daily living skills, and reduction of challenging behaviors. I'm passionate about family-centered care and helping parents generalize strategies at home. I'm looking for a full-time role where I can grow under strong BCBA supervision and contribute to a collaborative team.", isVerified: true, jobIntent: "primary", jobSearchStatus: "Actively looking", yearsExperience: "2-5 years", ageGroups: ["Early Intervention (0-5)", "School Age (6-12)"], languages: ["English", "Spanish"], earliestStart: "2 weeks", openToRelocation: false, multiSiteComfort: "Some travel required", preferredWeeklyHours: "36-40 hours", targetRoles: ["RBT", "Senior RBT"] },
-  { id: "W102", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Marietta, GA", zipCode: "30060", image: "", experience: "5 years", licenseNumber: "BCBA-W102", minRate: "82", employmentType: ["Full-time"], workSetting: "In-person", radius: "30", compensationPreference: "both", telehealthOnly: true, workSettings: [], schedulePreference: "standard", scheduleDetails: [], bio: "Board Certified Behavior Analyst with over five years in clinical supervision and program design. My background includes school-based consultation, parent training, and telehealth service delivery. I specialize in verbal behavior and severe behavior reduction. I'm committed to ethical practice, staff development, and data-driven decision making. Open to full-time positions that offer a mix of direct care and supervision.", isVerified: true, jobIntent: "primary", jobSearchStatus: "Open to opportunities", yearsExperience: "5-8 years", ageGroups: ["School Age (6-12)", "Adolescents (13-17)"], languages: ["English"], earliestStart: "30 days", openToRelocation: true, multiSiteComfort: "Multi-site travel", targetRoles: ["BCBA", "Clinical Director"], weeklyBillable: "21-25 hours", linkedinUrl: "https://linkedin.com/in/example-bcba" },
+  { id: "anonymous", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Atlanta, GA", zipCode: "30301", image: "", experience: "3 years", licenseNumber: "RBT-W101", minRate: "24", employmentType: ["Full-time"], workSetting: "In-person", radius: "25", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["Center-based", "In-home"], schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], bio: "I have three years of experience as an RBT, primarily in early intervention and center-based ABA. I've worked with children ages 2–8 across verbal behavior, daily living skills, and reduction of challenging behaviors. I'm passionate about family-centered care and helping parents generalize strategies at home. I'm looking for a full-time role where I can grow under strong BCBA supervision and contribute to a collaborative team.", isVerified: true, jobIntent: "primary", jobSearchStatus: "Actively looking", yearsExperience: "2-5 years", ageGroups: ["Early Intervention (0-5)", "School Age (6-12)"], languages: ["English", "Spanish"], earliestStart: "2 weeks", openToRelocation: false, multiSiteComfort: "Some travel required", preferredWeeklyHours: "36-40 hours", targetRoles: ["RBT", "Senior RBT"] },
+  { id: "full", name: "Anonymous RBT", email: "sarah.w@example.com", phone: "(555) 123-4567", role: "RBT", location: "Atlanta, GA", zipCode: "30301", image: "", experience: "3 years", licenseNumber: "RBT-W101", minRate: "24", employmentType: ["Full-time"], workSetting: "In-person", radius: "25", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["Center-based", "In-home"], schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], bio: "I have three years of experience as an RBT, primarily in early intervention and center-based ABA. I've worked with children ages 2–8 across verbal behavior, daily living skills, and reduction of challenging behaviors. I'm passionate about family-centered care and helping parents generalize strategies at home. I'm looking for a full-time role where I can grow under strong BCBA supervision and contribute to a collaborative team.", isVerified: true, jobIntent: "primary", jobSearchStatus: "Actively looking", yearsExperience: "2-5 years", ageGroups: ["Early Intervention (0-5)", "School Age (6-12)"], languages: ["English", "Spanish"], earliestStart: "2 weeks", openToRelocation: false, multiSiteComfort: "Some travel required", preferredWeeklyHours: "36-40 hours", targetRoles: ["RBT", "Senior RBT"], linkedinUrl: "https://linkedin.com/in/sarah-williams-rbt", resumeUrl: "/resumes/sarah-williams-rbt.pdf", unlockedForEmployerIds: ["E1"], realName: "Sarah Williams", realImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop", realBio: "I have three years of experience as an RBT, primarily in early intervention and center-based ABA. I've worked with children ages 2–8 across verbal behavior, daily living skills, and reduction of challenging behaviors. I'm passionate about family-centered care and helping parents generalize strategies at home. I'm looking for a full-time role where I can grow under strong BCBA supervision and contribute to a collaborative team." },
   { id: "W103", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Decatur, GA", zipCode: "30030", image: "", experience: "1 year", licenseNumber: "RBT-W103", minRate: "22", employmentType: ["Part-time"], workSetting: "Hybrid", radius: "15", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["School-based"], schedulePreference: "flexible", scheduleDetails: ["Weekends"], bio: "I'm an RBT with one year of experience and a background in special education. I've worked in school-based settings supporting students with autism and related disabilities. I'm seeking part-time opportunities that allow me to balance graduate coursework in ABA. I'm reliable, detail-oriented, and comfortable with data collection and behavior plans. Weekend and afternoon availability preferred.", isVerified: false },
   { id: "W104", name: "Anonymous RBT", email: "", phone: "", role: "RBT", location: "Alpharetta, GA", zipCode: "30009", image: "", experience: "4 years", licenseNumber: "RBT-W104", minRate: "26", employmentType: ["Full-time", "Contractor"], workSetting: "In-person", radius: "20", compensationPreference: "hourly", telehealthOnly: false, workSettings: ["Center-based", "In-home"], schedulePreference: "standard", scheduleDetails: [], bio: "Senior RBT with four years of experience in center-based and in-home ABA. I've supported clients across early learner programs, verbal behavior, and mild to moderate challenging behaviors. I'm skilled at building rapport with families and maintaining treatment integrity. Open to full-time or 1099 contract roles. I value clear communication, ongoing training, and a supportive clinical culture.", isVerified: true },
   { id: "W105", name: "Anonymous BCBA", email: "", phone: "", role: "BCBA", location: "Sandy Springs, GA", zipCode: "30328", image: "", experience: "7 years", licenseNumber: "BCBA-W105", minRate: "90", employmentType: ["Full-time"], workSetting: "Hybrid", radius: "35", compensationPreference: "salary", telehealthOnly: true, workSettings: [], schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], bio: "BCBA with seven years of experience in clinic leadership, telehealth, and hybrid service delivery. I've led clinical teams, developed training programs, and maintained high-quality outcomes across center and remote settings. My focus is on sustainable caseloads, ethical supervision, and family-centered care. I'm looking for a leadership or senior clinical role that supports work-life balance and professional growth.", isVerified: true },
@@ -127,8 +128,8 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   };
 
   const isVerifiedApplicant = worker.id === "XY987ZW";
-  const isDirectoryWorker = worker.id.startsWith("W");
   const dirWorker = directoryWorkers.find(w => w.id === worker.id);
+  const isDirectoryWorker = !!dirWorker;
   const unlockedByInvite = getUnlockedEmployerIds(worker.id).includes(CURRENT_EMPLOYER_ID);
   const isUnlockedForThisEmployer = isDirectoryWorker && (unlockedByInvite || (dirWorker?.unlockedForEmployerIds?.includes(CURRENT_EMPLOYER_ID) ?? false));
   const showFullProfile = !isDirectoryWorker || isUnlockedForThisEmployer;
@@ -141,7 +142,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   const displayBio = showFullProfile
     ? (dirWorker?.realBio ?? (worker as { bio?: string }).bio ?? "")
     : (dirWorker?.bio ?? (worker as { bio?: string }).bio ?? "");
-  const resumeUrl = (worker as { resumeUrl?: string }).resumeUrl;
+  const resumeUrl = dirWorker?.resumeUrl ?? (worker as { resumeUrl?: string }).resumeUrl;
   const showVerifiedBadge = showFullProfile ? isVerifiedApplicant : (dirWorker?.isVerified ?? false);
   const workSettingsDisplay = (dirWorker?.workSettings?.length ? dirWorker.workSettings : [worker.workSetting].filter(Boolean)) as string[];
   const compensationPreference = dirWorker?.compensationPreference ?? (worker as { compensationPreference?: string }).compensationPreference;
@@ -293,15 +294,13 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Position Type</Label>
-                <div className="font-medium flex items-center gap-1.5">
-                  <Briefcase className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <div className="font-medium">
                   {worker.role === "RBT" ? "RBT" : "BCBA"}
                 </div>
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-muted-foreground font-normal uppercase tracking-wide">Location</Label>
-                <div className="font-medium flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <div className="font-medium">
                   {worker.location}
                 </div>
               </div>

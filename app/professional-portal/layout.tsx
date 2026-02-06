@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { 
-  LayoutDashboard, 
-  Briefcase, 
+import {
+  LayoutDashboard,
+  Briefcase,
   User,
   LogOut,
   Menu,
-  Settings,
   MoreVertical,
   Search
 } from "lucide-react";
@@ -99,9 +98,17 @@ function ProfessionalPortalLayoutContent({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
+              <DropdownMenuItem asChild>
+                <Link href="/search">
+                  <Search className="mr-2 h-4 w-4" />
+                  Find Jobs
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/professional-portal?tab=profile">
+                  <User className="mr-2 h-4 w-4" />
+                  My Profile
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" asChild>
                 <Link href="/login">
@@ -117,9 +124,9 @@ function ProfessionalPortalLayoutContent({
   );
 
   return (
-    <div className="min-h-screen bg-gray-50/30 flex">
+    <div className="min-h-screen bg-gray-50">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block w-72 fixed inset-y-0 z-50">
+      <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
         <SidebarContent />
       </aside>
 
@@ -134,25 +141,27 @@ function ProfessionalPortalLayoutContent({
         </SheetContent>
       </Sheet>
 
-      {/* Main Content */}
-      <main className="flex-1 md:ml-72">
-        {/* Top Header */}
-        <header className="h-16 border-b border-border bg-white sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between md:justify-end gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden shrink-0 -ml-2"
-            onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769817783115x473563165576327740/mary.jpeg" alt="Sarah Williams" />
-            <AvatarFallback className="text-xs">SW</AvatarFallback>
-          </Avatar>
-        </header>
+      {/* Mobile Header */}
+      <div className="md:hidden sticky top-0 z-50 flex items-center gap-4 px-4 h-16 bg-white border-b">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Open menu"
+        >
+          <Menu className="w-5 h-5" />
+        </Button>
+        <Link href="/professional-portal?tab=dashboard">
+          <img
+            src="https://e47b698e59208764aee00d1d8e14313c.cdn.bubble.io/f1769551902030x600833303719120300/aba.png"
+            alt="ABA Marketplace"
+            className="h-8 w-auto"
+          />
+        </Link>
+      </div>
 
+      {/* Main Content */}
+      <main className="md:ml-72 bg-white">
         <div className="p-8 max-w-7xl mx-auto">
           {children}
         </div>
