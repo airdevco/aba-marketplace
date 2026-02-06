@@ -701,334 +701,520 @@ export default function OnboardingPage() {
                   </div>
                 )}
 
-                  {/* Step 3: Personal Information */}
+                  {/* Step 3: Tell Us About Your Experience */}
                   {currentStep === 3 && (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Label className="text-base font-semibold block">Personal Information</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button 
-                            type="button" 
-                            className="text-muted-foreground hover:text-foreground transition-colors"
-                          >
-                            <Info className="w-4 h-4" />
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent 
-                          side="bottom" 
-                          align="start"
-                          className="bg-white text-foreground border shadow-lg max-w-xs w-auto"
-                        >
-                          <div className="space-y-1">
-                            <p className="font-medium flex items-center gap-2">
-                              <Lock className="w-4 h-4" />
-                              Anonymous Profile
-                            </p>
-                            <p className="text-sm">
-                              Your personal information stays private. Employers will only see it when you apply to a job or accept a message request.
-                            </p>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                      
-                    {/* Photo Upload */}
                     <div>
-                      <Label className="text-sm font-medium mb-2 block text-center">Profile Photo</Label>
-                      <div className="flex justify-center">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handlePhotoUpload(e, false)}
-                          className="hidden"
-                          id="photo-upload"
-                        />
-                        {photo ? (
-                          <div className="relative group cursor-pointer">
-                            <label htmlFor="photo-upload" className="cursor-pointer">
-                              <img
-                                src={photo}
-                                alt="Profile"
-                                className="w-24 h-24 rounded-full object-cover border-2 border-border hover:opacity-80 transition-opacity"
+                      <h2 className="text-xl font-semibold mb-2">Tell Us About Your Experience</h2>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        Share a bit about your background and the types of clients you&apos;ve worked with.
+                      </p>
+
+                      {/* Years of Experience */}
+                      <div className="space-y-2 mb-6">
+                        <Label>Years of Experience</Label>
+                        <Select value={yearsExperience} onValueChange={setYearsExperience}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select years of experience" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0-2">0-2 years</SelectItem>
+                            <SelectItem value="2-5">2-5 years</SelectItem>
+                            <SelectItem value="5-8">5-8 years</SelectItem>
+                            <SelectItem value="8+">8+ years</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Age Groups Served */}
+                      <div className="space-y-2 mb-6">
+                        <Label>Age Groups Served</Label>
+                        <div className="space-y-2 mt-2">
+                          {[
+                            { value: "early-intervention", label: "Early Intervention (0-5)" },
+                            { value: "school-age", label: "School Age (6-12)" },
+                            { value: "adolescents", label: "Adolescents (13-17)" },
+                            { value: "adults", label: "Adults (18+)" }
+                          ].map((group) => (
+                            <div key={group.value} className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <Checkbox
+                                id={`age-${group.value}`}
+                                checked={ageGroups.includes(group.value)}
+                                onCheckedChange={(checked) =>
+                                  handleAgeGroupsChange(group.value, checked === true)
+                                }
                               />
-                            </label>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setPhoto(null);
-                              }}
-                              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center hover:bg-destructive/90 transition-colors"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ) : (
-                          <label htmlFor="photo-upload" className="cursor-pointer">
-                            <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-all">
-                              <span className="text-muted-foreground text-xs">Click to upload</span>
+                              <Label htmlFor={`age-${group.value}`} className="cursor-pointer flex-1">
+                                {group.label}
+                              </Label>
                             </div>
-                          </label>
-                        )}
+                          ))}
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Name Fields */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
-                          value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
-                          placeholder="Enter your first name"
-                        />
+                      {/* Languages Spoken */}
+                      <div className="space-y-2 mb-6">
+                        <Label>Languages Spoken</Label>
+                        <div className="space-y-2 mt-2">
+                          {[
+                            "English",
+                            "Spanish",
+                            "Mandarin",
+                            "Vietnamese",
+                            "Korean",
+                            "Tagalog",
+                            "Arabic",
+                            "French",
+                            "Portuguese",
+                            "Other"
+                          ].map((lang) => (
+                            <div key={lang} className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <Checkbox
+                                id={`lang-${lang}`}
+                                checked={languages.includes(lang)}
+                                onCheckedChange={(checked) =>
+                                  handleLanguagesChange(lang, checked === true)
+                                }
+                              />
+                              <Label htmlFor={`lang-${lang}`} className="cursor-pointer flex-1">
+                                {lang}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
-                          placeholder="Enter your last name"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Bio */}
-                    <div className="space-y-2">
-                      <Label htmlFor="bio">
-                        Bio / About You
-                      </Label>
-                      <Textarea
-                        id="bio"
-                        value={bio}
-                        onChange={(e) => setBio(e.target.value)}
-                        placeholder="Tell employers about your experience, specializations, and what makes you a great fit..."
-                        className="min-h-[100px] resize-none"
-                        maxLength={500}
-                        required
-                      />
-                    </div>
-
-                    {/* Resume Upload */}
-                    <div className="space-y-2">
-                      <Label htmlFor="resume">
-                        Resume
-                      </Label>
-                      <Input
-                        id="resume"
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleResumeUpload}
-                        className="cursor-pointer"
-                        required
-                      />
-                      {resume && (
-                        <p className="text-xs text-green-600 flex items-center gap-1">
-                          <Check className="w-3 h-3" /> {resume.name}
-                        </p>
-                      )}
-                      <p className="text-xs text-muted-foreground">PDF or DOC format, max 5MB</p>
-                    </div>
-
-                    {/* ZIP Code */}
-                    <div className="space-y-2">
-                      <Label htmlFor="zipCode">ZIP Code</Label>
-                      <Input
-                        id="zipCode"
-                        value={zipCode}
-                        onChange={(e) => handleZipCodeChange(e.target.value)}
-                        placeholder="Enter your ZIP code"
-                        maxLength={5}
-                      />
-                      {zipCodeError && (
-                        <p className="text-sm text-destructive mt-1">{zipCodeError}</p>
-                      )}
-                      {!zipCodeError && zipCode.length === 5 && (
-                        <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
-                          <Check className="w-3 h-3" /> Location verified
-                        </p>
-                      )}
                     </div>
                   </div>
                 )}
 
-                  {/* Step 4: License Attestation */}
+                  {/* Step 4: Tell Us What's Important To You */}
                   {currentStep === 4 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-base font-semibold mb-4 block">License Verification</Label>
+                      <h2 className="text-xl font-semibold mb-2">Tell Us What&apos;s Important To You</h2>
                       <p className="text-sm text-muted-foreground mb-6">
-                        Confirm your professional credentials
+                        Set your non-negotiables, like pay, location, and work setting.
                       </p>
-                      
-                      <div className="flex items-start space-x-2 p-4 border rounded-lg">
-                        <Checkbox
-                          id="hasLicense"
-                          checked={hasLicense}
-                          onCheckedChange={(checked) => setHasLicense(checked === true)}
-                        />
-                        <Label
-                          htmlFor="hasLicense"
-                          className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-1"
-                        >
-                          I attest that I hold an active {roleType} credential
-                        </Label>
+
+                      {/* Compensation Section */}
+                      <div className="border-b pb-6 mb-6">
+                        <h3 className="text-base font-semibold mb-4">Compensation</h3>
+
+                        {/* Compensation Preference */}
+                        <div className="space-y-3 mb-4">
+                          <Label>Compensation Preference</Label>
+                          <RadioGroup value={compensationPreference} onValueChange={(value) => setCompensationPreference(value as "hourly" | "salary" | "both")}>
+                            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <RadioGroupItem value="hourly" id="comp-hourly" />
+                              <Label htmlFor="comp-hourly" className="flex-1 cursor-pointer">Hourly only</Label>
+                            </div>
+                            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <RadioGroupItem value="salary" id="comp-salary" />
+                              <Label htmlFor="comp-salary" className="flex-1 cursor-pointer">Salary only</Label>
+                            </div>
+                            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <RadioGroupItem value="both" id="comp-both" />
+                              <Label htmlFor="comp-both" className="flex-1 cursor-pointer">Open to hourly or salary</Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+
+                        {/* Minimum Hourly Rate (conditional) */}
+                        {(compensationPreference === "hourly" || compensationPreference === "both") && (
+                          <div className="space-y-2 mb-4">
+                            <Label htmlFor="minHourlyRate">Minimum Hourly Rate</Label>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                              <Input
+                                id="minHourlyRate"
+                                type="number"
+                                value={minHourlyRate}
+                                onChange={(e) => setMinHourlyRate(e.target.value)}
+                                placeholder="25"
+                                className="pl-7"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Minimum Annual Salary (conditional) */}
+                        {(compensationPreference === "salary" || compensationPreference === "both") && (
+                          <div className="space-y-2">
+                            <Label htmlFor="minAnnualSalary">Minimum Annual Salary</Label>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                              <Input
+                                id="minAnnualSalary"
+                                type="number"
+                                value={minAnnualSalary}
+                                onChange={(e) => setMinAnnualSalary(e.target.value)}
+                                placeholder="50000"
+                                className="pl-7"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      {hasLicense && (
-                        <div className="mt-4 space-y-2">
-                          <Label htmlFor="licenseNumber">License Number <span className="text-muted-foreground text-xs">(Optional)</span></Label>
-                          <Input
-                            id="licenseNumber"
-                            value={licenseNumber}
-                            onChange={(e) => setLicenseNumber(e.target.value)}
-                            placeholder="Enter your license number"
-                          />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Enter your license number to receive a &quot;Verified Professional&quot; badge after we verify your license
-                          </p>
+                      {/* Work Setting Section */}
+                      <div className="border-b pb-6 mb-6">
+                        <h3 className="text-base font-semibold mb-4">Work Setting</h3>
+
+                        {/* Telehealth Only */}
+                        <div className="space-y-3 mb-4">
+                          <Label>Telehealth Only?</Label>
+                          <RadioGroup
+                            value={telehealthOnly === null ? "" : telehealthOnly ? "yes" : "no"}
+                            onValueChange={(value) => setTelehealthOnly(value === "yes")}
+                          >
+                            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <RadioGroupItem value="yes" id="telehealth-yes" />
+                              <Label htmlFor="telehealth-yes" className="flex-1 cursor-pointer">Yes, telehealth only</Label>
+                            </div>
+                            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <RadioGroupItem value="no" id="telehealth-no" />
+                              <Label htmlFor="telehealth-no" className="flex-1 cursor-pointer">No, open to in-person</Label>
+                            </div>
+                          </RadioGroup>
                         </div>
-                      )}
+
+                        {/* Work Setting Preference (conditional - only if NOT telehealth only) */}
+                        {telehealthOnly === false && (
+                          <div className="space-y-2 mb-4">
+                            <Label>Work Setting Preference</Label>
+                            <div className="space-y-2 mt-2">
+                              {["Center-based", "In-home", "School-based", "Community-based"].map((setting) => (
+                                <div key={setting} className="flex items-center space-x-2 p-3 border rounded-lg">
+                                  <Checkbox
+                                    id={`setting-${setting}`}
+                                    checked={workSettings.includes(setting)}
+                                    onCheckedChange={(checked) =>
+                                      handleWorkSettingsChange(setting, checked === true)
+                                    }
+                                  />
+                                  <Label htmlFor={`setting-${setting}`} className="cursor-pointer flex-1">
+                                    {setting}
+                                  </Label>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Location & Travel Section */}
+                      <div className="border-b pb-6 mb-6">
+                        <h3 className="text-base font-semibold mb-4">Location & Travel</h3>
+
+                        {/* Geographic Radius (only if NOT telehealth only) */}
+                        {telehealthOnly !== true && (
+                          <div className="space-y-2 mb-4">
+                            <Label>Geographic Radius</Label>
+                            <Select value={geographicRadius} onValueChange={setGeographicRadius}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select radius" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="5">5 miles</SelectItem>
+                                <SelectItem value="10">10 miles</SelectItem>
+                                <SelectItem value="15">15 miles</SelectItem>
+                                <SelectItem value="25">25 miles</SelectItem>
+                                <SelectItem value="50">50 miles</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        {/* Willing to Relocate */}
+                        <div className="space-y-3 mb-4">
+                          <Label>Willing to Relocate?</Label>
+                          <RadioGroup
+                            value={willingToRelocate === null ? "" : willingToRelocate ? "yes" : "no"}
+                            onValueChange={(value) => setWillingToRelocate(value === "yes")}
+                          >
+                            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <RadioGroupItem value="yes" id="relocate-yes" />
+                              <Label htmlFor="relocate-yes" className="flex-1 cursor-pointer">Yes</Label>
+                            </div>
+                            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                              <RadioGroupItem value="no" id="relocate-no" />
+                              <Label htmlFor="relocate-no" className="flex-1 cursor-pointer">No</Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+
+                        {/* Travel / Multi-Site */}
+                        <div className="space-y-2">
+                          <Label>Travel / Multi-Site Preference</Label>
+                          <Select value={travelPreference} onValueChange={setTravelPreference}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select preference" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="single-site">Single site only</SelectItem>
+                              <SelectItem value="some-travel">Some travel required</SelectItem>
+                              <SelectItem value="multi-site">Multi-site travel</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {/* Target Roles Section */}
+                      <div className="mb-6">
+                        <h3 className="text-base font-semibold mb-4">Target Roles</h3>
+
+                        <div className="space-y-2">
+                          <Label>Roles of Interest</Label>
+                          <div className="space-y-2 mt-2">
+                            {(roleType === "RBT"
+                              ? ["RBT", "Senior RBT", "Lead / Supervisor", "Other"]
+                              : ["BCBA", "Lead BCBA", "Clinic Supervisor", "Clinical Director", "Other"]
+                            ).map((role) => (
+                              <div key={role} className="flex items-center space-x-2 p-3 border rounded-lg">
+                                <Checkbox
+                                  id={`role-${role}`}
+                                  checked={targetRoles.includes(role)}
+                                  onCheckedChange={(checked) =>
+                                    handleTargetRolesChange(role, checked === true)
+                                  }
+                                />
+                                <Label htmlFor={`role-${role}`} className="cursor-pointer flex-1">
+                                  {role}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* BCBA-only: Maximum Weekly Billable */}
+                        {roleType === "BCBA" && (
+                          <div className="space-y-2 mt-4">
+                            <Label>Maximum Weekly Billable Requirement</Label>
+                            <Select value={weeklyBillable} onValueChange={setWeeklyBillable}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select preference" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="under-20">Under 20 hours</SelectItem>
+                                <SelectItem value="21-25">21-25 hours</SelectItem>
+                                <SelectItem value="26-30">26-30 hours</SelectItem>
+                                <SelectItem value="30+">30+ hours</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
 
-                  {/* Step 5: Review & Submit */}
+                  {/* Step 5: Make Your Profile Shine */}
                   {currentStep === 5 && (
-                  <div className="space-y-8">
-                    <div className="space-y-6">
-                      {/* 1. Role (Step 1) */}
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-semibold mb-4">Role</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Role Type</p>
-                            <p className="font-medium">{roleType || "RBT"}</p>
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2">Make Your Profile Shine</h2>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        Add optional details to strengthen your profile and stand out.
+                      </p>
+
+                      {/* Privacy Notice */}
+                      <div className="flex items-center gap-2 mb-6 p-4 bg-muted/50 rounded-lg">
+                        <Lock className="w-4 h-4 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                          Your personal information stays private. Employers will only see it when you apply to a job or accept a message request.
+                        </p>
+                      </div>
+
+                      {/* Personal Info Section */}
+                      <div className="border-b pb-6 mb-6">
+                        <h3 className="text-base font-semibold mb-4">Personal Information</h3>
+
+                        {/* Photo Upload */}
+                        <div className="mb-4">
+                          <Label className="text-sm font-medium mb-2 block">Profile Photo <span className="text-muted-foreground text-xs">(Optional)</span></Label>
+                          <div className="flex items-center gap-4">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handlePhotoUpload(e, false)}
+                              className="hidden"
+                              id="photo-upload"
+                            />
+                            {photo ? (
+                              <div className="relative group cursor-pointer">
+                                <label htmlFor="photo-upload" className="cursor-pointer">
+                                  <img
+                                    src={photo}
+                                    alt="Profile"
+                                    className="w-20 h-20 rounded-full object-cover border-2 border-border hover:opacity-80 transition-opacity"
+                                  />
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setPhoto(null);
+                                  }}
+                                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center hover:bg-destructive/90 transition-colors"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ) : (
+                              <label htmlFor="photo-upload" className="cursor-pointer">
+                                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30 hover:border-primary hover:bg-muted/50 transition-all">
+                                  <span className="text-muted-foreground text-xs text-center px-2">Click to upload</span>
+                                </div>
+                              </label>
+                            )}
                           </div>
+                        </div>
+
+                        {/* Name Fields */}
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="firstName">First Name</Label>
+                            <Input
+                              id="firstName"
+                              value={firstName}
+                              onChange={(e) => setFirstName(e.target.value)}
+                              placeholder="Enter your first name"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="lastName">Last Name</Label>
+                            <Input
+                              id="lastName"
+                              value={lastName}
+                              onChange={(e) => setLastName(e.target.value)}
+                              placeholder="Enter your last name"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Phone (optional) */}
+                        <div className="space-y-2 mb-4">
+                          <Label htmlFor="phone">Phone Number <span className="text-muted-foreground text-xs">(Optional)</span></Label>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="(555) 123-4567"
+                          />
+                        </div>
+
+                        {/* ZIP Code */}
+                        <div className="space-y-2">
+                          <Label htmlFor="zipCode">ZIP Code</Label>
+                          <Input
+                            id="zipCode"
+                            value={zipCode}
+                            onChange={(e) => handleZipCodeChange(e.target.value)}
+                            placeholder="Enter your ZIP code"
+                            maxLength={5}
+                          />
+                          {zipCodeError && (
+                            <p className="text-sm text-destructive mt-1">{zipCodeError}</p>
+                          )}
+                          {!zipCodeError && zipCode.length === 5 && (
+                            <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+                              <Check className="w-3 h-3" /> Location verified
+                            </p>
+                          )}
                         </div>
                       </div>
 
-                      {/* 2. Job Preferences (Step 2) */}
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-semibold mb-4">Preferences</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Compensation Preference</p>
-                            <p className="font-medium capitalize">{compensationPreference === "both" ? "Hourly or Salary" : compensationPreference}</p>
-                          </div>
-                          {(compensationPreference === "hourly" || compensationPreference === "both") && minHourlyRate && (
-                            <div>
-                              <p className="text-sm text-muted-foreground">Minimum Hourly Rate</p>
-                              <p className="font-medium">${minHourlyRate}/hr</p>
-                            </div>
-                          )}
-                          {(compensationPreference === "salary" || compensationPreference === "both") && minAnnualSalary && (
-                            <div>
-                              <p className="text-sm text-muted-foreground">Minimum Annual Salary</p>
-                              <p className="font-medium">${parseInt(minAnnualSalary).toLocaleString()}/year</p>
-                            </div>
-                          )}
-                          <div>
-                            <p className="text-sm text-muted-foreground">Employment Type</p>
-                            <p className="font-medium">
-                              {employmentType.length > 0 
-                                ? employmentType.join(", ") 
-                                : "Full-time, Part-time"}
+                      {/* Profile Details Section */}
+                      <div className="border-b pb-6 mb-6">
+                        <h3 className="text-base font-semibold mb-4">Profile Details</h3>
+
+                        {/* Bio */}
+                        <div className="space-y-2 mb-4">
+                          <Label htmlFor="bio">
+                            Professional Bio / Description <span className="text-muted-foreground text-xs">(Optional)</span>
+                          </Label>
+                          <Textarea
+                            id="bio"
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
+                            placeholder="Tell employers about your experience, specializations, and what makes you a great fit..."
+                            className="min-h-[100px] resize-none"
+                            maxLength={500}
+                          />
+                          <p className="text-xs text-muted-foreground">{bio.length}/500 characters</p>
+                        </div>
+
+                        {/* Resume Upload */}
+                        <div className="space-y-2 mb-4">
+                          <Label htmlFor="resume">
+                            Resume <span className="text-muted-foreground text-xs">(Optional)</span>
+                          </Label>
+                          <Input
+                            id="resume"
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleResumeUpload}
+                            className="cursor-pointer"
+                          />
+                          {resume && (
+                            <p className="text-xs text-green-600 flex items-center gap-1">
+                              <Check className="w-3 h-3" /> {resume.name}
                             </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Telehealth Only</p>
-                            <p className="font-medium">{telehealthOnly === null ? "No" : telehealthOnly ? "Yes" : "No"}</p>
-                          </div>
-                          {telehealthOnly === false && (
-                            <div>
-                              <p className="text-sm text-muted-foreground">Work Setting</p>
-                              <p className="font-medium">{workSettings.length > 0 ? workSettings.join(", ") : "Center-based, In-home"}</p>
-                            </div>
                           )}
-                          <div>
-                            <p className="text-sm text-muted-foreground">Geographic Radius</p>
-                            <p className="font-medium">{geographicRadius ? `${geographicRadius} miles` : "25 miles"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Schedule</p>
-                            <p className="font-medium capitalize">
-                              {schedulePreference === "standard" ? "Standard weekday" : "Non-standard / flexible"}
-                            </p>
-                          </div>
-                          {schedulePreference === "flexible" && (
-                            <div className="col-span-2">
-                              <p className="text-sm text-muted-foreground">Schedule Availability</p>
-                              <p className="font-medium">{scheduleDetails.length > 0 ? scheduleDetails.join(", ") : "Weekdays, Mornings, Afternoons"}</p>
-                            </div>
-                          )}
+                          <p className="text-xs text-muted-foreground">PDF or DOC format, max 5MB</p>
+                        </div>
+
+                        {/* LinkedIn URL */}
+                        <div className="space-y-2">
+                          <Label htmlFor="linkedinUrl">
+                            LinkedIn Profile URL <span className="text-muted-foreground text-xs">(Optional)</span>
+                          </Label>
+                          <Input
+                            id="linkedinUrl"
+                            type="url"
+                            value={linkedinUrl}
+                            onChange={(e) => setLinkedinUrl(e.target.value)}
+                            placeholder="https://linkedin.com/in/yourprofile"
+                          />
                         </div>
                       </div>
 
-                      {/* 3. Personal Information (Step 3) */}
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-semibold mb-4">Personal</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Profile Photo</p>
-                            <p className="font-medium">
-                              <a
-                                href={photo || "#"}
-                                target={photo ? "_blank" : undefined}
-                                rel={photo ? "noopener noreferrer" : undefined}
-                                className="text-primary hover:underline"
-                              >
-                                {photo ? "View photo" : "profile.jpg"}
-                              </a>
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Full Name</p>
-                            <p className="font-medium">{firstName || "Sarah"} {lastName || "Hammer"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Location (ZIP Code)</p>
-                            <p className="font-medium">{zipCode || "30301"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Email</p>
-                            <p className="font-medium">{email || "sarah.hammer@example.com"}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Phone</p>
-                            <p className="font-medium">{phone || "(555) 123-4567"}</p>
-                          </div>
-                          <div className="col-span-2">
-                            <p className="text-sm text-muted-foreground">Bio</p>
-                            <p className="font-medium">{bio || "Experienced ABA professional with a passion for helping clients achieve their goals. Specialized in early intervention and school-based services."}</p>
-                          </div>
-                          <div className="col-span-2">
-                            <p className="text-sm text-muted-foreground">Resume</p>
-                            <p className="font-medium">
-                              <a href="#" className="text-primary hover:underline">
-                                {resume ? resume.name : "resume.pdf"}
-                              </a>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 4. License (Step 4) */}
+                      {/* License Verification Section */}
                       <div>
-                        <h3 className="text-lg font-semibold mb-4">License</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                          <div>
-                            <p className="text-sm text-muted-foreground">License</p>
-                            <p className="font-medium">
-                              {hasLicense
-                                ? (licenseNumber ? `Licensed · ${licenseNumber}` : `Licensed · ${roleType === "BCBA" ? "BCBA-" : "RBT-"}12345678`)
-                                : "Not Licensed"}
+                        <h3 className="text-base font-semibold mb-4">License Verification</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Confirm your professional credentials to receive a verification badge.
+                        </p>
+
+                        <div className="flex items-start space-x-2 p-4 border rounded-lg">
+                          <Checkbox
+                            id="hasLicense"
+                            checked={hasLicense}
+                            onCheckedChange={(checked) => setHasLicense(checked === true)}
+                          />
+                          <Label
+                            htmlFor="hasLicense"
+                            className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-1"
+                          >
+                            I attest that I hold an active {roleType} credential
+                          </Label>
+                        </div>
+
+                        {hasLicense && (
+                          <div className="mt-4 space-y-2">
+                            <Label htmlFor="licenseNumber">License Number <span className="text-muted-foreground text-xs">(Optional)</span></Label>
+                            <Input
+                              id="licenseNumber"
+                              value={licenseNumber}
+                              onChange={(e) => setLicenseNumber(e.target.value)}
+                              placeholder="Enter your license number"
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Enter your license number to receive a &quot;Verified Professional&quot; badge after we verify your license
                             </p>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>

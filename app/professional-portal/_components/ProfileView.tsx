@@ -23,16 +23,41 @@ export default function ProfileView() {
   const [zipCodeError, setZipCodeError] = useState("");
   const [bio, setBio] = useState("Experienced RBT with a passion for helping children develop essential life skills.");
   const [resume, setResume] = useState<File | null>(null);
+  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [hasLicense, setHasLicense] = useState(true);
   const [licenseNumber, setLicenseNumber] = useState("RBT-12345678");
+
+  // Job Intent fields
+  const [jobIntent, setJobIntent] = useState<"primary" | "supplemental">("primary");
+  const [jobSearchStatus, setJobSearchStatus] = useState("actively-looking");
+
+  // Compensation fields
   const [compensationPreference, setCompensationPreference] = useState<"hourly" | "salary" | "both">("hourly");
   const [minHourlyRate, setMinHourlyRate] = useState("24");
   const [minAnnualSalary, setMinAnnualSalary] = useState("");
+  const [preferredWeeklyHours, setPreferredWeeklyHours] = useState("");
+
+  // Employment fields
   const [employmentType, setEmploymentType] = useState<string[]>(["Full-time"]);
-  const [workSetting, setWorkSetting] = useState("in-person");
+  const [telehealthOnly, setTelehealthOnly] = useState<boolean>(false);
+  const [workSettings, setWorkSettings] = useState<string[]>(["Center-based"]);
   const [geographicRadius, setGeographicRadius] = useState("25");
   const [schedulePreference, setSchedulePreference] = useState<"standard" | "flexible">("standard");
   const [scheduleDetails, setScheduleDetails] = useState<string[]>([]);
+  const [earliestStart, setEarliestStart] = useState("immediate");
+
+  // Location & Travel
+  const [openToRelocation, setOpenToRelocation] = useState<boolean>(false);
+  const [multiSiteComfort, setMultiSiteComfort] = useState("single-site");
+
+  // Experience fields
+  const [yearsExperience, setYearsExperience] = useState("");
+  const [ageGroups, setAgeGroups] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<string[]>(["English"]);
+
+  // Role-specific fields
+  const [targetRoles, setTargetRoles] = useState<string[]>([]);
+  const [weeklyBillable, setWeeklyBillable] = useState("");
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,6 +98,38 @@ export default function ProfileView() {
       setScheduleDetails([...scheduleDetails, detail]);
     } else {
       setScheduleDetails(scheduleDetails.filter((d) => d !== detail));
+    }
+  };
+
+  const handleWorkSettingsChange = (setting: string, checked: boolean) => {
+    if (checked) {
+      setWorkSettings([...workSettings, setting]);
+    } else {
+      setWorkSettings(workSettings.filter((s) => s !== setting));
+    }
+  };
+
+  const handleAgeGroupsChange = (group: string, checked: boolean) => {
+    if (checked) {
+      setAgeGroups([...ageGroups, group]);
+    } else {
+      setAgeGroups(ageGroups.filter((g) => g !== group));
+    }
+  };
+
+  const handleLanguagesChange = (lang: string, checked: boolean) => {
+    if (checked) {
+      setLanguages([...languages, lang]);
+    } else {
+      setLanguages(languages.filter((l) => l !== lang));
+    }
+  };
+
+  const handleTargetRolesChange = (role: string, checked: boolean) => {
+    if (checked) {
+      setTargetRoles([...targetRoles, role]);
+    } else {
+      setTargetRoles(targetRoles.filter((r) => r !== role));
     }
   };
 
@@ -229,6 +286,17 @@ export default function ProfileView() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="linkedinUrl">LinkedIn Profile URL</Label>
+              <Input
+                id="linkedinUrl"
+                type="url"
+                value={linkedinUrl}
+                onChange={(e) => setLinkedinUrl(e.target.value)}
+                placeholder="https://linkedin.com/in/yourprofile"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="zipCode">ZIP Code</Label>
               <Input
                 id="zipCode"
@@ -273,17 +341,138 @@ export default function ProfileView() {
         </CardContent>
       </Card>
 
-      {/* Section 3: Job Preferences */}
+      {/* Section 3: Job Intent */}
       <Card className="shadow-md">
         <CardContent className="p-8">
           <div className="space-y-6">
-              <div>
-                <Label className="text-base font-semibold mb-4 block">Job Preferences</Label>
-                <p className="text-sm text-muted-foreground mb-6">
-                  Tell us what you&apos;re looking for in your next role
-                </p>
+            <Label className="text-base font-semibold mb-4 block">Job Intent</Label>
 
-                <div className="space-y-3 mb-6">
+            <div className="space-y-3 mb-6">
+              <Label>What type of opportunity are you looking for?</Label>
+              <RadioGroup value={jobIntent} onValueChange={(value) => setJobIntent(value as "primary" | "supplemental")}>
+                <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                  <RadioGroupItem value="primary" id="intent-primary" />
+                  <Label htmlFor="intent-primary" className="flex-1 cursor-pointer">Primary role</Label>
+                </div>
+                <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                  <RadioGroupItem value="supplemental" id="intent-supplemental" />
+                  <Label htmlFor="intent-supplemental" className="flex-1 cursor-pointer">Supplemental / additional work</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Job Search Status</Label>
+              <Select value={jobSearchStatus} onValueChange={setJobSearchStatus}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="actively-looking">Actively looking</SelectItem>
+                  <SelectItem value="open">Open to opportunities</SelectItem>
+                  <SelectItem value="browsing">Just browsing</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Section 4: Experience */}
+      <Card className="shadow-md">
+        <CardContent className="p-8">
+          <div className="space-y-6">
+            <Label className="text-base font-semibold mb-4 block">Experience</Label>
+
+            <div className="space-y-2 mb-6">
+              <Label>Years of Experience</Label>
+              <Select value={yearsExperience} onValueChange={setYearsExperience}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select years of experience" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0-2">0-2 years</SelectItem>
+                  <SelectItem value="2-5">2-5 years</SelectItem>
+                  <SelectItem value="5-8">5-8 years</SelectItem>
+                  <SelectItem value="8+">8+ years</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2 mb-6">
+              <Label>Age Groups Served</Label>
+              <div className="space-y-2 mt-2">
+                {[
+                  { value: "early-intervention", label: "Early Intervention (0-5)" },
+                  { value: "school-age", label: "School Age (6-12)" },
+                  { value: "adolescents", label: "Adolescents (13-17)" },
+                  { value: "adults", label: "Adults (18+)" }
+                ].map((group) => (
+                  <div key={group.value} className="flex items-center space-x-2 p-3 border rounded-lg">
+                    <Checkbox
+                      id={`profile-age-${group.value}`}
+                      checked={ageGroups.includes(group.value)}
+                      onCheckedChange={(checked) =>
+                        handleAgeGroupsChange(group.value, checked === true)
+                      }
+                    />
+                    <Label htmlFor={`profile-age-${group.value}`} className="cursor-pointer flex-1">
+                      {group.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Languages Spoken</Label>
+              <div className="space-y-2 mt-2">
+                {[
+                  "English",
+                  "Spanish",
+                  "Mandarin",
+                  "Vietnamese",
+                  "Korean",
+                  "Tagalog",
+                  "Arabic",
+                  "French",
+                  "Portuguese",
+                  "Other"
+                ].map((lang) => (
+                  <div key={lang} className="flex items-center space-x-2 p-3 border rounded-lg">
+                    <Checkbox
+                      id={`profile-lang-${lang}`}
+                      checked={languages.includes(lang)}
+                      onCheckedChange={(checked) =>
+                        handleLanguagesChange(lang, checked === true)
+                      }
+                    />
+                    <Label htmlFor={`profile-lang-${lang}`} className="cursor-pointer flex-1">
+                      {lang}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Section 6: Job Preferences */}
+      <Card className="shadow-md">
+        <CardContent className="p-8">
+          <div className="space-y-6">
+            <div>
+              <Label className="text-base font-semibold mb-4 block">Job Preferences</Label>
+              <p className="text-sm text-muted-foreground mb-6">
+                Tell us what you&apos;re looking for in your next role
+              </p>
+
+              {/* Compensation Section */}
+              <div className="border-b pb-6 mb-6">
+                <h3 className="text-sm font-semibold mb-4">Compensation</h3>
+
+                <div className="space-y-3 mb-4">
                   <Label>Compensation Preference</Label>
                   <RadioGroup value={compensationPreference} onValueChange={(value) => setCompensationPreference(value as "hourly" | "salary" | "both")}>
                     <div className="flex items-center space-x-2 p-3 border rounded-lg">
@@ -302,32 +491,63 @@ export default function ProfileView() {
                 </div>
 
                 {(compensationPreference === "hourly" || compensationPreference === "both") && (
-                  <div className="space-y-2 mb-6">
-                    <Label htmlFor="minHourlyRate">Minimum Hourly Rate ($)</Label>
-                    <Input
-                      id="minHourlyRate"
-                      type="number"
-                      value={minHourlyRate}
-                      onChange={(e) => setMinHourlyRate(e.target.value)}
-                      placeholder="Enter minimum hourly rate"
-                    />
+                  <div className="space-y-2 mb-4">
+                    <Label htmlFor="minHourlyRate">Minimum Hourly Rate</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                      <Input
+                        id="minHourlyRate"
+                        type="number"
+                        value={minHourlyRate}
+                        onChange={(e) => setMinHourlyRate(e.target.value)}
+                        placeholder="25"
+                        className="pl-7"
+                      />
+                    </div>
                   </div>
                 )}
 
                 {(compensationPreference === "salary" || compensationPreference === "both") && (
-                  <div className="space-y-2 mb-6">
-                    <Label htmlFor="minAnnualSalary">Minimum Annual Salary ($)</Label>
-                    <Input
-                      id="minAnnualSalary"
-                      type="number"
-                      value={minAnnualSalary}
-                      onChange={(e) => setMinAnnualSalary(e.target.value)}
-                      placeholder="Enter minimum annual salary"
-                    />
+                  <div className="space-y-2 mb-4">
+                    <Label htmlFor="minAnnualSalary">Minimum Annual Salary</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                      <Input
+                        id="minAnnualSalary"
+                        type="number"
+                        value={minAnnualSalary}
+                        onChange={(e) => setMinAnnualSalary(e.target.value)}
+                        placeholder="50000"
+                        className="pl-7"
+                      />
+                    </div>
                   </div>
                 )}
 
-                <div className="space-y-2 mb-6">
+                {(compensationPreference === "hourly" || compensationPreference === "both") && (
+                  <div className="space-y-2">
+                    <Label>Preferred Weekly Hours</Label>
+                    <Select value={preferredWeeklyHours} onValueChange={setPreferredWeeklyHours}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select preferred hours" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="under-20">Under 20 hours</SelectItem>
+                        <SelectItem value="20-29">20-29 hours</SelectItem>
+                        <SelectItem value="30-35">30-35 hours</SelectItem>
+                        <SelectItem value="36-40">36-40 hours</SelectItem>
+                        <SelectItem value="40+">40+ hours</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+
+              {/* Employment Type & Schedule */}
+              <div className="border-b pb-6 mb-6">
+                <h3 className="text-sm font-semibold mb-4">Employment & Schedule</h3>
+
+                <div className="space-y-2 mb-4">
                   <Label>Employment Type</Label>
                   <div className="flex flex-wrap gap-3 mt-2">
                     {["Full-time", "Part-time", "Contract"].map((type) => (
@@ -347,33 +567,7 @@ export default function ProfileView() {
                   </div>
                 </div>
 
-                <div className="space-y-2 mb-6">
-                  <Label htmlFor="workSetting">Work Setting</Label>
-                  <Select value={workSetting} onValueChange={setWorkSetting}>
-                    <SelectTrigger id="workSetting">
-                      <SelectValue placeholder="Select work setting" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="in-person">In-Person</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
-                      <SelectItem value="remote">Remote</SelectItem>
-                      <SelectItem value="telehealth">Telehealth</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2 mb-6">
-                  <Label htmlFor="geographicRadius">Geographic Radius (miles)</Label>
-                  <Input
-                    id="geographicRadius"
-                    type="number"
-                    value={geographicRadius}
-                    onChange={(e) => setGeographicRadius(e.target.value)}
-                    placeholder="Enter radius in miles"
-                  />
-                </div>
-
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3 mb-4">
                   <Label>Schedule Preference</Label>
                   <RadioGroup value={schedulePreference} onValueChange={(value) => setSchedulePreference(value as "standard" | "flexible")}>
                     <div className="flex items-center space-x-2 p-3 border rounded-lg">
@@ -388,19 +582,19 @@ export default function ProfileView() {
                 </div>
 
                 {schedulePreference === "flexible" && (
-                  <div className="space-y-2 mb-6">
+                  <div className="space-y-2 mb-4">
                     <Label>Schedule Availability</Label>
                     <div className="flex flex-wrap gap-3 mt-2">
                       {["Weekdays", "Weekends", "Mornings", "Afternoons", "Evenings"].map((detail) => (
                         <div key={detail} className="flex items-center space-x-2">
                           <Checkbox
-                            id={`schedule-${detail}`}
+                            id={`profile-schedule-${detail}`}
                             checked={scheduleDetails.includes(detail)}
                             onCheckedChange={(checked) =>
                               handleScheduleDetailsChange(detail, checked === true)
                             }
                           />
-                          <Label htmlFor={`schedule-${detail}`} className="cursor-pointer text-sm">
+                          <Label htmlFor={`profile-schedule-${detail}`} className="cursor-pointer text-sm">
                             {detail}
                           </Label>
                         </div>
@@ -408,19 +602,178 @@ export default function ProfileView() {
                     </div>
                   </div>
                 )}
+
+                <div className="space-y-2">
+                  <Label>Earliest Start Availability</Label>
+                  <Select value={earliestStart} onValueChange={setEarliestStart}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select availability" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="immediate">Immediate</SelectItem>
+                      <SelectItem value="2-weeks">2 weeks</SelectItem>
+                      <SelectItem value="30-days">30 days</SelectItem>
+                      <SelectItem value="60-days">60+ days</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Work Setting Section */}
+              <div className="border-b pb-6 mb-6">
+                <h3 className="text-sm font-semibold mb-4">Work Setting</h3>
+
+                <div className="space-y-3 mb-4">
+                  <Label>Telehealth Only?</Label>
+                  <RadioGroup
+                    value={telehealthOnly ? "yes" : "no"}
+                    onValueChange={(value) => setTelehealthOnly(value === "yes")}
+                  >
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="yes" id="profile-telehealth-yes" />
+                      <Label htmlFor="profile-telehealth-yes" className="flex-1 cursor-pointer">Yes, telehealth only</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="no" id="profile-telehealth-no" />
+                      <Label htmlFor="profile-telehealth-no" className="flex-1 cursor-pointer">No, open to in-person</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {!telehealthOnly && (
+                  <div className="space-y-2">
+                    <Label>Work Setting Preference</Label>
+                    <div className="space-y-2 mt-2">
+                      {["Center-based", "In-home", "School-based", "Community-based"].map((setting) => (
+                        <div key={setting} className="flex items-center space-x-2 p-3 border rounded-lg">
+                          <Checkbox
+                            id={`profile-setting-${setting}`}
+                            checked={workSettings.includes(setting)}
+                            onCheckedChange={(checked) =>
+                              handleWorkSettingsChange(setting, checked === true)
+                            }
+                          />
+                          <Label htmlFor={`profile-setting-${setting}`} className="cursor-pointer flex-1">
+                            {setting}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Location & Travel Section */}
+              <div className="border-b pb-6 mb-6">
+                <h3 className="text-sm font-semibold mb-4">Location & Travel</h3>
+
+                {!telehealthOnly && (
+                  <div className="space-y-2 mb-4">
+                    <Label>Geographic Radius</Label>
+                    <Select value={geographicRadius} onValueChange={setGeographicRadius}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select radius" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5 miles</SelectItem>
+                        <SelectItem value="10">10 miles</SelectItem>
+                        <SelectItem value="15">15 miles</SelectItem>
+                        <SelectItem value="25">25 miles</SelectItem>
+                        <SelectItem value="50">50 miles</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="space-y-3 mb-4">
+                  <Label>Open to Relocation?</Label>
+                  <RadioGroup
+                    value={openToRelocation ? "yes" : "no"}
+                    onValueChange={(value) => setOpenToRelocation(value === "yes")}
+                  >
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="yes" id="profile-relocate-yes" />
+                      <Label htmlFor="profile-relocate-yes" className="flex-1 cursor-pointer">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 border rounded-lg">
+                      <RadioGroupItem value="no" id="profile-relocate-no" />
+                      <Label htmlFor="profile-relocate-no" className="flex-1 cursor-pointer">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Comfort with Multi-Site Work</Label>
+                  <Select value={multiSiteComfort} onValueChange={setMultiSiteComfort}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select preference" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="single-site">Single site only</SelectItem>
+                      <SelectItem value="some-travel">Some travel required</SelectItem>
+                      <SelectItem value="multi-site">Multi-site travel</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Target Roles Section */}
+              <div>
+                <h3 className="text-sm font-semibold mb-4">Target Roles</h3>
+
+                <div className="space-y-2 mb-4">
+                  <Label>Roles of Interest</Label>
+                  <div className="space-y-2 mt-2">
+                    {(roleType === "RBT"
+                      ? ["RBT", "Senior RBT", "Lead / Supervisor", "Other"]
+                      : ["BCBA", "Lead BCBA", "Clinic Supervisor", "Clinical Director", "Other"]
+                    ).map((role) => (
+                      <div key={role} className="flex items-center space-x-2 p-3 border rounded-lg">
+                        <Checkbox
+                          id={`profile-role-${role}`}
+                          checked={targetRoles.includes(role)}
+                          onCheckedChange={(checked) =>
+                            handleTargetRolesChange(role, checked === true)
+                          }
+                        />
+                        <Label htmlFor={`profile-role-${role}`} className="cursor-pointer flex-1">
+                          {role}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {roleType === "BCBA" && (
+                  <div className="space-y-2">
+                    <Label>Weekly Billable Preference</Label>
+                    <Select value={weeklyBillable} onValueChange={setWeeklyBillable}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select preference" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="under-20">Under 20 hours</SelectItem>
+                        <SelectItem value="21-25">21-25 hours</SelectItem>
+                        <SelectItem value="26-30">26-30 hours</SelectItem>
+                        <SelectItem value="30+">30+ hours</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
             </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Section 4: License Verification */}
+      {/* Section 7: License Verification */}
       <Card className="shadow-md">
         <CardContent className="p-8">
           <div className="space-y-6">
             <div>
               <Label className="text-base font-semibold mb-4 block">License Verification</Label>
               <p className="text-sm text-muted-foreground mb-6">
-                Confirm your professional credentials
+                Confirm your professional credentials to receive a verification badge.
               </p>
 
               <div className="flex items-start space-x-2 p-4 border rounded-lg">
@@ -439,7 +792,7 @@ export default function ProfileView() {
 
               {hasLicense && (
                 <div className="mt-4 space-y-2">
-                  <Label htmlFor="licenseNumber">License Number (Optional)</Label>
+                  <Label htmlFor="licenseNumber">License Number <span className="text-muted-foreground text-xs">(Optional)</span></Label>
                   <Input
                     id="licenseNumber"
                     value={licenseNumber}

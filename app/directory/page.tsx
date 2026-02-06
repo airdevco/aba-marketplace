@@ -20,6 +20,7 @@ type DirectoryWorker = {
   role: "RBT" | "BCBA";
   location: string;
   experience: string;
+  yearsExperience: string;
   rate: string;
   schedule: string[];
   compensationPreference: "hourly" | "salary" | "both";
@@ -29,6 +30,7 @@ type DirectoryWorker = {
   radius: number;
   schedulePreference: "standard" | "flexible";
   scheduleDetails: string[];
+  jobSearchStatus: "actively-looking" | "open" | "browsing";
   licensed: boolean;
   licenseNumber?: string;
   postedDays: number;
@@ -37,14 +39,14 @@ type DirectoryWorker = {
 
 // Mock Directory Data (fields align with professional preferences)
 const directoryWorkers: DirectoryWorker[] = [
-  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], compensationPreference: "hourly", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], licensed: true, licenseNumber: "RBT-101234", postedDays: 2, bio: "Passionate RBT with experience working with children ages 3-12. Skilled in DTT, NET, and behavioral intervention strategies." },
-  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", rate: "$75-90/hr", schedule: ["Weekdays"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 30, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-102345", postedDays: 1, bio: "Board certified analyst specializing in early intervention and parent training. Experienced with telehealth service delivery." },
-  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["School-based"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 5, bio: "Recent graduate pursuing RBT certification. Experience with school-aged children and classroom behavior support." },
-  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", rate: "$24-28/hr", schedule: ["Full-time"], compensationPreference: "hourly", employmentType: ["Full-time", "Contractor"], telehealthOnly: false, workSettings: ["Center-based", "In-home", "School-based"], radius: 20, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "RBT-104567", postedDays: 3, bio: "Versatile RBT comfortable in all settings. Strong data collection skills and experience with adolescent clients." },
-  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", rate: "$80-100/hr", schedule: ["Flexible"], compensationPreference: "salary", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 35, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], licensed: true, licenseNumber: "BCBA-105678", postedDays: 7, bio: "Senior BCBA with expertise in complex cases and staff training. Published researcher in behavioral interventions." },
-  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", rate: "$21-25/hr", schedule: ["Weekdays"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["In-home"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Afternoons"], licensed: false, postedDays: 4, bio: "Dedicated technician focusing on in-home services. Great rapport with families and strong communication skills." },
-  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", rate: "$18-22/hr", schedule: ["Weekends"], compensationPreference: "hourly", employmentType: ["Part-time", "Contractor"], telehealthOnly: null, workSettings: ["Center-based"], radius: 10, schedulePreference: "flexible", scheduleDetails: ["Weekends"], licensed: false, postedDays: 10, bio: "Entry-level candidate eager to grow in the ABA field. Currently enrolled in RBT training program." },
-  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", rate: "$70-85/hr", schedule: ["Full-time"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "standard", scheduleDetails: [], licensed: true, licenseNumber: "BCBA-108901", postedDays: 14, bio: "Collaborative BCBA passionate about team-based care. Experience supervising RBTs and developing treatment plans." },
+  { id: "W101", role: "RBT", location: "Atlanta, GA", experience: "3 years", yearsExperience: "2-5", rate: "$22-26/hr", schedule: ["Weekdays", "Evenings"], compensationPreference: "hourly", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Evenings"], jobSearchStatus: "actively-looking", licensed: true, licenseNumber: "RBT-101234", postedDays: 2, bio: "Passionate RBT with experience working with children ages 3-12. Skilled in DTT, NET, and behavioral intervention strategies." },
+  { id: "W102", role: "BCBA", location: "Marietta, GA", experience: "5 years", yearsExperience: "5-8", rate: "$75-90/hr", schedule: ["Weekdays"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 30, schedulePreference: "standard", scheduleDetails: [], jobSearchStatus: "open", licensed: true, licenseNumber: "BCBA-102345", postedDays: 1, bio: "Board certified analyst specializing in early intervention and parent training. Experienced with telehealth service delivery." },
+  { id: "W103", role: "RBT", location: "Decatur, GA", experience: "1 year", yearsExperience: "0-2", rate: "$20-24/hr", schedule: ["Weekends", "School Hours"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["School-based"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekends"], jobSearchStatus: "actively-looking", licensed: false, postedDays: 5, bio: "Recent graduate pursuing RBT certification. Experience with school-aged children and classroom behavior support." },
+  { id: "W104", role: "RBT", location: "Alpharetta, GA", experience: "4 years", yearsExperience: "2-5", rate: "$24-28/hr", schedule: ["Full-time"], compensationPreference: "hourly", employmentType: ["Full-time", "Contract"], telehealthOnly: false, workSettings: ["Center-based", "In-home", "School-based"], radius: 20, schedulePreference: "standard", scheduleDetails: [], jobSearchStatus: "open", licensed: true, licenseNumber: "RBT-104567", postedDays: 3, bio: "Versatile RBT comfortable in all settings. Strong data collection skills and experience with adolescent clients." },
+  { id: "W105", role: "BCBA", location: "Sandy Springs, GA", experience: "7 years", yearsExperience: "5-8", rate: "$80-100/hr", schedule: ["Flexible"], compensationPreference: "salary", employmentType: ["Full-time"], telehealthOnly: true, workSettings: [], radius: 35, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Mornings", "Afternoons"], jobSearchStatus: "browsing", licensed: true, licenseNumber: "BCBA-105678", postedDays: 7, bio: "Senior BCBA with expertise in complex cases and staff training. Published researcher in behavioral interventions." },
+  { id: "W106", role: "RBT", location: "Smyrna, GA", experience: "2 years", yearsExperience: "0-2", rate: "$21-25/hr", schedule: ["Weekdays"], compensationPreference: "hourly", employmentType: ["Part-time"], telehealthOnly: false, workSettings: ["In-home"], radius: 15, schedulePreference: "flexible", scheduleDetails: ["Weekdays", "Afternoons"], jobSearchStatus: "actively-looking", licensed: false, postedDays: 4, bio: "Dedicated technician focusing on in-home services. Great rapport with families and strong communication skills." },
+  { id: "W107", role: "RBT", location: "Atlanta, GA", experience: "< 1 year", yearsExperience: "0-2", rate: "$18-22/hr", schedule: ["Weekends"], compensationPreference: "hourly", employmentType: ["Part-time", "Contract"], telehealthOnly: null, workSettings: ["Center-based"], radius: 10, schedulePreference: "flexible", scheduleDetails: ["Weekends"], jobSearchStatus: "browsing", licensed: false, postedDays: 10, bio: "Entry-level candidate eager to grow in the ABA field. Currently enrolled in RBT training program." },
+  { id: "W108", role: "BCBA", location: "Roswell, GA", experience: "3 years", yearsExperience: "2-5", rate: "$70-85/hr", schedule: ["Full-time"], compensationPreference: "both", employmentType: ["Full-time"], telehealthOnly: false, workSettings: ["Center-based", "In-home"], radius: 25, schedulePreference: "standard", scheduleDetails: [], jobSearchStatus: "actively-looking", licensed: true, licenseNumber: "BCBA-108901", postedDays: 14, bio: "Collaborative BCBA passionate about team-based care. Experience supervising RBTs and developing treatment plans." },
 ];
 
 export default function DirectoryPage() {
@@ -59,6 +61,8 @@ export default function DirectoryPage() {
   const [schedulePreferenceFilter, setSchedulePreferenceFilter] = useState<string>("all");
   const [scheduleDetailsFilter, setScheduleDetailsFilter] = useState<string[]>([]);
   const [licensedFilter, setLicensedFilter] = useState<string>("all");
+  const [jobSearchStatusFilter, setJobSearchStatusFilter] = useState<string>("all");
+  const [yearsExperienceFilter, setYearsExperienceFilter] = useState<string>("all");
 
   const filteredWorkers = directoryWorkers.filter((worker) => {
     if (selectedRole !== "all" && worker.role.toLowerCase() !== selectedRole) return false;
@@ -74,6 +78,8 @@ export default function DirectoryPage() {
     if (scheduleDetailsFilter.length > 0 && !scheduleDetailsFilter.some((d) => worker.scheduleDetails.includes(d))) return false;
     if (licensedFilter === "yes" && !worker.licensed) return false;
     if (licensedFilter === "no" && worker.licensed) return false;
+    if (jobSearchStatusFilter !== "all" && worker.jobSearchStatus !== jobSearchStatusFilter) return false;
+    if (yearsExperienceFilter !== "all" && worker.yearsExperience !== yearsExperienceFilter) return false;
     return true;
   });
 
@@ -118,6 +124,39 @@ export default function DirectoryPage() {
                       <SelectItem value="all">All Roles</SelectItem>
                       <SelectItem value="rbt">RBT</SelectItem>
                       <SelectItem value="bcba">BCBA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Job Search Status */}
+                <div className="space-y-3">
+                  <Label>Job Search Status</Label>
+                  <Select value={jobSearchStatusFilter} onValueChange={setJobSearchStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Any</SelectItem>
+                      <SelectItem value="actively-looking">Actively looking</SelectItem>
+                      <SelectItem value="open">Open to opportunities</SelectItem>
+                      <SelectItem value="browsing">Just browsing</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Years of Experience */}
+                <div className="space-y-3">
+                  <Label>Years of Experience</Label>
+                  <Select value={yearsExperienceFilter} onValueChange={setYearsExperienceFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Any</SelectItem>
+                      <SelectItem value="0-2">0-2 years</SelectItem>
+                      <SelectItem value="2-5">2-5 years</SelectItem>
+                      <SelectItem value="5-8">5-8 years</SelectItem>
+                      <SelectItem value="8+">8+ years</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -359,6 +398,8 @@ export default function DirectoryPage() {
                    setSchedulePreferenceFilter("all");
                    setScheduleDetailsFilter([]);
                    setLicensedFilter("all");
+                   setJobSearchStatusFilter("all");
+                   setYearsExperienceFilter("all");
                  }} className="mt-2">
                    Clear all filters
                  </Button>
